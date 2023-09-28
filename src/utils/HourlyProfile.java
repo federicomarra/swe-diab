@@ -1,13 +1,10 @@
 package utils;
 
-enum Mode {BASAL, IC, IG}
-
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;
+    public ProfileMode mode;
 
-    public Mode mode;
-
-    public HourlyProfile(Mode mode) {
+    public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
         for (int i = 0; i < 24; i++) {

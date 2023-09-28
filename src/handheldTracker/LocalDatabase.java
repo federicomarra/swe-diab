@@ -1,18 +1,34 @@
 package handheldTracker;
+import cloudInterface.BackupDatabase;
+import glucoseDeliverySystem.PumpManager;
+import utils.Database;
+import utils.Mesurament;
+import utils.Observer;
+import exceptions.BluetoothException;
+import exceptions.InternetException;
 
-public class LocalDatabase {
-    private manager PumpManager;
-    private backupDb BackupDatabase;
+import java.util.List;
 
-    public update(Mesurament[] mesurament) {
-        PumpManager.update(mesurament[]);
-        BackupDatabase.update(mesurament[]);
+public class LocalDatabase extends Database implements Observer {
+    private PumpManager manager;
+    private BackupDatabase backupDb;
+
+    public void update(List<Mesurament> m) {
+        this.mesuraments= m;
     }
-    public computeAndInject(){
-
+    public void computeAndInject() throws BluetoothException {
+        try {
+            manager.verifyAndInject(/*TODO: implement*/);
+        } catch (Exception e) {
+            throw new BluetoothException();
+        }
     }
 
-    private backup(){
-        backupDb.update();
+    private void backup() throws InternetException {
+        try {
+            backupDb.update(); //TODO: update() to implement into BackupDatabase
+        } catch (Exception e) {
+            throw new InternetException();
+        }
     }
 }

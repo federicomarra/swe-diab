@@ -1,5 +1,7 @@
 package handheldTracker;
 
+import utils.HourlyFactor;
+
 import java.time.LocalTime;
 
 public class UserInterface {
@@ -9,11 +11,22 @@ public class UserInterface {
         localDatabase = new LocalDatabase();
     }
 
-    public void addBolus(float units, LocalTime time, int delay, string mode) {
+    public void addBolus(float units, LocalTime time, int delay, BolusMode mode) {
         //TODO: implement
     }
 
-    public void updateBasalProfil(float units, int hour) {
+    public void updateBasalProfile(float units, int hour) {
         //TODO: implement
+        //updateHourlyFactor(new HourlyFactor(units, hour));
+    }
+
+    public void updateCarbRatioProfile(float units, int hour) {
+        //TODO: implement
+        //updateHourlyFactor(new HourlyFactor(units, hour));
+    }
+
+    public void updateInsulinSensitivityProfile(float units, int hour) {
+        //TODO: implement
+        //updateHourlyFactor(new HourlyFactor(units, hour));
     }
 }

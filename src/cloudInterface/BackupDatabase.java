@@ -1,4 +1,7 @@
 package cloudInterface;
 
-public class BackupDatabase {
+import utils.Database;
+
+public class BackupDatabase extends Database {
+
 }

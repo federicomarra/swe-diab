@@ -1,12 +1,12 @@
 package handheldTracker;
 
-public class BasalProfil {
+public class BasalProfile {
     public basalDelivery[24] basalDeliveries;
 
     public void updateBasalProfil(basalDelivery[] basals) {
         this.basalDeliveries = basals;
     }
-    public basalDelivery[] getBasalProfil() {
+    public basalDelivery[] getBasalProfile() {
         return basalDeliveries;
     }
 

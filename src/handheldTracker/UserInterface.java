@@ -17,7 +17,7 @@ public class UserInterface {
 
     public void updateBasalProfile(float units, int hour) {
         //TODO: implement
-        //updateHourlyFactor(new HourlyFactor(units, hour));
+        localDatabase.updateHourlyFactor(new HourlyFactor(units, hour));
     }
 
     public void updateCarbRatioProfile(float units, int hour) {

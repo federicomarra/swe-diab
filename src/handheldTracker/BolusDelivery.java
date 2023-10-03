@@ -17,6 +17,7 @@ public class BolusDelivery {
 
     public float calculateResidualUnits() {
         //TODO: implement
+        return 0;
     }
 
 

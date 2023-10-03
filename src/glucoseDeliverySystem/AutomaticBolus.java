@@ -1,5 +1,7 @@
 package glucoseDeliverySystem;
 
+import utils.HourlyFactor;
+import utils.HourlyProfile;
 import utils.Mesurament;
 import utils.Observer;
 
@@ -10,19 +12,27 @@ public class AutomaticBolus implements Observer {
     public List<Mesurament> mesuraments;
     private PumpManager manager;
 
+    public AutomaticBolus(PumpManager manager){
+        this.manager = manager;
+    }
+
     public void update(List<Mesurament> m) {
         this.mesuraments = m;
         evaluate(m);
     }
 
-    private evaluate(List<Mesurament> m){
+    private void evaluate(List<Mesurament> m){
         //TODO: implement get insulinSensitivity based on time from insulinSensitivityProfile
         var lm = m.get(m.size()-1);
-        var sensitivity = lm.insulinSensitivityProfile[(int)(LocalTime.now().getHour())];
+        /*
+        HourlyProfile sensitivities = manager.insulinSensitivityProfile;
+        HourlyFactor sensitivity = sensitivities[(int)(LocalTime.now().getHour())];
         if (lm.glycemia() > 180){
-            var units = (lm.glycemia() - 120) / sensitivity;
+            float units = (lm.glycemia() - 120) / sensitivity;
             sendBolus(units);
         }
+
+         */
     }
 
     private void sendBolus(float units){

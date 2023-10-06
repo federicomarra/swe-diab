@@ -13,8 +13,10 @@ public class PumpManager {
     public HourlyProfile insulinSensitivityProfile;
 
     public void verifyAndInject(float units){
-        if (units > 0 && units < 20) {
+        if (units > 0 && units <= 20) {
             pump.inject(units);
+        } else if (units > 20) {
+            System.out.println("Too many units");
         } else {
             System.out.println("Invalid units");
         }

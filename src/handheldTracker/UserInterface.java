@@ -1,39 +1,40 @@
 package handheldTracker;
 
+import glucoseDeliverySystem.PumpManager;
 import utils.HourlyFactor;
 
 import java.time.LocalTime;
 
 public class UserInterface {
-    private LocalDatabase localDatabase;
+    private LocalDatabase localDb;
 
     public UserInterface() {
-        localDatabase = new LocalDatabase();
+        localDb = new LocalDatabase(new PumpManager());
     }
 
-    public void newBolus(float units, LocalTime time, int delay, BolusMode mode) {
+    public void newBolus(float units, LocalTime time, int delay, BolusMode mode, int carb) {
         switch (mode) {
             case STANDARD:
-                localDatabase.computeAndInject(carb, mode);
+                localDb.computeAndInject(carb, mode);
                 break;
             case EXTENDED:
                 wait(delay*1000*60);    //delay in minutes
-                localDatabase.computeAndInject(carb, mode);
+                localDb.computeAndInject(carb, mode);
                 break;
             case MANUAL:
-                addBolus(new BolusDelivery(units, time, delay, mode));
+                localDb.addBolus(new BolusDelivery(units, LocalTime.now(), 0, mode));
                 break;
             case PEN:
-                addBolus(new BolusDelivery(units, time, delay, mode));
+                localDb.addBolus(new BolusDelivery(units, LocalTime.now(), 0, mode));
                 break;
         }
         //TODO: implement
-        localDatabase.addBolus(new BolusDelivery(units, time, delay, mode));
+        localDb.addBolus(new BolusDelivery(units, time, delay, mode));
     }
 
     public void updateBasalProfile(float units, int hour) {
         //TODO: implement
-        localDatabase.updateHourlyFactor(new HourlyFactor(units, hour));
+        localDb.updateHourlyFactor(new HourlyFactor(units, hour));
     }
 
     public void updateCarbRatioProfile(float units, int hour) {

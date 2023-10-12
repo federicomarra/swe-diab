@@ -1,17 +1,17 @@
 package glucoseDeliverySystem;
 
-import utils.Mesurament;
+import utils.Measurement;
 
 import java.util.List;
 
 public class GlucoseSensor {
-    public List<Mesurament> mesuraments;
-    public Mesurament makeMesurament() {
+    public List<Measurement> measuraments;
+    public Measurement makeMesurament() {
         int min = 60;
         int max = 500;
         int glycemia = (int) (Math.random() * (max - min) + min);
-        var m = new Mesurament(glycemia, java.time.LocalTime.now());
-        mesuraments.add(m);
+        var m = new Measurement(glycemia, java.time.LocalTime.now());
+        measuraments.add(m);
         return m;
     }
 }

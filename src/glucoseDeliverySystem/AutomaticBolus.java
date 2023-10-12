@@ -1,27 +1,24 @@
 package glucoseDeliverySystem;
 
-import utils.HourlyFactor;
-import utils.HourlyProfile;
-import utils.Mesurament;
+import utils.Measurement;
 import utils.Observer;
 
-import java.time.LocalTime;
 import java.util.List;
 
 public class AutomaticBolus implements Observer {
-    public List<Mesurament> mesuraments;
+    public List<Measurement> measuraments;
     private PumpManager manager;
 
     public AutomaticBolus(PumpManager manager){
         this.manager = manager;
     }
 
-    public void update(List<Mesurament> m) {
-        this.mesuraments = m;
+    public void update(List<Measurement> m) {
+        this.measuraments = m;
         evaluate(m);
     }
 
-    private void evaluate(List<Mesurament> m){
+    private void evaluate(List<Measurement> m){
         //TODO: implement get insulinSensitivity based on time from insulinSensitivityProfile
         var lm = m.get(m.size()-1);
         /*

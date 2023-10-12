@@ -1,7 +1,7 @@
 package glucoseDeliverySystem;
 
 import utils.HourlyProfile;
-import utils.Mesurament;
+import utils.Measurement;
 import utils.Observer;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +22,12 @@ public class PumpManager {
         }
     }
 
-    public Mesurament newMesurament(){
+    public Measurement newMesurament(){
         return sensor.makeMesurament();
     }
 
-    private List<Mesurament> getMesuraments() {
-        return sensor.mesuraments;
+    private List<Measurement> getMesuraments() {
+        return sensor.measuraments;
     }
 
     public void subscribe(Observer o) {

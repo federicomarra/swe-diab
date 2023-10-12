@@ -2,7 +2,6 @@ package utils;
 
 import handheldTracker.BolusDelivery;
 
-import java.time.LocalTime;
 import java.util.List;
 
 public class Database {
@@ -10,7 +9,7 @@ public class Database {
     public HourlyProfile insulinSensitivityProfile;
     public HourlyProfile basalProfile;
     public List<BolusDelivery> bolusDeliveries;
-    public List<Mesurament> mesuraments;
+    public List<Measurement> measurements;
 
     public Database() {
 
@@ -20,8 +19,9 @@ public class Database {
 
     }
 
-    public void update(List<Mesurament> m) {
-
+    public void update(List<Measurement> ms) {
+        for (Measurement m : ms)
+            measurements.add(m);
     }
 
     public void computeAndInject() {
@@ -32,7 +32,7 @@ public class Database {
 
     }
 
-    public void addBolus(BolusDelivery bolusDelivery) {
-
+    public void addBolus(BolusDelivery bd) {
+        bolusDeliveries.add(bd);
     }
 }

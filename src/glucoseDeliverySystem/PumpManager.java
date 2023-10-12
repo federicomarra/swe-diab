@@ -22,8 +22,8 @@ public class PumpManager {
         }
     }
 
-    public Measurement newMesurament(){
-        return sensor.makeMesurament();
+    public Measurement newMeasurement(){
+        return sensor.makeMeasurement();
     }
 
     private List<Measurement> getMesuraments() {

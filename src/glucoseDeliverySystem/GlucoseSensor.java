@@ -6,7 +6,7 @@ import java.util.List;
 
 public class GlucoseSensor {
     public List<Measurement> measuraments;
-    public Measurement makeMesurament() {
+    public Measurement makeMeasurement() {
         int min = 60;
         int max = 500;
         int glycemia = (int) (Math.random() * (max - min) + min);

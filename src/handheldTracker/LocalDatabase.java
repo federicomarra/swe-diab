@@ -30,7 +30,7 @@ public class LocalDatabase extends Database implements Observer {
             Measurement lm = measurements.get(measurements.size()-1);  // last mesurament
             Duration diff = Duration.between(lm.time(), LocalTime.now());
             if (diff.toMinutes() > 10)  // if last mesurament is older than 10 minutes
-                lm = manager.newMesurament();   // get new mesurament
+                lm = manager.newMeasurement();   // get new mesurament
             HourlyFactor sensitivity = insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()];
             HourlyFactor carbRatio = carbRatioProfile.hourlyFactors[LocalTime.now().getHour()];
             float units = 0;

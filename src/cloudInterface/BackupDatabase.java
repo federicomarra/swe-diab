@@ -2,8 +2,4 @@ package cloudInterface;
 
 import utils.Database;
 
-public class BackupDatabase extends Database {
-    public void update() {
-
-    }
-}
+public class BackupDatabase extends Database {}

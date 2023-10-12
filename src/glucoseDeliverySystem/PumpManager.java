@@ -26,7 +26,7 @@ public class PumpManager {
         return sensor.makeMeasurement();
     }
 
-    private List<Measurement> getMesuraments() {
+    private List<Measurement> getMeasurements() {
         return sensor.measuraments;
     }
 
@@ -40,7 +40,7 @@ public class PumpManager {
 
     public void notifyObservers(){
         for(Observer observer: observers) {
-            observer.update(getMesuraments());
+            observer.update(getMeasurements());
         }
     }
 }

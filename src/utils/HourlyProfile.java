@@ -1,5 +1,8 @@
 package utils;
 
+import static utils.ReadCSV.ReadFloatCSV;
+import static utils.ReadCSV.ReadIntCSV;
+
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;
     public ProfileMode mode;
@@ -7,18 +10,22 @@ public class HourlyProfile {
     public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
-        for (int i = 0; i < 24; i++) {
-            switch (mode) {
-                case BASAL:
-                    hourlyFactors[i] = new HourlyFactor(1.5F, i);
-                    break;
-                case IC:
-                    hourlyFactors[i] = new HourlyFactor(10, i);
-                    break;
-                case IG:
-                    hourlyFactors[i] = new HourlyFactor(40, i);
-                    break;
-            }
+        switch (mode) {
+            case BASAL:
+                float[] bf = ReadFloatCSV("csv/basalProfile.csv");
+                for (int i = 0; i < 24; i++)
+                    hourlyFactors[i] = new HourlyFactor(bf[i], i);
+                break;
+            case IC:
+                int[] cb = ReadIntCSV("csv/carbRatio.csv");
+                for (int i = 0; i < 24; i++)
+                    hourlyFactors[i] = new HourlyFactor(cb[i], i);
+                break;
+            case IG:
+                int[] is = ReadIntCSV("csv/insulinSensitivity.csv");
+                for (int i = 0; i < 24; i++)
+                    hourlyFactors[i] = new HourlyFactor(is[i], i);
+                break;
         }
     }
 

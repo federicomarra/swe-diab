@@ -53,7 +53,7 @@ public class LocalDatabase extends Database implements Observer {
 
     private void backup() throws InternetException {
         try {
-            backupDb.update(this.measurements); //TODO: update() to implement into BackupDatabase
+            backupDb.update(this.measurements); //update() to implemented into Database.java
         } catch (Exception e) {
             e.printStackTrace();
         }

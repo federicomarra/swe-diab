@@ -1,5 +1,12 @@
 package cloudInterface;
 
 import utils.Database;
+import utils.Measurement;
 
-public class BackupDatabase extends Database {}
+import java.util.List;
+
+public class BackupDatabase extends Database {
+    public void update(List<Measurement> ms) {
+        super.update(ms);
+    }
+}

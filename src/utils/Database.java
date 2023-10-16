@@ -23,20 +23,15 @@ public class Database {
 
     }
 
-    public void update(List<Measurement> ms) {
+    protected void update(List<Measurement> ms) {
         for (Measurement m : ms)
             measurements.add(m);
     }
 
-    public void computeAndInject() {
+    public void computeAndInject() {}
 
-    }
+    private void backup() {}
 
-    private void backup() {
+    public void addBolus(BolusDelivery bd) {}
 
-    }
-
-    public void addBolus(BolusDelivery bd) {
-        bolusDeliveries.add(bd);
-    }
 }

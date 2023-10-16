@@ -15,21 +15,32 @@ public class UserInterface {
     public void newBolus(float units, LocalTime time, int delay, BolusMode mode, int carb) {
         switch (mode) {
             case STANDARD:
-                localDb.computeAndInject(carb, mode);
+                try{
+                    localDb.computeAndInject(carb, mode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case EXTENDED:
-                wait(delay*1000*60);    //delay in minutes
-                localDb.computeAndInject(carb, mode);
+                try {
+                    wait((long)delay*1000*60);    //delay in minutes
+                    localDb.computeAndInject(carb, mode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case MANUAL:
-                localDb.addBolus(new BolusDelivery(units, LocalTime.now(), 0, mode));
+                localDb.addBolus(new BolusDelivery(units, LocalTime.now(), mode));
                 break;
             case PEN:
-                localDb.addBolus(new BolusDelivery(units, LocalTime.now(), 0, mode));
+                localDb.addBolus(new BolusDelivery(units, LocalTime.now(), mode));
+                break;
+            default:
+                System.out.println("Invalid bolus mode");
                 break;
         }
         //TODO: implement
-        localDb.addBolus(new BolusDelivery(units, time, delay, mode));
+        localDb.addBolus(new BolusDelivery(units, time, mode));
     }
 
     public void updateBasalProfile(float units, int hour) {

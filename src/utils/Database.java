@@ -1,7 +1,7 @@
 package utils;
 
 import handheldTracker.BolusDelivery;
-import util.ProfileMode;
+import utils.ProfileMode;
 
 import java.util.List;
 

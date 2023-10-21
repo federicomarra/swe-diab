@@ -1,22 +1,39 @@
 package handheldTracker;
+
 import cloudInterface.BackupDatabase;
 import glucoseDeliverySystem.PumpManager;
 import utils.*;
 import exceptions.BluetoothException;
 import exceptions.InternetException;
 
-import java.time.Duration;
 import java.time.LocalTime;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocalDatabase extends Database implements Observer {
     private PumpManager manager;
     private BackupDatabase backupDb;
+    public HourlyProfile carbRatioProfile;
+    public HourlyProfile insulinSensitivityProfile;
+    public HourlyProfile basalProfile;
+    public List<BolusDelivery> bolusDeliveries;
+    public List<Measurement> measurements;
 
-    public LocalDatabase(PumpManager manager) {
-        this.manager = manager;
+    public LocalDatabase() {
         this.backupDb = new BackupDatabase();
+
+        this.insulinSensitivityProfile = new HourlyProfile(ProfileMode.IG);
+        this.basalProfile = new HourlyProfile(ProfileMode.BASAL);
+        this.carbRatioProfile = new HourlyProfile(ProfileMode.IC);
+        this.bolusDeliveries = new ArrayList<>();
+        this.measurements = new ArrayList<>();
+        System.out.println("LocalDatabase created");
+        this.manager = new PumpManager(insulinSensitivityProfile);
+        System.out.println("PumpManager created");
+        // manager.subscribe(this);
     }
+
     public void update(List<Measurement> ms) {
         try {
             super.update(ms);
@@ -25,26 +42,72 @@ public class LocalDatabase extends Database implements Observer {
             e.printStackTrace();
         }
     }
-    public void computeAndInject(int carb, BolusMode mode) throws BluetoothException {
+
+    public void newBolus(float units, int delay, BolusMode mode, int carb) {
+        switch (mode) {
+            case STANDARD, MANUAL:  //computes and injects
+                try{
+                    computeAndInject(LocalTime.now(), carb, mode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case EXTENDED:  //calculates timeDelayed and computes and injects
+                try {
+                    LocalTime timeDelayed = LocalTime.now().plusMinutes(delay); // delay in minutes
+                    computeAndInject(timeDelayed, carb, mode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PEN:       //adds bolus to localDb
+                addBolus(new BolusDelivery(units, LocalTime.now(), mode));
+                break;
+        }
+        //TODO: add bolus to localDb?
+        //localDb.addBolus(new BolusDelivery(units, time, mode));
+    }
+
+    private void computeAndInject(LocalTime time, int carb, BolusMode mode) throws BluetoothException {
         try {
-            Measurement lm = measurements.get(measurements.size()-1);  // last mesurament
-            Duration diff = Duration.between(lm.time(), LocalTime.now());
+            if (measurements.size() == 0)  // if no mesurament is present
+                addMeasurement(manager.newMeasurement());   // get new mesurament
+            Measurement lm = measurements.get(measurements.size() - 1);  // last mesurament
+            Duration diff = Duration.between(lm.time(), time);
             if (diff.toMinutes() > 10)  // if last mesurament is older than 10 minutes
-                lm = manager.newMeasurement();   // get new mesurament
+                lm = addMeasurement(manager.newMeasurement());   // get new mesurament and add to measurements
             HourlyFactor sensitivity = insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()];
             HourlyFactor carbRatio = carbRatioProfile.hourlyFactors[LocalTime.now().getHour()];
-            float units = 0;
+            int referement = 120;
+            BolusDelivery bd = new BolusDelivery(0, time, mode);
 
             if (lm.glycemia() > 180)
-                units += ((float)(lm.glycemia() - 120)) / sensitivity.units();
+                bd.units += ((float) (lm.glycemia() - referement)) / sensitivity.units();
             if (carb > 0 && carb <= 150)
-                units += carb / carbRatio.units();
-            addBolus(new BolusDelivery(units, LocalTime.now(), mode));
-            if(units > 0 && (mode == BolusMode.STANDARD || mode == BolusMode.EXTENDED))
-                manager.verifyAndInject(units);
-            else if (units > 0 && (mode == BolusMode.PEN || mode == BolusMode.MANUAL))
-                addBolus(new BolusDelivery(units, LocalTime.now(), mode));
-                System.out.println("You should manually inject " + Math.round(units) + " units");
+                bd.units += carb / carbRatio.units();
+            bd.units -= bd.calculateResidualUnits(bolusDeliveries);
+            bd.units = Math.round(bd.units / 0.01f) * 0.01f; // round to 2 decimal places
+            if (bd.units > 0) {
+                addBolus(bd);
+                switch (mode){
+                    case STANDARD:
+                        System.out.println("With a glycemia of " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
+                        System.out.println("...injecting " + Math.round(bd.units) + " units" + " at " + LocalTime.now().getHour() + ":" + LocalTime.now().getMinute());   //TODO: comment
+                        //manager.verifyAndInject(bd.units); TODO: uncomment
+                        break;
+                    case EXTENDED:
+                        //while (time.getMinute() == LocalTime.now().getMinute())   // wait until time is reached
+                        //while ((Duration.between(LocalTime.now(), time)).toMinutes() <= 1); // wait until time is reached
+                        System.out.println("Waiting " + (Duration.between(LocalTime.now(), time)).toMinutes() + " minutes to inject " + Math.round(bd.units) + " units");
+                        Thread.sleep(Duration.between(LocalTime.now(), time).toMillis());
+                        System.out.println("Injecting " + Math.round(bd.units) + " units"); //TODO: comment
+                        //manager.verifyAndInject(bd.units); TODO: uncomment
+                        break;
+                    case MANUAL:
+                        System.out.println("With a glycemia of  " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
+                        break;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             // throw new BluetoothException();
@@ -59,11 +122,31 @@ public class LocalDatabase extends Database implements Observer {
         }
     }
 
-    public void updateHourlyFactor(HourlyFactor hf) {
-        updateHourlyFactor(hf);
+    public void updateHourlyFactor(HourlyFactor hf, ProfileMode mode) {
+        switch (mode) {
+            case BASAL:
+                basalProfile.updateHourlyFactor(hf);
+                break;
+            case IC:
+                insulinSensitivityProfile.updateHourlyFactor(hf);
+                manager = new PumpManager(this.insulinSensitivityProfile);
+                break;
+            case IG:
+                carbRatioProfile.updateHourlyFactor(hf);
+                break;
+        }
+        try {
+            backup();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void addBolus(BolusDelivery bd) {
+    private void addBolus(BolusDelivery bd) {
         bolusDeliveries.add(bd);
+    }
+    private Measurement addMeasurement(Measurement m) {
+        measurements.add(m);
+        return m;
     }
 }

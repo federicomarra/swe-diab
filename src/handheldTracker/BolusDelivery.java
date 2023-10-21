@@ -21,6 +21,7 @@ public class BolusDelivery {
         float residualUnits = 0;
         do {    // calculate residual units from last 3 hours (linear decay)
             i++;
+            if (i > bds.size()) break;  // if there are no bolus deliveries, return 0
             BolusDelivery lb = bds.get(bds.size()-i);  // last bolus
             diff = Duration.between(lb.time, LocalTime.now());  // difference between last bolus time and now
             residualUnits += lb.units*(1 - (float)diff.toMinutes()/180);    // linear decay

@@ -1,5 +1,6 @@
 
 //import static utils.ReadCSV.*;
+
 import handheldTracker.UserInterface;
 
 public class Main {
@@ -21,9 +22,25 @@ public class Main {
         //ui.newPenBolus(1.5f);
         //ui.howManyUnits(56);
         //ui.newStandardBolus(53);
+
+        System.out.println("\n\nStarting simulation:\n");
+
         int carb = (int) (Math.abs(Math.random() * 300 - 150));
-        ui.newStandardBolus(carb/3);
-        ui.newStandardBolus(carb);
+        int mode = (int) (Math.abs(Math.random() * 3));
+        switch (mode) {
+            case 0:
+                System.out.println("Mode: Standard Bolus");
+                ui.newStandardBolus(carb);
+                break;
+            case 1:
+                System.out.println("Mode: Extended Bolus");
+                ui.newExtendedBolus(carb, 3);
+                break;
+            case 2:
+                System.out.println("Mode: Manual Bolus");
+                ui.howManyUnits(carb);
+                break;
+        }
 
     }
 

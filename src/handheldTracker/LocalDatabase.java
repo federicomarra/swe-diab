@@ -104,7 +104,7 @@ public class LocalDatabase extends Database implements Observer {
                         //manager.verifyAndInject(bd.units); TODO: uncomment
                         break;
                     case MANUAL:
-                        System.out.println("With a glycemia of  " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
+                        System.out.println("With a glycemia of " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
                         break;
                 }
             }

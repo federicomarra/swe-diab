@@ -19,9 +19,7 @@ public class Database {
         basalProfile = new HourlyProfile(ProfileMode.BASAL);
     }
 
-    public void updateHourlyFactor(HourlyFactor hf) {
-
-    }
+    public void updateHourlyFactor(HourlyFactor hf) {}
 
     protected void update(List<Measurement> ms) {
         for (Measurement m : ms)

@@ -1,7 +1,7 @@
 package utils;
 
 import handheldTracker.BolusDelivery;
-import utils.ProfileMode;
+import handheldTracker.BolusMode;
 
 import java.util.List;
 
@@ -13,11 +13,7 @@ public class Database {
     public List<BolusDelivery> bolusDeliveries;
     public List<Measurement> measurements;
 
-    public Database() {
-        carbRatioProfile = new HourlyProfile(ProfileMode.IC);
-        insulinSensitivityProfile = new HourlyProfile(ProfileMode.IG);
-        basalProfile = new HourlyProfile(ProfileMode.BASAL);
-    }
+    public Database() {}
 
     public void updateHourlyFactor(HourlyFactor hf) {}
 

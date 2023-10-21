@@ -6,8 +6,11 @@ import utils.*;
 import exceptions.BluetoothException;
 import exceptions.InternetException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalTime;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,10 +92,12 @@ public class LocalDatabase extends Database implements Observer {
             bd.units = Math.round(bd.units / 0.01f) * 0.01f; // round to 2 decimal places
             if (bd.units > 0) {
                 addBolus(bd);
+                BigDecimal u = new BigDecimal(bd.units);                       // parse first row into BigDecimal
+                u = u.setScale(2, RoundingMode.HALF_UP);
                 switch (mode) {
                     case STANDARD:
                         System.out.println("With a glycemia of " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
-                        System.out.println("...injecting " + Math.round(bd.units) + " units" + " at " + LocalTime.now().getHour() + ":" + LocalTime.now().getMinute());   //TODO: comment
+                        System.out.println("...injecting " + u + " units" + " at " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
                         //manager.verifyAndInject(bd.units); TODO: uncomment
                         break;
                     case EXTENDED:
@@ -100,11 +105,12 @@ public class LocalDatabase extends Database implements Observer {
                         //while ((Duration.between(LocalTime.now(), time)).toMinutes() <= 1); // wait until time is reached
                         System.out.println("Waiting " + (Duration.between(LocalTime.now(), time)).toMinutes() + " minutes to inject " + Math.round(bd.units) + " units");
                         Thread.sleep(Duration.between(LocalTime.now(), time).toMillis());
-                        System.out.println("Injecting " + Math.round(bd.units) + " units"); //TODO: comment
+                        System.out.println("Injecting " + u + " units"); //TODO: comment
                         //manager.verifyAndInject(bd.units); TODO: uncomment
                         break;
                     case MANUAL:
-                        System.out.println("With a glycemia of " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
+                        u = u.divide(new BigDecimal("0.05"), 0, RoundingMode.HALF_UP).multiply(new BigDecimal("0.05")); // round with 0.05 sensibility
+                        System.out.println("With a glycemia of " + lm.glycemia() + " and " + carb + " carbs, you should inject " + u + " units");
                         break;
                 }
             }

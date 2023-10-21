@@ -26,10 +26,12 @@ public class Database {
             measurements.add(m);
     }
 
-    public void computeAndInject() {}
+    public void newBolus(float units, int delay, BolusMode mode, int carb) {}
+
+    private void computeAndInject() {}
 
     private void backup() {}
 
-    public void addBolus(BolusDelivery bd) {}
+    private void addBolus(BolusDelivery bd) {}
 
 }

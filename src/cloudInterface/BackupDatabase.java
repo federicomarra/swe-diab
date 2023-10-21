@@ -6,7 +6,7 @@ import utils.Measurement;
 import java.util.List;
 
 public class BackupDatabase extends Database {
-    public void update(List<Measurement> ms) {
+    public void update(List<Measurement> ms){
         super.update(ms);
     }
 }

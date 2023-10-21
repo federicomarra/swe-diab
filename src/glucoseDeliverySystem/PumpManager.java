@@ -17,7 +17,7 @@ public class PumpManager {
         this.insulinSensitivityProfile = isp;
     }
 
-    public void verifyAndInject(float units){
+    public void verifyAndInject(float units) {
         if (units > 0 && units <= 20) {
             pump.inject(units);
         } else if (units > 20) {
@@ -27,7 +27,7 @@ public class PumpManager {
         }
     }
 
-    public Measurement newMeasurement(){
+    public Measurement newMeasurement() {
         return sensor.makeMeasurement();
     }
 
@@ -43,8 +43,8 @@ public class PumpManager {
         observers.remove(o);
     }
 
-    public void notifyObservers(){
-        for(Observer observer: observers) {
+    public void notifyObservers() {
+        for (Observer observer : observers) {
             observer.update(getMeasurements());
         }
     }

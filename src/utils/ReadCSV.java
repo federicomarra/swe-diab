@@ -27,7 +27,7 @@ public interface ReadCSV {
                 try {
                     h = Integer.parseInt(linesplit[0]) % 24;                            // parse hour
                     u = new BigDecimal(linesplit[1]);                        // parse first row into BigDecimal
-                    u= u.setScale(2, RoundingMode.HALF_UP);                            // round with 0.01 sensibility
+                    u = u.setScale(2, RoundingMode.HALF_UP);                            // round with 0.01 sensibility
                     u = u.divide(new BigDecimal("0.05"), 0, RoundingMode.HALF_UP).multiply(new BigDecimal("0.05")); // round with 0.05 sensibility
                     units[h] = u.floatValue();                                          // parse units into float
                     System.out.println("WRITTEN: Factor[h=" + h + "] = " + units[h]);    // print after parsing

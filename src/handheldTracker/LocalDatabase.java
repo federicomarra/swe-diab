@@ -46,7 +46,7 @@ public class LocalDatabase extends Database implements Observer {
     public void newBolus(float units, int delay, BolusMode mode, int carb) {
         switch (mode) {
             case STANDARD, MANUAL:  //computes and injects
-                try{
+                try {
                     computeAndInject(LocalTime.now(), carb, mode);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -89,7 +89,7 @@ public class LocalDatabase extends Database implements Observer {
             bd.units = Math.round(bd.units / 0.01f) * 0.01f; // round to 2 decimal places
             if (bd.units > 0) {
                 addBolus(bd);
-                switch (mode){
+                switch (mode) {
                     case STANDARD:
                         System.out.println("With a glycemia of " + lm.glycemia() + " and " + carb + " carbs, you should inject " + Math.round(bd.units) + " units");
                         System.out.println("...injecting " + Math.round(bd.units) + " units" + " at " + LocalTime.now().getHour() + ":" + LocalTime.now().getMinute());   //TODO: comment
@@ -145,6 +145,7 @@ public class LocalDatabase extends Database implements Observer {
     private void addBolus(BolusDelivery bd) {
         bolusDeliveries.add(bd);
     }
+
     private Measurement addMeasurement(Measurement m) {
         measurements.add(m);
         return m;

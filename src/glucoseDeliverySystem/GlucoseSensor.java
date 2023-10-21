@@ -8,9 +8,11 @@ import java.util.List;
 
 public class GlucoseSensor {
     public List<Measurement> measurements;
+
     public GlucoseSensor() {
         this.measurements = new ArrayList<>();
     }
+
     public Measurement makeMeasurement() {
         int min = 60;
         int max = 300;

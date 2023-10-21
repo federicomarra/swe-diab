@@ -27,6 +27,7 @@ public class Main {
 
         int carb = (int) (Math.abs(Math.random() * 300 - 150));
         int mode = (int) (Math.abs(Math.random() * 3));
+        // ui.newPenBolus(1.5f);        // to test calculation of residual units
         switch (mode) {
             case 0:
                 System.out.println("Mode: Standard Bolus");

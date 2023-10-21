@@ -1,8 +1,7 @@
 package glucoseDeliverySystem;
 
-import utils.HourlyProfile;
-import utils.Measurement;
-import utils.Observer;
+import utils.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,12 @@ public class PumpManager {
     private InsulinPump pump;
     private List<Observer> observers = new ArrayList<>();
     public HourlyProfile insulinSensitivityProfile;
+
+    public PumpManager(HourlyProfile isp) {
+        this.sensor = new GlucoseSensor();
+        this.pump = new InsulinPump();
+        this.insulinSensitivityProfile = isp;
+    }
 
     public void verifyAndInject(float units){
         if (units > 0 && units <= 20) {
@@ -27,7 +32,7 @@ public class PumpManager {
     }
 
     private List<Measurement> getMeasurements() {
-        return sensor.measuraments;
+        return sensor.measurements;
     }
 
     public void subscribe(Observer o) {

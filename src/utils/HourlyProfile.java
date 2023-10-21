@@ -10,21 +10,21 @@ public class HourlyProfile {
     public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
+        String path = switch (mode) {
+            case BASAL -> "csv/basalProfile.csv";
+            case IC -> "csv/carbRatio.csv";
+            case IG -> "csv/insulinSensitivity.csv";
+        };
         switch (mode) {
             case BASAL:
-                float[] bf = ReadFloatCSV("csv/basalProfile.csv");
+                float[] fhf = ReadFloatCSV(path);
                 for (int i = 0; i < 24; i++)
-                    hourlyFactors[i] = new HourlyFactor(bf[i], i);
+                    hourlyFactors[i] = new HourlyFactor(fhf[i], i);
                 break;
-            case IC:
-                int[] cb = ReadIntCSV("csv/carbRatio.csv");
+            case IC, IG:
+                int[] ihf = ReadIntCSV(path);
                 for (int i = 0; i < 24; i++)
-                    hourlyFactors[i] = new HourlyFactor(cb[i], i);
-                break;
-            case IG:
-                int[] is = ReadIntCSV("csv/insulinSensitivity.csv");
-                for (int i = 0; i < 24; i++)
-                    hourlyFactors[i] = new HourlyFactor(is[i], i);
+                    hourlyFactors[i] = new HourlyFactor(ihf[i], i);
                 break;
         }
     }

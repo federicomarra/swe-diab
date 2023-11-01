@@ -6,7 +6,7 @@ import utils.Observer;
 import java.util.List;
 
 public class AutomaticBolus implements Observer {
-    public List<Measurement> measuraments;
+    public List<Measurement> measurements;
     private PumpManager manager;
 
     public AutomaticBolus(PumpManager manager){
@@ -14,7 +14,7 @@ public class AutomaticBolus implements Observer {
     }
 
     public void update(List<Measurement> m) {
-        this.measuraments = m;
+        this.measurements = m;
         evaluate(m);
     }
 

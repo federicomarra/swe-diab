@@ -73,57 +73,72 @@ public class LocalDatabase extends Database implements Observer {
 
     private void computeAndInject(LocalTime time, int carb, BolusMode mode) throws BluetoothException {
         try {
-            if (measurements.size() == 0)  // if no mesurament is present
-                addMeasurement(manager.newMeasurement());   // get new mesurament
-            Measurement lm = measurements.get(measurements.size() - 1);  // last mesurament
-            Duration diff = Duration.between(lm.time(), time);
-            if (diff.toMinutes() > 10)  // if last mesurament is older than 10 minutes
-                lm = addMeasurement(manager.newMeasurement());   // get new mesurament and add to measurements
+            if (measurements.isEmpty())  // if no measurement is present
+                addMeasurement(manager.newMeasurement());   // get new measurement
+            Measurement lm = measurements.get(measurements.size() - 1);  // last measurement
+            Duration diff = Duration.between(lm.time(), time);  // difference between last measurement and bolus time
+            if (diff.toMinutes() > 10)  // if last measurement is older than 10 minutes
+                lm = addMeasurement(manager.newMeasurement());   // get new measurement and add to measurements
+
             HourlyFactor sensitivity = insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()];
             HourlyFactor carbRatio = carbRatioProfile.hourlyFactors[LocalTime.now().getHour()];
+
             int glreference = 120;
 
             BolusDelivery bd = new BolusDelivery(0, time, mode);
 
             float uglyc = 0;
-            float uactive = bd.calculateResidualUnits(bolusDeliveries);
             if (lm.glycemia() > 180)
                 uglyc = ((float) (lm.glycemia() - glreference)) / sensitivity.units();
-            float ucorrection = uglyc - uactive;
+
+            float uactive = bd.calculateResidualUnits(bolusDeliveries);
+
+            float ucorrection = uglyc - uactive; // round to 2 decimal places
 
             float ucarb = 0;
             if (carb > 0 && carb <= 150)
                 ucarb = carb / carbRatio.units();
 
-            bd.units = ucorrection + ucarb;
+            bd.units = RoundToCent(ucorrection + ucarb, "0.01"); // round to 2 decimal places
+            uglyc = RoundToCent(uglyc, "0.01"); // round to 2 decimal places
+            uactive = RoundToCent(uactive, "0.01"); // round to 2 decimal places
+            ucorrection = RoundToCent(ucorrection, "0.01"); // round to 2 decimal places
+            ucarb = RoundToCent(ucarb, "0.01"); // round to 2 decimal places
 
             if (bd.units > 0) {
-                System.out.println("With " + lm.glycemia() + " mg/dL of glycemia" + (uglyc > 0 ? ", you should inject: " + uglyc + " units of correction" : ""));
-                if (ucarb > 0)
-                    System.out.println("Eating " + carb + " g of carbohydrates, you should inject: " + ucarb + " units");
+                    System.out.println("With " + (lm.glycemia()<100 ? " " : "") + lm.glycemia() + " mg/dL of glycemia" + (uglyc > 0 ? ",                   you should inject: " + uglyc + " units" : ""));
+
                 if (uactive > 0)
-                    System.out.println("Also having: " + uactive + " units active");
+                    System.out.println((uglyc > 0 ? "                                    y" : "Y") + "ou already have a total of: " + uactive + " units active");
+
+                if (ucorrection > 0)
+                    System.out.println("You're going to inject: " + ucorrection + " units of correction");
+                else if (ucorrection < 0)
+                    System.out.println("You're going to subtract: " + ucorrection + " units of surplus");
+                else if (ucorrection == 0) {
+                    System.out.println("You're not going to inject units of correction");
+                }
+
+                if (ucarb > 0)
+                    System.out.println("You're going to eat: " + (carb<100 ? " " : "") + (carb<10 ? " " : "") + carb + " g of carbohydrates, you should inject: " + ucarb + " units");
+
                 System.out.println("You should inject: " + bd.units + " units\n");
+
 
                 switch (mode) {
                     case STANDARD:
-                        System.out.println("INJECTING " + bd.units + " units" + " at " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
+                        System.out.println("Now injecting: " + bd.units + " units" + " at " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
                         //manager.verifyAndInject(bd.units); TODO: uncomment
                         break;
                     case EXTENDED:
-                        //while (time.getMinute() == LocalTime.now().getMinute())   // wait until time is reached
-                        //while ((Duration.between(LocalTime.now(), time)).toMinutes() <= 1); // wait until time is reached
-                        System.out.println("Waiting " + ((Duration.between(LocalTime.now(), time)).toMinutes() + 1) + " minutes to inject " + bd.units + " units");
-                        System.out.println("INJECTING " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
+                        System.out.println("Waiting " + ((Duration.between(LocalTime.now(), time)).toMinutes() + 1) + " minute" + (((Duration.between(LocalTime.now(), time)).toMinutes() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
                         Thread.sleep(Duration.between(LocalTime.now(), time).toMillis());
-                        System.out.println("Now INJECTING " + bd.units + " units"); //TODO: comment
+                        System.out.println("Now injecting: " + bd.units + " units"); //TODO: comment
                         //manager.verifyAndInject(bd.units); TODO: uncomment
                         break;
                     case MANUAL:
-                        BigDecimal u = new BigDecimal(bd.units);                       // parse first row into BigDecimal
-                        u = u.setScale(2, RoundingMode.HALF_UP);
-                        u = u.divide(new BigDecimal("0.5"), 0, RoundingMode.HALF_UP).multiply(new BigDecimal("0.5")); // round with 0.05 sensibility
-                        System.out.println("Manually inject: " + u + " units");
+                        bd.units = RoundToCent(bd.units, "0.5"); // round to 2 decimal places
+                        System.out.println("Manually inject: " + bd.units + " units");
                         break;
                 }
                 addBolus(bd);   // add bolus to bolusDeliveries
@@ -170,5 +185,12 @@ public class LocalDatabase extends Database implements Observer {
     private Measurement addMeasurement(Measurement m) {
         measurements.add(m);
         return m;
+    }
+
+    private float RoundToCent(float f, String sensibility) {    // replacable with String.format("%.2f", units)
+        BigDecimal n = new BigDecimal(f);
+        n = n.setScale(2, RoundingMode.HALF_UP);
+        n = n.divide(new BigDecimal(sensibility), 0, RoundingMode.HALF_UP).multiply(new BigDecimal(sensibility));
+        return n.floatValue();
     }
 }

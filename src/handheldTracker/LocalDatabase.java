@@ -110,10 +110,10 @@ public class LocalDatabase extends Database implements Observer {
 
             if (bd.units > 0) {
                 // PRINTF VERSION
-                System.out.printf("%-15s%-15s%-17s%-14s%n", "Glycemia:", (lm.glycemia()<100 ? " " : "") + (lm.glycemia()<10 ? " " : "") + lm.glycemia() + " mg/dL", (glycUnits > 0 ? glycUnits + " units" : ""), (correctionUnits != 0 ?  "correction" : ""));
-                System.out.printf("%-15s%-15s%-17s%-15s%n", "Active units:", "" , (activeUnits > 0 ? activeUnits*(-1) + " units" : ""), (correctionUnits != 0 ? correctionUnits + " units" : ""));
-                System.out.printf("%-15s%-15s%-17s%n", "Carbohydrates:", (carb<100 ? " " : "") + (carb<10 ? " " : "") + carb + " g", (carbUnits > 0 ? carbUnits + " units" : ""));
-                System.out.printf("%-15s%-15s%-17s%n", "Total units:", "" , (bd.units > 0 ? bd.units + " units" : "") + "\n");
+                System.out.printf("%-15s%-15s%-17s%-14s%n", "Glycemia:", (lm.glycemia()<100 ? " " : "") + (lm.glycemia()<10 ? " " : "") + lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ?  "correction" : ""));
+                System.out.printf("%-30s%-15s%-17s%-15s%n", "Active units:", "" , (activeUnits > 0 ? activeUnits*(-1) + " units" : ""), (correctionUnits != 0 ? correctionUnits + " units" : ""));
+                System.out.printf("%-15s%-15s%-17s%n", "Carbohydrates:", (carb<100 ? " " : "") + (carb<10 ? " " : "") + carb + " g", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
+                System.out.printf("%-15s%-15s%-17s%n", "Total units:", "" , (bd.units > 0 ? " " + bd.units + " units" : "") + "\n");
 
                 /*  //PRINTLN VERSION
                 System.out.println("With " + (lm.glycemia()<100 ? " " : "") + lm.glycemia() + " mg/dL of glycemia" + (glycUnits > 0 ? ",                   you should inject: " + glycUnits + " units" : ""));
@@ -134,23 +134,21 @@ public class LocalDatabase extends Database implements Observer {
 
                 switch (mode) {
                     case STANDARD:
-                        //System.out.println("Now injecting: " + bd.units + " units" + " at " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
-                        manager.verifyAndInject(bd.units); //TODO: uncomment
+                        manager.verifyAndInject(bd.units);
                         break;
                     case EXTENDED:
-                        System.out.println("Waiting " + ((Duration.between(LocalTime.now(), time)).toMinutes() + 1) + " minute" + (((Duration.between(LocalTime.now(), time)).toMinutes() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));   //TODO: comment
-                        Thread.sleep(Duration.between(LocalTime.now(), time).toMillis());
-                        System.out.println("Now injecting: " + bd.units + " units"); //TODO: comment
-                        //manager.verifyAndInject(bd.units); TODO: uncomment
+                        Duration delay = Duration.between(LocalTime.now(), time);
+                        System.out.println("Waiting " + (delay.toMinutes() + 1) + " minute" + ((delay.toMinutes() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        Thread.sleep(delay.toMillis());
+                        manager.verifyAndInject(bd.units);
                         break;
                     case MANUAL:
-                        bd.units = RoundToCent(bd.units, "0.5"); // round to 2 decimal places
+                        bd.units = RoundToCent(bd.units, "0.5"); // round to 0.50
                         System.out.println("Manually inject: " + bd.units + " units");
                         break;
                 }
                 addBolus(bd);   // add bolus to bolusDeliveries
             } else {
-                System.out.println("With " + lm.glycemia() + " mg/dL of glycemia");
                 System.out.println("You don't need to inject insulin");
             }
         } catch (Exception e) {
@@ -174,7 +172,8 @@ public class LocalDatabase extends Database implements Observer {
                 break;
             case IC:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
-                manager = new PumpManager(this.insulinSensitivityProfile);
+                manager = new PumpManager(this.insulinSensitivityProfile);  //TODO: check if singleton is respected
+                // manager.subscribe(this); //TODO: check if this is needed
                 break;
             case IG:
                 carbRatioProfile.updateHourlyFactor(hf);

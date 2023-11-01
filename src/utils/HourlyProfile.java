@@ -10,7 +10,7 @@ public class HourlyProfile {
     public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
-        String path = switch (mode) {
+        String path = switch (mode) {   // switch expression
             case BASAL -> "csv/basalProfile.csv";
             case IC -> "csv/carbRatio.csv";
             case IG -> "csv/insulinSensitivity.csv";

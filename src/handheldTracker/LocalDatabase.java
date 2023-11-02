@@ -109,28 +109,10 @@ public class LocalDatabase extends Database implements Observer {
             carbUnits = RoundToCent(carbUnits, "0.01");
 
             if (bd.units > 0) {
-                // PRINTF VERSION
-                System.out.printf("%-15s%-15s%-17s%-14s%n", "Glycemia:", (lm.glycemia()<100 ? " " : "") + (lm.glycemia()<10 ? " " : "") + lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ?  "correction" : ""));
-                System.out.printf("%-30s%-15s%-17s%-15s%n", "Active units:", "" , (activeUnits > 0 ? activeUnits*(-1) + " units" : ""), (correctionUnits != 0 ? correctionUnits + " units" : ""));
-                System.out.printf("%-15s%-15s%-17s%n", "Carbohydrates:", (carb<100 ? " " : "") + (carb<10 ? " " : "") + carb + " g", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
-                System.out.printf("%-15s%-15s%-17s%n", "Total units:", "" , (bd.units > 0 ? " " + bd.units + " units" : "") + "\n");
-
-                /*  //PRINTLN VERSION
-                System.out.println("With " + (lm.glycemia()<100 ? " " : "") + lm.glycemia() + " mg/dL of glycemia" + (glycUnits > 0 ? ",                   you should inject: " + glycUnits + " units" : ""));
-                if (activeUnits > 0)
-                    System.out.println((glycUnits > 0 ? "                                    y" : "Y") + "ou already have a total of: " + activeUnits + " units active");
-
-                if (correctionUnits > 0)
-                    System.out.println("You're going to inject: " + correctionUnits + " units of correction");
-                else if (correctionUnits < 0)
-                    System.out.println("You're going to subtract: " + correctionUnits + " units of surplus");
-                else if (correctionUnits == 0) {
-                    System.out.println("You're not going to inject units of correction");
-                }
-                if (carbUnits > 0)
-                    System.out.println("You're going to eat: " + (carb<100 ? " " : "") + (carb<10 ? " " : "") + carb + " g of carbohydrates, you should inject: " + carbUnits + " units");
-                System.out.println("You should inject: " + bd.units + " units\n");
-                */
+                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction:" : ""));
+                System.out.printf("%-25s%14s%-18s%n", "Active insulin:", (activeUnits > 0 ? "-" : "") + activeUnits + " units", "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
+                System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", +carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
+                System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));
 
                 switch (mode) {
                     case STANDARD:
@@ -148,8 +130,10 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                 }
                 addBolus(bd);   // add bolus to bolusDeliveries
-            } else {
-                System.out.println("You don't need to inject insulin");
+            } else if (bd.units == 0) {
+                System.out.println("You don't need to inject insulin, you have a glycemia of: " + lm.glycemia() + " mg/dL");
+            } else if (bd.units < 0) {
+                System.out.println("You don't need to inject insulin, you have " + activeUnits + " units of active insulin");
             }
         } catch (Exception e) {
             e.printStackTrace();

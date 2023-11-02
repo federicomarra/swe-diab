@@ -19,7 +19,7 @@ public class AutomaticBolus implements Observer {
     }
 
     private void evaluate(List<Measurement> m){
-        //TODO: implement get insulinSensitivity based on time from insulinSensitivityProfile
+        // FIXME: implement get insulinSensitivity based on time from insulinSensitivityProfile
         var lm = m.get(m.size()-1);
         /*
         HourlyProfile sensitivities = manager.insulinSensitivityProfile;
@@ -28,15 +28,15 @@ public class AutomaticBolus implements Observer {
             float units = (lm.glycemia() - 120) / sensitivity;
             sendBolus(units);
         }
-
-         */
+        */
     }
 
     private void sendBolus(float units){
         manager.verifyAndInject(units);
     }
 
-    /* da esempio task che lavora ogni 3h:
+    // Example recurrent task every 3 hours
+    /*
         import java.util.concurrent.Executors;
         import java.util.concurrent.ScheduledExecutorService;
         import java.util.concurrent.TimeUnit;
@@ -56,6 +56,5 @@ public class AutomaticBolus implements Observer {
                 scheduler.scheduleAtFixedRate(task, 0, 3, TimeUnit.HOURS);
             }
         }
-
-     */
+    */
 }

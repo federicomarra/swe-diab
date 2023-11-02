@@ -10,6 +10,7 @@ public class HourlyProfile {
     public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
+        
         String path = "";
         switch (mode) {
             case BASAL:
@@ -22,6 +23,7 @@ public class HourlyProfile {
                 path = "csv/insulinSensitivity.csv";
                 break;
         };
+
         switch (mode) {
             case BASAL:
                 float[] fhf = ReadFloatCSV(path);
@@ -53,5 +55,4 @@ public class HourlyProfile {
                 break;
         }
     }
-
 }

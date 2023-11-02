@@ -15,25 +15,28 @@ public class BolusDelivery {
         this.mode = mode;
     }
 
-    public float calculateResidualUnits(List<BolusDelivery> bds) {  // bds = bolusDeliveries
+    public float calculateResidualUnits(List<BolusDelivery> bds) {
         int hours = 3;
         float residualUnits = 0;
         if (!bds.isEmpty()) {
-            // cycle init
+            // Cycle init
             int i = 0;
-            BolusDelivery lb = bds.get(bds.size() - 1); // init to last bolus
+            // Init the last bolus
+            BolusDelivery lb = bds.get(bds.size() - 1);
             Duration diff = Duration.between(lb.time, LocalTime.now());
 
-            while (diff.toMinutes() <= hours * 60 && i < bds.size()) {   // while last bolus is not older than 3 hours
-                // cycle iteration
-                residualUnits += lb.units * (1 - (float) diff.toMinutes() / (hours * 60));    // linear decay
-                // cycle increment
+            // While last bolus is not older than 3 hours
+            while (diff.toMinutes() <= hours * 60 && i < bds.size()) {
+                // Linear decay
+                residualUnits += lb.units * (1 - (float) diff.toMinutes() / (hours * 60));
+                // Cycle increment
                 i++;
-                lb = bds.get(bds.size() - i);  // last bolus
-                diff = Duration.between(lb.time, LocalTime.now());  // difference between last bolus time and now
+                // Last bolus
+                lb = bds.get(bds.size() - i);
+                // Difference between last bolus time and now
+                diff = Duration.between(lb.time, LocalTime.now());
             }
         }
         return residualUnits;
     }
-
 }

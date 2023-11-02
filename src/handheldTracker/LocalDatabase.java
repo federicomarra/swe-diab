@@ -32,7 +32,7 @@ public class LocalDatabase extends Database implements Observer {
         this.bolusDeliveries = new ArrayList<>();
         this.measurements = new ArrayList<>();
         System.out.println("LocalDatabase created");
-        this.manager = new PumpManager(insulinSensitivityProfile);
+        this.manager = PumpManager.getInstance(insulinSensitivityProfile);
         System.out.println("PumpManager created");
         // manager.subscribe(this);
     }
@@ -48,7 +48,8 @@ public class LocalDatabase extends Database implements Observer {
 
     public void newBolus(float units, int delay, BolusMode mode, int carb) {
         switch (mode) {
-            case STANDARD, MANUAL:  //computes and injects
+            case STANDARD:
+            case MANUAL:  //computes and injects
                 try {
                     computeAndInject(LocalTime.now(), carb, mode);
                 } catch (Exception e) {
@@ -156,7 +157,7 @@ public class LocalDatabase extends Database implements Observer {
                 break;
             case IC:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
-                manager = new PumpManager(this.insulinSensitivityProfile);  //TODO: check if singleton is respected
+                manager = PumpManager.getInstance(insulinSensitivityProfile);
                 // manager.subscribe(this); //TODO: check if this is needed
                 break;
             case IG:

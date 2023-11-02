@@ -5,8 +5,6 @@ import handheldTracker.UserInterface;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello and welcome in the Glucose Monitoring System");
-
         UserInterface ui = new UserInterface();
         
         // Uncomment to test parsing of csv files (put in HourlyProfile constructor)

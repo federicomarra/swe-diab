@@ -120,7 +120,8 @@ public class LocalDatabase extends Database implements Observer {
             carbUnits = RoundToCent(carbUnits, "0.01");
 
             if (bd.units > 0) {
-                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction:" : ""));
+                System.out.println();
+                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction" : ""));
                 System.out.printf("%-25s%14s%-18s%n", "Active insulin:", (activeUnits > 0 ? "-" : "") + activeUnits + " units", "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
                 System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", +carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
                 System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));

@@ -10,10 +10,17 @@ public class HourlyProfile {
     public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
-        String path = switch (mode) {   // switch expression
-            case BASAL -> "csv/basalProfile.csv";
-            case IC -> "csv/carbRatio.csv";
-            case IG -> "csv/insulinSensitivity.csv";
+        String path = "";
+        switch (mode) {
+            case BASAL:
+                path = "csv/basalProfile.csv";
+                break;
+            case IC:
+                path = "csv/carbRatio.csv";
+                break;
+            case IG:
+                path = "csv/insulinSensitivity.csv";
+                break;
         };
         switch (mode) {
             case BASAL:
@@ -21,7 +28,8 @@ public class HourlyProfile {
                 for (int i = 0; i < 24; i++)
                     hourlyFactors[i] = new HourlyFactor(fhf[i], i);
                 break;
-            case IC, IG:
+            case IC:
+            case IG:
                 int[] ihf = ReadIntCSV(path);
                 for (int i = 0; i < 24; i++)
                     hourlyFactors[i] = new HourlyFactor(ihf[i], i);

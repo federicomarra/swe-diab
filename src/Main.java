@@ -8,20 +8,6 @@ public class Main {
         System.out.println("Hello and welcome in the Glucose Monitoring System");
 
         UserInterface ui = new UserInterface();
-        /*  // uncomment to test parsing of csv files (put in HourlyProfile constructor)
-        float[] bf = ReadFloatCSV("csv/basalProfile.csv");
-        int[] cb = ReadIntCSV("csv/carbRatio.csv");
-        int[] is = ReadIntCSV("csv/insulinSensitivity.csv");
-        for (int i = 0; i < 24; i++) {
-            ui.updateBasalProfile(bf[i], i);
-            ui.updateCarbRatioProfile(cb[i], i);
-            ui.updateInsulinSensitivityProfile(is[i], i);
-        }
-        */
-
-        //ui.newPenBolus(1.5f);
-        //ui.howManyUnits(56);
-        //ui.newStandardBolus(53);
 
         System.out.println("\n\nStarting simulation:\n");
 
@@ -30,7 +16,6 @@ public class Main {
         int mode = (int) (Math.abs(Math.random() * 3));             // randomize mode between 0 and 2
         int delay = (int) (Math.abs(Math.random() * 3)+1);          // randomize delay between 1 and 3
         ui.newPenBolus((float) (Math.abs(Math.random() * 5)));      // randomize residual units (still active insulin)
-
         switch (mode) {
             case 0:
                 System.out.println("Mode: Standard Bolus");

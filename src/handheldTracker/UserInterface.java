@@ -9,7 +9,8 @@ public class UserInterface {
     private LocalDatabase localDb;
 
     public UserInterface() {
-        localDb = new LocalDatabase(); //singleton pattern (one localDb for one user)
+        // One localDb for one user
+        localDb = new LocalDatabase();
     }
 
     public void newStandardBolus(int carb) {
@@ -27,7 +28,6 @@ public class UserInterface {
     public void newPenBolus(float units) {
         localDb.newBolus(units, 0, BolusMode.PEN, 0);
     }
-
 
     public void updateBasalProfile(float units, int hour) {
         localDb.updateHourlyFactor(new HourlyFactor(units, hour), ProfileMode.BASAL);

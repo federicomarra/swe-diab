@@ -23,6 +23,9 @@ public class LocalDatabase extends Database implements Observer {
     public List<BolusDelivery> bolusDeliveries;
     public List<Measurement> measurements;
 
+    // Set the reference glycemia to 120 mg/dL
+    private final int GLYC_REFERENCE = 120;
+
     public LocalDatabase() {
         this.backupDb = new BackupDatabase();
 
@@ -32,8 +35,10 @@ public class LocalDatabase extends Database implements Observer {
         this.bolusDeliveries = new ArrayList<>();
         this.measurements = new ArrayList<>();
         System.out.println("LocalDatabase created");
-        this.manager = new PumpManager(insulinSensitivityProfile);
+        this.manager = PumpManager.getInstance(insulinSensitivityProfile);
         System.out.println("PumpManager created");
+
+        // TODO: Check if this is needed
         // manager.subscribe(this);
     }
 
@@ -48,60 +53,66 @@ public class LocalDatabase extends Database implements Observer {
 
     public void newBolus(float units, int delay, BolusMode mode, int carb) {
         switch (mode) {
-            case STANDARD, MANUAL:  //computes and injects
+            case STANDARD:
+            case MANUAL:
+                // Computes and injects
                 try {
                     computeAndInject(LocalTime.now(), carb, mode);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
-            case EXTENDED:  //calculates timeDelayed and computes and injects
+            case EXTENDED:
+                // Calculates timeDelayed and computes and injects
                 try {
-                    LocalTime timeDelayed = LocalTime.now().plusMinutes(delay); // delay in minutes
+                    LocalTime timeDelayed = LocalTime.now().plusMinutes(delay);
                     computeAndInject(timeDelayed, carb, mode);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
-            case PEN:       //adds bolus to localDb
+            case PEN:
+                // Adds bolus to localDb
                 addBolus(new BolusDelivery(units, LocalTime.now(), mode));
                 break;
         }
-        //TODO: add bolus to localDb?
-        //localDb.addBolus(new BolusDelivery(units, time, mode));
+        // TODO: Add bolus to localDb?
+        // localDb.addBolus(new BolusDelivery(units, time, mode));
     }
 
     private void computeAndInject(LocalTime time, int carb, BolusMode mode) throws BluetoothException {
         try {
-            // get last measurement, if older than 10 minutes, get new measurement
-            if (measurements.isEmpty())  // if no measurement is present
-                addMeasurement(manager.newMeasurement());   // get new measurement
-            Measurement lm = measurements.get(measurements.size() - 1);  // last measurement
-            Duration diff = Duration.between(lm.time(), time);  // difference between last measurement and bolus time
-            if (diff.toMinutes() > 10)  // if last measurement is older than 10 minutes ago
-                lm = addMeasurement(manager.newMeasurement());   // get new measurement and add to measurements
+            // Get the last measurement if it exists
+            if (measurements.isEmpty())
+                addMeasurement(manager.newMeasurement());
+            
+            Measurement lm = measurements.get(measurements.size() - 1);
+            // Difference between last measurement and bolus time
+            Duration diff = Duration.between(lm.time(), time);
+            
+            // Make a new measurement if the last one is older than 10 minutes from now
+            if (diff.toMinutes() > 10)
+                lm = addMeasurement(manager.newMeasurement());
 
-            // get actual hourly factors from profiles
+            // Get the actual hourly factors from profiles
             HourlyFactor sensitivity = insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()];
             HourlyFactor carbRatio = carbRatioProfile.hourlyFactors[LocalTime.now().getHour()];
 
-            // set a reference glycemia of 120 mg/dL
-            int glycReference = 120;
-
-            // create BolusDelivery object
+            // Create the BolusDelivery object
             BolusDelivery bd = new BolusDelivery(0, time, mode);
 
-            // compute units of correction, units of carbohydrates and total units
+            // Compute the units of correction, units of carbohydrates and total units
             float glycUnits = 0;
             if (lm.glycemia() > 160)
-                glycUnits = ((float) (lm.glycemia() - glycReference)) / sensitivity.units();
+                glycUnits = ((float) (lm.glycemia() - GLYC_REFERENCE)) / sensitivity.units();
             float activeUnits = bd.calculateResidualUnits(bolusDeliveries);
-            float correctionUnits = glycUnits - activeUnits; // units of correction = units of glycemia - units of active insulin
+            // Units of correction = Units of glycemia - Units of active insulin
+            float correctionUnits = glycUnits - activeUnits;
             float carbUnits = 0;
             if (carb > 0 && carb <= 150)
                 carbUnits = carb / carbRatio.units();
 
-            // round to 2 decimal places
+            // Round the results to 2 decimal places
             bd.units = RoundToCent(correctionUnits + carbUnits, "0.01");
             glycUnits = RoundToCent(glycUnits, "0.01");
             activeUnits = RoundToCent(activeUnits, "0.01");
@@ -125,11 +136,13 @@ public class LocalDatabase extends Database implements Observer {
                         manager.verifyAndInject(bd.units);
                         break;
                     case MANUAL:
-                        bd.units = RoundToCent(bd.units, "0.5"); // round to 0.50
+                        // Round the units to 0.5
+                        bd.units = RoundToCent(bd.units, "0.5");
                         System.out.println("Manually inject: " + bd.units + " units");
                         break;
+                    // FIXME: Add pen case
                 }
-                addBolus(bd);   // add bolus to bolusDeliveries
+                addBolus(bd);
             } else if (bd.units == 0) {
                 System.out.println("You don't need to inject insulin, you have a glycemia of: " + lm.glycemia() + " mg/dL");
             } else if (bd.units < 0) {
@@ -143,7 +156,8 @@ public class LocalDatabase extends Database implements Observer {
 
     private void backup() throws InternetException {
         try {
-            backupDb.update(this.measurements); //update() to implemented into Database.java
+            // FIXME: update() to be implemented into Database.java
+            backupDb.update(this.measurements);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,8 +170,10 @@ public class LocalDatabase extends Database implements Observer {
                 break;
             case IC:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
-                manager = new PumpManager(this.insulinSensitivityProfile);  //TODO: check if singleton is respected
-                // manager.subscribe(this); //TODO: check if this is needed
+                manager = PumpManager.getInstance(insulinSensitivityProfile);
+                
+                // TODO: Check if this is needed
+                // manager.subscribe(this);
                 break;
             case IG:
                 carbRatioProfile.updateHourlyFactor(hf);
@@ -179,7 +195,8 @@ public class LocalDatabase extends Database implements Observer {
         return m;
     }
 
-    private float RoundToCent(float f, String sensibility) {    // replacable with String.format("%.2f", units)
+    // FIXME: Replaceable with String.format("%.2f", units)
+    private float RoundToCent(float f, String sensibility) {
         BigDecimal n = new BigDecimal(f);
         n = n.setScale(2, RoundingMode.HALF_UP);
         n = n.divide(new BigDecimal(sensibility), 0, RoundingMode.HALF_UP).multiply(new BigDecimal(sensibility));

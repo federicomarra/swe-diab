@@ -11,10 +11,21 @@ public class PumpManager {
     private List<Observer> observers = new ArrayList<>();
     public HourlyProfile insulinSensitivityProfile;
 
-    public PumpManager(HourlyProfile isp) {
+    private static PumpManager SingletonInstance;
+
+    private PumpManager(HourlyProfile isp) {
         this.sensor = new GlucoseSensor();
         this.pump = new InsulinPump();
         this.insulinSensitivityProfile = isp;
+    }
+
+    public static PumpManager getInstance(HourlyProfile isp) {
+        if(SingletonInstance == null) {
+            SingletonInstance = PumpManager.getInstance(isp);
+        } else {
+            SingletonInstance.insulinSensitivityProfile = isp;
+        }
+        return SingletonInstance;
     }
 
     public void verifyAndInject(float units) {

@@ -30,7 +30,7 @@ public class Main {
         // Randomize mode between 0 and 2   
         int mode = (int) (Math.abs(Math.random() * 3));
         // Randomize delay between 1 and 3
-        int delay = (int) (Math.abs(Math.random() * 3)+1);
+        int delay = (int) (Math.abs(Math.random() * 3) + 1);
         // Randomize residual units (still active insulin)
         ui.newPenBolus((float) (Math.abs(Math.random() * 5)));
 

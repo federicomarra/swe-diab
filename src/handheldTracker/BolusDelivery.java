@@ -9,7 +9,7 @@ public class BolusDelivery {
     public LocalTime time;
     public BolusMode mode;
 
-    BolusDelivery(float units, LocalTime time, BolusMode mode) {
+    public BolusDelivery(float units, LocalTime time, BolusMode mode) {
         this.units = units;
         this.time = time;
         this.mode = mode;

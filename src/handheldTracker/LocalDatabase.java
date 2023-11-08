@@ -51,10 +51,12 @@ public class LocalDatabase extends Database implements Observer {
         }
     }
 
-    public void newBolus(float units, int delay, BolusMode mode, int carb) {
+    public void newBolus(float units, int delaySeconds, BolusMode mode, int carb) {    // delay in seconds
         switch (mode) {
             case STANDARD:
+                System.out.println("Mode: Standard Bolus");
             case MANUAL:
+                System.out.println("Mode: Manual Bolus");
                 // Computes and injects
                 try {
                     computeAndInject(LocalTime.now(), carb, mode);
@@ -63,9 +65,10 @@ public class LocalDatabase extends Database implements Observer {
                 }
                 break;
             case EXTENDED:
-                // Calculates timeDelayed and computes and injects
+                // Calculates timeDelayed, computes and injects
+                System.out.println("Mode: Extended Bolus");
                 try {
-                    LocalTime timeDelayed = LocalTime.now().plusMinutes(delay);
+                    LocalTime timeDelayed = LocalTime.now().plusSeconds(delaySeconds);
                     computeAndInject(timeDelayed, carb, mode);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -73,7 +76,10 @@ public class LocalDatabase extends Database implements Observer {
                 break;
             case PEN:
                 // Adds bolus to localDb
+                System.out.println("Mode: Pen Bolus");
                 addBolus(new BolusDelivery(units, LocalTime.now(), mode));
+                System.out.println("You have injected: " + units + " units");
+                System.out.println();
                 break;
         }
     }
@@ -118,10 +124,9 @@ public class LocalDatabase extends Database implements Observer {
             carbUnits = RoundToCent(carbUnits, "0.01");
 
             if (bd.units > 0) {
-                System.out.println();
                 System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction" : ""));
                 System.out.printf("%-25s%14s%-18s%n", "Active insulin:", (activeUnits > 0 ? "-" : "") + activeUnits + " units", "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
-                System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", +carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
+                System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
                 System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));
 
                 switch (mode) {
@@ -130,10 +135,25 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                     case EXTENDED:
                         Duration delay = Duration.between(LocalTime.now(), time);
-                        if (delay.toSeconds() >= 59)
-                            System.out.println("Waiting " + (delay.toMinutes() + 1) + " minute" + ((delay.toMinutes() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
-                        else if (delay.toSeconds() < 59)
-                            System.out.println("Waiting " + (delay.toSeconds() + 1) + " second" + ((delay.toSeconds() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        System.out.print("Waiting ");
+                        int hours = (int) delay.toHours();
+                        int minutes = (int) delay.toMinutes() % 60;
+                        int seconds = (int) delay.toSeconds() % 60;
+                        if (hours > 0) {
+                            System.out.print(hours + " hour" + ((hours == 1) ? "" : "s"));
+                            if (minutes > 0) {
+                                if (seconds > 0) System.out.print(", ");
+                                else System.out.print(" and ");
+                            }
+                        }
+                        if (minutes > 0) {
+                            System.out.print(minutes + " minute" + ((minutes == 1) ? "" : "s"));
+                            if (seconds > 0) System.out.print(" and ");
+                        }
+                        if (seconds > 0) System.out.print(seconds + 1 + " second" + ((seconds == 1) ? "" : "s"));
+                        // TODO: FIX if delaySeconds is 61, it doesn't print 1 minute and 1 second
+
+                        System.out.println(" to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
                         Thread.sleep(delay.toMillis());
                         manager.verifyAndInject(bd.units);
                         break;

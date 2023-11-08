@@ -36,15 +36,12 @@ public class Main {
 
         switch (mode) {
             case 0:
-                System.out.println("Mode: Standard Bolus");
                 ui.newStandardBolus(carb);
                 break;
             case 1:
-                System.out.println("Mode: Extended Bolus");
                 ui.newExtendedBolus(carb, delay);
                 break;
             case 2:
-                System.out.println("Mode: Manual Bolus");
                 ui.howManyUnits(carb);
                 break;
         }

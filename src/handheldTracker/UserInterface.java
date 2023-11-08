@@ -1,12 +1,11 @@
 package handheldTracker;
 
-import glucoseDeliverySystem.PumpManager;
 import utils.*;
-
-import java.util.List;
 
 public class UserInterface {
     private LocalDatabase localDb;
+    // TODO: put this instead?
+    // private final LocalDatabase localDb;
 
     public UserInterface() {
         // One localDb for one user
@@ -17,8 +16,8 @@ public class UserInterface {
         localDb.newBolus(0, 0, BolusMode.STANDARD, carb);
     }
 
-    public void newExtendedBolus(int carb, int delay) {
-        localDb.newBolus(0, delay, BolusMode.EXTENDED, carb);
+    public void newExtendedBolus(int carb, int delayMinutes) { // delay in minutes
+        localDb.newBolus(0, delayMinutes * 60, BolusMode.EXTENDED, carb);  // delay in seconds
     }
 
     public void howManyUnits(int carb) {

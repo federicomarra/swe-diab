@@ -83,11 +83,11 @@ public class LocalDatabase extends Database implements Observer {
             // Get the last measurement if it exists
             if (measurements.isEmpty())
                 addMeasurement(manager.newMeasurement());
-            
+
             Measurement lm = measurements.get(measurements.size() - 1);
             // Difference between last measurement and bolus time
             Duration diff = Duration.between(lm.time(), time);
-            
+
             // Make a new measurement if the last one is older than 10 minutes from now
             if (diff.toMinutes() > 10)
                 lm = addMeasurement(manager.newMeasurement());
@@ -130,7 +130,10 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                     case EXTENDED:
                         Duration delay = Duration.between(LocalTime.now(), time);
-                        System.out.println("Waiting " + (delay.toMinutes() + 1) + " minute" + ((delay.toMinutes() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        if (delay.toSeconds() >= 59)
+                            System.out.println("Waiting " + (delay.toMinutes() + 1) + " minute" + ((delay.toMinutes() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        else if (delay.toSeconds() < 59)
+                            System.out.println("Waiting " + (delay.toSeconds() + 1) + " second" + ((delay.toSeconds() == 0) ? "" : "s") + " to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
                         Thread.sleep(delay.toMillis());
                         manager.verifyAndInject(bd.units);
                         break;
@@ -170,7 +173,7 @@ public class LocalDatabase extends Database implements Observer {
             case IC:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
                 manager = PumpManager.getInstance(insulinSensitivityProfile);
-                
+
                 // TODO: Check if this is needed
                 // manager.subscribe(this);
                 break;

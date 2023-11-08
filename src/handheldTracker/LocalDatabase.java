@@ -76,8 +76,6 @@ public class LocalDatabase extends Database implements Observer {
                 addBolus(new BolusDelivery(units, LocalTime.now(), mode));
                 break;
         }
-        // TODO: Add bolus to localDb?
-        // localDb.addBolus(new BolusDelivery(units, time, mode));
     }
 
     private void computeAndInject(LocalTime time, int carb, BolusMode mode) throws BluetoothException {

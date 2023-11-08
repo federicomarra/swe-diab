@@ -20,7 +20,7 @@ public class PumpManager {
     }
 
     public static PumpManager getInstance(HourlyProfile isp) {
-        if(SingletonInstance == null) {
+        if (SingletonInstance == null) {
             SingletonInstance = new PumpManager(isp);
         } else {
             SingletonInstance.insulinSensitivityProfile = isp;

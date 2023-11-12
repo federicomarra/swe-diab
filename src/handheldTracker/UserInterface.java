@@ -42,7 +42,7 @@ public class UserInterface {
         localDb.updateHourlyFactor(new HourlyFactor(units, hour), ProfileMode.IG);
     }
 
-    public static float safeInput(String nameVar, int min, int max) {
+    public static float safeInput(String nameVar, int min, int max, float sensitivity) {
         float value;
         Scanner scanner = new Scanner(System.in);
 
@@ -50,8 +50,8 @@ public class UserInterface {
         while (true) {
             if (scanner.hasNextFloat()) {
                 value = scanner.nextFloat();
-                if (value < min || value > max) {
-                    System.out.print("Insert a number between " + min + " and " + max + ". Try again: ");
+                if (value < min || value > max || value % sensitivity != 0) {
+                    System.out.print("Insert a number between " + min + " and " + max + "with a sensitivity of " + sensitivity + ". Try again: ");
                 } else {
                     break;
                 }

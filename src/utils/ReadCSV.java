@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 public interface ReadCSV {
     static float[] ReadFloatCSV(String path) {
         float[] units = new float[24];
-        System.out.println("\nReading " + path.substring(4, path.length() - 4) + " from " + path);
+        System.out.println("Reading " + path.substring(4, path.length() - 4) + " from " + path);
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
             // Reads first row
@@ -19,7 +19,7 @@ public interface ReadCSV {
             // Initialize hour
             int h = 0;
             // Print before first parsing
-            System.out.print("Read: Factor[h=" + firstlinesplit[0] + "] = " + firstlinesplit[1] + " -> ");
+            //System.out.print("Read: Factor[h=" + firstlinesplit[0] + "] = " + firstlinesplit[1] + " -> ");
             // Parse first row into BigDecimal
             BigDecimal u = new BigDecimal(firstlinesplit[1]);
             // Round with 0.01 sensibility
@@ -27,14 +27,14 @@ public interface ReadCSV {
             // Parse units into float
             units[h] = u.floatValue();
             // Print after first parsing
-            System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
+            //System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
             // Reads second row
             line = br.readLine();
             while (line != null) {
                 // Separator in-row
                 String[] linesplit = line.split(";");
                 // Print before parsing
-                System.out.print("Read: Factor[h=" + linesplit[0] + "] = " + linesplit[1] + " -> ");
+                //System.out.print("Read: Factor[h=" + linesplit[0] + "] = " + linesplit[1] + " -> ");
                 try {
                     // Parse hour
                     h = Integer.parseInt(linesplit[0]) % 24;
@@ -47,7 +47,7 @@ public interface ReadCSV {
                     // Parse units into float
                     units[h] = u.floatValue();
                     // Print after parsing
-                    System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
+                    //System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
                 } catch (NumberFormatException e) {
                     // FIXME: Fix first iteration error parsing "0" as int
                     System.out.println("The string cannot be converted. Logs: " +
@@ -65,7 +65,7 @@ public interface ReadCSV {
 
     static int[] ReadIntCSV(String path) {
         int[] units = new int[24];
-        System.out.println("\nReading " + path.substring(4, path.length() - 4) + " from " + path);
+        System.out.println("Reading " + path.substring(4, path.length() - 4) + " from " + path);
         try {
             // Reads file
             BufferedReader br = new BufferedReader(new FileReader(path));   
@@ -76,21 +76,21 @@ public interface ReadCSV {
             // Initialize hour
             int h = 0;
             // Print before first parsing
-            System.out.print("Read: Factor[h=" + firstlinesplit[0] + "] = " + firstlinesplit[1] + " -> ");
+            //System.out.print("Read: Factor[h=" + firstlinesplit[0] + "] = " + firstlinesplit[1] + " -> ");
             // Parse first row
             units[h] = Integer.parseInt(firstlinesplit[1]);
             // Print after first parsing
-            System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
+            //System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
             // Reads second row
             line = br.readLine();
             while (line != null) {
                 // Use comma as separator
                 String[] linesplit = line.split(";");
-                System.out.print("Read: Factor[h=" + linesplit[0] + "] = " + linesplit[1] + " -> ");
+                //System.out.print("Read: Factor[h=" + linesplit[0] + "] = " + linesplit[1] + " -> ");
                 try {
                     h = Integer.parseInt(linesplit[0]) % 24;
                     units[h] = Integer.parseInt(linesplit[1]);
-                    System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
+                    //System.out.println("Wrote: Factor[h=" + h + "] = " + units[h]);
                 } catch (NumberFormatException e) {
                     System.out.println("The string cannot be converted. Logs: " +
                         "h: " + linesplit[0] + "->" + Integer.parseInt(linesplit[0]) % 24 +

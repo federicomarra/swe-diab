@@ -1,7 +1,6 @@
 package utils;
 
-import static utils.ReadCSV.ReadFloatCSV;
-import static utils.ReadCSV.ReadIntCSV;
+import static utils.ReadCSV.ReadCSV;
 
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;
@@ -23,20 +22,9 @@ public class HourlyProfile {
                 path = "csv/insulinSensitivity.csv";
                 break;
         };
-
-        switch (mode) {
-            case BASAL:
-                float[] fhf = ReadFloatCSV(path);
-                for (int i = 0; i < 24; i++)
-                    hourlyFactors[i] = new HourlyFactor(fhf[i], i);
-                break;
-            case IC:
-            case IG:
-                int[] ihf = ReadIntCSV(path);
-                for (int i = 0; i < 24; i++)
-                    hourlyFactors[i] = new HourlyFactor(ihf[i], i);
-                break;
-        }
+        float[] hf = ReadCSV(path);
+        for (int i = 0; i < 24; i++)
+            hourlyFactors[i] = new HourlyFactor(hf[i], i);
     }
 
     public void updateHourlyFactor(HourlyFactor hf) {

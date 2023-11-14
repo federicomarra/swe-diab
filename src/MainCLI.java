@@ -49,14 +49,15 @@ public class MainCLI {
                         break;
                     case 6: // Update Carb Ratio Profile
                         units = safeInput("units", 1, 15, 1f);
-                        ui.updateCarbRatioProfile((int) units, hour);
+                        ui.updateCarbRatioProfile(units, hour);
                         break;
                     case 7: // Update Insulin Sensitivity Profile
                         units = safeInput("units", 20, 50, 1f);
-                        ui.updateInsulinSensitivityProfile((int) units, hour);
+                        ui.updateInsulinSensitivityProfile(units, hour);
                         break;
                 }
             }
+            System.out.println();
         } while (mode > 0);
         System.out.println("Exiting...");
     }

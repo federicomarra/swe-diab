@@ -7,6 +7,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public interface ReadCSV {
+    /**
+     * @param path Path of the CSV file
+     * @return Array of floats containing the hourly factors
+     */
     static float[] ReadCSV(String path) {
         float[] units = new float[24];
         System.out.println("Reading " + path.substring(4, path.length() - 4) + " from " + path);

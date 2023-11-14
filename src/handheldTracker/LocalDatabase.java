@@ -192,14 +192,14 @@ public class LocalDatabase extends Database implements Observer {
                 basalProfile.updateHourlyFactor(hf);
                 break;
             case IC:
+                carbRatioProfile.updateHourlyFactor(hf);
+                break;
+            case IG:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
                 manager = PumpManager.getInstance(insulinSensitivityProfile);
 
                 // TODO: Check if this is needed
                 // manager.subscribe(this);
-                break;
-            case IG:
-                carbRatioProfile.updateHourlyFactor(hf);
                 break;
         }
         try {

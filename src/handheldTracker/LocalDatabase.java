@@ -186,6 +186,7 @@ public class LocalDatabase extends Database implements Observer {
     }
 
     public void updateHourlyFactor(HourlyFactor hf, ProfileMode mode) {
+        System.out.println("Updating " + mode.toString() + " profile...");
         switch (mode) {
             case BASAL:
                 basalProfile.updateHourlyFactor(hf);

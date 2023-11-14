@@ -21,7 +21,7 @@ public class HourlyProfile {
             case IG:
                 path = "csv/insulinSensitivity.csv";
                 break;
-        };
+        }
         float[] hf = ReadCSV(path);
         for (int i = 0; i < 24; i++)
             hourlyFactors[i] = new HourlyFactor(hf[i], i);
@@ -32,14 +32,17 @@ public class HourlyProfile {
             case BASAL:
                 if (hf.units() > 0.1 && hf.units() < 5)
                     hourlyFactors[hf.hour()] = hf;
+                else System.out.println("Invalid basal profile value");
                 break;
             case IC:
                 if (hf.units() >= 1 && hf.units() <= 15)
                     hourlyFactors[hf.hour()] = hf;
+                else System.out.println("Invalid carb ratio value");
                 break;
             case IG:
                 if (hf.units() >= 20 && hf.units() <= 50)
                     hourlyFactors[hf.hour()] = hf;
+                else System.out.println("Invalid insulin sensitivity value");
                 break;
         }
     }

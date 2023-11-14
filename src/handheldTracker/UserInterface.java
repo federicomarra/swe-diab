@@ -5,7 +5,7 @@ import utils.*;
 import java.util.Scanner;
 
 public class UserInterface {
-    private LocalDatabase localDb;
+    private final LocalDatabase localDb;
     // TODO: put this instead?
     // private final LocalDatabase localDb;
 
@@ -51,7 +51,7 @@ public class UserInterface {
             if (scanner.hasNextFloat()) {
                 value = scanner.nextFloat();
                 if (value < min || value > max || value % sensitivity != 0) {
-                    System.out.print("Insert a number between " + min + " and " + max + "with a sensitivity of " + sensitivity + ". Try again: ");
+                    System.out.print("Insert a number between " + min + " and " + max + (sensitivity == 1 ? "" : " with a sensitivity of " + sensitivity) + ". Try again: ");
                 } else {
                     break;
                 }

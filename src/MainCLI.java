@@ -1,6 +1,6 @@
 import handheldTracker.UserInterface;
 
-import static handheldTracker.UserInterface.safeInput;
+import java.util.Scanner;
 
 public class MainCLI {
     public static void main(String[] args) {
@@ -60,6 +60,28 @@ public class MainCLI {
             System.out.println();
         } while (mode > 0);
         System.out.println("Exiting...");
+    }
+
+    public static float safeInput(String nameVar, int min, int max, float sensitivity) {
+        float value;
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Insert " + nameVar + ": ");
+        while (true) {
+            if (scanner.hasNextFloat()) {
+                value = scanner.nextFloat();
+                if (value < min || value > max || value % sensitivity != 0) {
+                    System.out.print("Insert a number between " + min + " and " + max + (sensitivity == 1 ? "" : " with a sensitivity of " + sensitivity) + ". Try again: ");
+                } else {
+                    break;
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid float number.");
+                scanner.next(); // Consume invalid input
+                System.out.print("Insert " + nameVar + ": ");
+            }
+        }
+        return value;
     }
 }
 

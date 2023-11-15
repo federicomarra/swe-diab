@@ -71,7 +71,7 @@ public class MainGUI {
         // JTextField
         carbTextField = new JTextField(10);
         delayMinutesTextField = new JTextField(10);
-        hourComboBox = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23});
+        hourComboBox = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24});
         unitsTextField = new JTextField(10);
 
         initialize();
@@ -82,6 +82,8 @@ public class MainGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+
+        // TODO: finire e far funzionare
 
         /*
         // Aggiunge una progress bar

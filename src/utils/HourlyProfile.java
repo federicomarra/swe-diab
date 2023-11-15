@@ -9,7 +9,7 @@ public class HourlyProfile {
     public HourlyProfile(ProfileMode mode) {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
-        
+
         String path = "";
         switch (mode) {
             case BASAL:
@@ -28,22 +28,32 @@ public class HourlyProfile {
     }
 
     public void updateHourlyFactor(HourlyFactor hf) {
+        boolean success = false;
+        String modeString = "";
+        if (hf.hour() < 0 || hf.hour() > 23)
+            hf.hour = hf.hour() % 24;
         switch (mode) {
             case BASAL:
+                modeString = "basal profile";
                 if (hf.units() > 0.1 && hf.units() < 5)
-                    hourlyFactors[hf.hour()] = hf;
-                else System.out.println("Invalid basal profile value");
+                    success = true;
                 break;
             case IC:
+                modeString = "carb ratio";
                 if (hf.units() >= 1 && hf.units() <= 15)
-                    hourlyFactors[hf.hour()] = hf;
-                else System.out.println("Invalid carb ratio value");
+                    success = true;
                 break;
             case IG:
+                modeString = "insulin sensitivity";
                 if (hf.units() >= 20 && hf.units() <= 50)
-                    hourlyFactors[hf.hour()] = hf;
-                else System.out.println("Invalid insulin sensitivity value");
+                    success = true;
                 break;
+        }
+        if (success) {
+            System.out.println("Updating " + modeString + " h=" + hf.hour() + " from " + String.format("%.2f", hourlyFactors[hf.hour()].units()) + " to " + String.format("%.2f", hf.units()) + "...");
+            hourlyFactors[hf.hour()] = hf;
+        } else {
+            System.out.println("Invalid " + modeString + " value");
         }
     }
 }

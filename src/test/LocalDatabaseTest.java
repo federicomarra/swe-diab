@@ -1,12 +1,15 @@
 package test;
 
 import handheldTracker.LocalDatabase;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import handheldTracker.BolusDelivery;
 import handheldTracker.BolusMode;
+import utils.HourlyFactor;
 import utils.Measurement;
+import utils.ProfileMode;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,11 +21,11 @@ public class LocalDatabaseTest {
     public void ConstructorTest() {
         LocalDatabase db = new LocalDatabase();
 
-        Assert.assertEquals(0, db.bolusDeliveries.size());
-        Assert.assertEquals(0, db.measurements.size());
-        Assert.assertEquals(24, db.carbRatioProfile.hourlyFactors.length);
-        Assert.assertEquals(24, db.insulinSensitivityProfile.hourlyFactors.length);
-        Assert.assertEquals(24, db.basalProfile.hourlyFactors.length);
+        assertEquals(0, db.bolusDeliveries.size());
+        assertEquals(0, db.measurements.size());
+        assertEquals(24, db.carbRatioProfile.hourlyFactors.length);
+        assertEquals(24, db.insulinSensitivityProfile.hourlyFactors.length);
+        assertEquals(24, db.basalProfile.hourlyFactors.length);
     }
 
     @Test
@@ -35,12 +38,12 @@ public class LocalDatabaseTest {
         BolusDelivery bd = new BolusDelivery(u, LocalTime.now(), BolusMode.PEN);
         db.newBolus(bd.units, 0, bd.mode, 0);
 
-        Assert.assertEquals(1, db.bolusDeliveries.size());
-        Assert.assertEquals(bd.units, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).units, 0.01);
-        Assert.assertEquals(bd.time.getHour(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getHour(), 0);
-        Assert.assertEquals(bd.time.getMinute(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getMinute(), 0);
-        Assert.assertEquals(bd.time.getSecond(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getSecond(), 1);
-        Assert.assertEquals(bd.mode, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).mode);
+        assertEquals(1, db.bolusDeliveries.size());
+        assertEquals(bd.units, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).units, 0.01);
+        assertEquals(bd.time.getHour(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getHour(), 0);
+        assertEquals(bd.time.getMinute(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getMinute(), 0);
+        assertEquals(bd.time.getSecond(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getSecond(), 1);
+        assertEquals(bd.mode, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).mode);
     }
 
     @Test
@@ -73,9 +76,8 @@ public class LocalDatabaseTest {
                 break;
             case 1: // Extended bolus test
                 mode = BolusMode.EXTENDED;
-                // Randomize delay between 1 and 10 seconds
-                delaySeconds = (int) (Math.abs(Math.random() * (10 - 1)) + 1);
-                System.out.println("Delay: " + delaySeconds + " seconds");
+                // Randomize delay between 1 and 5 seconds
+                delaySeconds = (int) (Math.abs(Math.random() * (5 - 1)) + 1);
                 break;
             case 2: // Manual bolus test
                 mode = BolusMode.MANUAL;
@@ -87,18 +89,46 @@ public class LocalDatabaseTest {
             // Pen bolus case does not exist because it is not possible to call computeAndInject() with Pen mode
         }
         BolusDelivery bd = new BolusDelivery(u, LocalTime.now().plusSeconds(delaySeconds), mode);
-        // inside this it is called computeAndInject() which is private
+        // inside newBolus() it is called computeAndInject() which being private, this is the only way to test it
         db.newBolus(0, delaySeconds, bd.mode, c);
-        Assert.assertEquals(1, db.bolusDeliveries.size());
-        Assert.assertEquals(bd.units, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).units, 0.01);
-        Assert.assertEquals(bd.time.getHour(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getHour());
-        Assert.assertEquals(bd.time.getMinute(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getMinute());
-        Assert.assertEquals(bd.time.getSecond(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getSecond());
-        Assert.assertEquals(bd.mode, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).mode);
+        assertEquals(1, db.bolusDeliveries.size());
+        assertEquals(bd.units, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).units, 0.01);
+        assertEquals(bd.time.getHour(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getHour());
+        assertEquals(bd.time.getMinute(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getMinute());
+        assertEquals(bd.time.getSecond(), db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).time.getSecond());
+        assertEquals(bd.mode, db.bolusDeliveries.get(db.bolusDeliveries.size() - 1).mode);
     }
 
     @Test
     public void updateHourlyFactorTest() {
+        LocalDatabase db = new LocalDatabase();
+        int hours[] = new int[3];
+        float units[] = new float[3];
+        for (int i = 0; i < 3; i++)
+            hours[i] = (int) (Math.abs(Math.random() * 24));
 
+        // Basal profile test
+        units[0] = (float) ((float) (Math.random() * (5 - 0.01) + 0.1) / 0.05 * 0.05);
+        System.out.println("Basal: " + units[0]);
+        HourlyFactor hf0 = new HourlyFactor(units[0], hours[0]);
+        db.updateHourlyFactor(hf0, ProfileMode.BASAL);
+        assertEquals(hours[0], db.basalProfile.hourlyFactors[hours[0]].hour(), 0);
+        assertEquals(units[0], db.basalProfile.hourlyFactors[hours[0]].units(), 0.05);
+
+        // Carb ratio profile test
+        units[1] = (float) ((int) Math.abs(Math.random() * (15 - 1) + 1));
+        HourlyFactor hf1 = new HourlyFactor(units[1], hours[1]);
+        System.out.println("Carb: " + units[1]);
+        db.updateHourlyFactor(hf1, ProfileMode.IC);
+        assertEquals(hours[1], db.carbRatioProfile.hourlyFactors[hours[1]].hour(), 0);
+        assertEquals(units[1], db.carbRatioProfile.hourlyFactors[hours[1]].units(), 0);
+
+        // Insulin sensitivity profile test
+        units[2] = (float) ((int) Math.abs(Math.random() * (50 - 20) + 20));
+        HourlyFactor hf2 = new HourlyFactor(units[2], hours[2]);
+        System.out.println("Insulin: " + units[2]);
+        db.updateHourlyFactor(hf2, ProfileMode.IG);
+        assertEquals(hf2.hour(), db.insulinSensitivityProfile.hourlyFactors[hours[2]].hour(), 0);
+        assertEquals(units[2], db.insulinSensitivityProfile.hourlyFactors[hours[2]].units(), 5);
     }
 }

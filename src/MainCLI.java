@@ -40,7 +40,7 @@ public class MainCLI {
                 float units = safeInput("units", 0, 15, 1f);
                 ui.newPenBolus(units);
             } else if (mode >= 5 && mode <= 7) {
-                int hour = (int) safeInput("hour", 0, 23, 1f);
+                int hour = (int) safeInput("hour", 0, 24, 1f);
                 float units;
                 switch (mode) {
                     case 5: // Update Basal Profile

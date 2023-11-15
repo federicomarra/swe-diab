@@ -134,29 +134,24 @@ public class LocalDatabase extends Database implements Observer {
                         manager.verifyAndInject(bd.units);
                         break;
                     case EXTENDED:
-                        Duration delay = Duration.between(LocalTime.now(), time);
+                        Duration delay = Duration.between(LocalTime.now(), time).plusSeconds(1);
                         System.out.print("Waiting ");
                         int hours = (int) delay.toHours();
                         int minutes = (int) delay.toMinutes() % 60;
                         int seconds = (int) delay.toSeconds() % 60;
-                        if (hours > 0) {
-                            System.out.print(hours + " hour" + ((hours == 1) ? "" : "s"));
-                            if (minutes > 0) {
-                                if (seconds > 0) System.out.print(", ");
-                                else System.out.print(" and ");
-                            }
-                        }
-                        if (minutes > 0) {
-                            System.out.print(minutes + " minute" + ((minutes == 1) ? "" : "s"));
-                            if (seconds > 0) System.out.print(" and ");
-                        }
-                        if (seconds > 0) System.out.print(seconds + 1 + " second" + ((seconds == 1) ? "" : "s"));
+                        if (hours > 0)
+                            System.out.print(hours + "h ");
+                        if (minutes > 0)
+                            System.out.print(minutes + "m ");
+                        if (seconds > 0)
+                            System.out.print(seconds + "s ");
                         // TODO: FIX if delaySeconds is 61, it doesn't print 1 minute and 1 second
 
-                        System.out.println(" to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        System.out.println("to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
                         Thread.sleep(delay.toMillis());
                         manager.verifyAndInject(bd.units);
                         break;
+
                     case MANUAL:
                         // Round the units to 0.5
                         bd.units = RoundToCent(bd.units, "0.5");
@@ -176,17 +171,17 @@ public class LocalDatabase extends Database implements Observer {
         }
     }
 
+
     private void backup() throws InternetException {
         try {
             // FIXME: update() to be implemented into Database.java
-            backupDb.update(this.measurements);
+            //backupDb.update(this.measurements);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void updateHourlyFactor(HourlyFactor hf, ProfileMode mode) {
-        System.out.println("Updating " + mode.toString() + " profile...");
         switch (mode) {
             case BASAL:
                 basalProfile.updateHourlyFactor(hf);

@@ -1,6 +1,6 @@
 # swe-diab
 
-![Java](https://img.shields.io/badge/Java-15.0.2-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Java](https://img.shields.io/badge/Java-11.0-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![GitHub last commit](https://img.shields.io/github/last-commit/federicomarra/swe-diab?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/federicomarra/swe-diab?style=for-the-badge)
 

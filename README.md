@@ -6,11 +6,17 @@
 
 Unifi Software Engineering project for diabetes management
 
+## How to run
+
+1. Install dependencies with `mvn install -f pom.xml` from the root of the project.
+2. Run `mvn clean test` to execute all the available tests.
+
 ## Authors
 
 Federico Marra [@federicomarra](https://github.com/federicomarra) & Alberto Del Buono Paolini [@albbus-stack](https://github.com/albbus-stack)
 
 ## License
+
 MIT License
 
 Copyright (c) 2023 federicomarra

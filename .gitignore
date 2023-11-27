@@ -59,4 +59,5 @@ build
 
 # Maven Tests
 /src/target/
+/target
 exec

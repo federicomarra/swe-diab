@@ -121,12 +121,11 @@ public class MainGUI {
         // Aggiunge choosePanel al frame
         frame.add(choosePanel);
         // Aggiunge carbPanel a bolusPanel
-        //bolusPanel.add(carbPanel);
+        // bolusPanel.add(carbPanel);
         // Aggiunge bolusPanel al frame
         frame.add(bolusPanel);
         // Aggiunge executeButton al frame
         frame.add(executeButton);
-
 
         // Handle chooseOptionComboBox
         chooseComboBox.addActionListener(new ActionListener() {
@@ -144,8 +143,6 @@ public class MainGUI {
                     choosePanel.add(bolusLabel);
                     choosePanel.add(bolusComboBox);
 
-
-
                     // BASAL
                 } else if (selectedOption.equals("UpdateHourlyProfile")) {
                     System.out.println("UpdateHourlyProfile");
@@ -153,8 +150,6 @@ public class MainGUI {
                     choosePanel.remove(bolusComboBox);
                     choosePanel.remove(carbTextField);
                     choosePanel.remove(delayMinutesTextField);
-
-
 
                 }
             }
@@ -166,7 +161,8 @@ public class MainGUI {
             public void actionPerformed(ActionEvent e) {
                 String bolusOption = bolusComboBox.getSelectedItem().toString();
                 switch (bolusOption) {
-                    case "New Standard Bolus", "How Many Units":
+                    case "New Standard Bolus":
+                    case "How Many Units":
                         System.out.println("New Standard Bolus");
                         choosePanel.remove(delayMinutesTextField);
                         choosePanel.remove(unitsTextField);
@@ -240,9 +236,8 @@ public class MainGUI {
         /*
         // Aggiungi il pannello al frame
         frame.getContentPane().add(choosePanel);
-
-
-         */
+        */
+        
         // Rendi il frame visibile
         frame.setVisible(true);
 
@@ -268,7 +263,8 @@ public class MainGUI {
                 ui.newStandardBolus(Integer.parseInt(carbTextField.getText()));
                 break;
             case "New Extended Bolus":
-                ui.newExtendedBolus(Integer.parseInt(carbTextField.getText()), Integer.parseInt(delayMinutesTextField.getText()));
+                ui.newExtendedBolus(Integer.parseInt(carbTextField.getText()),
+                        Integer.parseInt(delayMinutesTextField.getText()));
                 break;
             case "How Many Units":
                 ui.howManyUnits(Integer.parseInt(carbTextField.getText()));
@@ -279,12 +275,12 @@ public class MainGUI {
         }
     }
 
-
     private void executeUpdateHourlyProfileOption() {
         String profileOption = profileComboBox.getSelectedItem().toString();
         int hour = (int) hourComboBox.getSelectedItem();
         float units = Float.parseFloat(unitsTextField.getText());
-        // Chiamate i metodi appropriati di UserInterface in base all'opzione selezionata
+        // Chiamate i metodi appropriati di UserInterface in base all'opzione
+        // selezionata
         switch (profileOption) {
             case "Update Basal Profile":
                 ui.updateBasalProfile(units, hour);
@@ -310,4 +306,3 @@ public class MainGUI {
         });
     }
 }
-

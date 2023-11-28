@@ -8,19 +8,27 @@ import java.time.LocalTime;
 // public record Measurement(int glycemia, LocalTime time) {}
 
 public class Measurement {
-    int glycemia;
-    LocalTime time;
+    private int glycemia;
+    private LocalTime time;
 
     public Measurement(int glycemia, LocalTime time) {
         this.glycemia = glycemia;
         this.time = time;
     }
     
-    public int glycemia() {
+    public int getGlycemia() {
         return this.glycemia;
     }
 
-    public LocalTime time() {
+    public void setGlycemia(int glycemia) {
+        this.glycemia = glycemia;
+    }
+
+    public LocalTime getTime() {
         return this.time;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
     }
 }

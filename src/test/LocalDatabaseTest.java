@@ -61,9 +61,9 @@ public class LocalDatabaseTest {
         // Generate new measurement and add it to the measurements list
         db.measurements.add(new Measurement(g, LocalTime.now()));
         // Carb sensitivity
-        float csens = db.carbRatioProfile.hourlyFactors[LocalTime.now().getHour()].units();
+        float csens = db.carbRatioProfile.hourlyFactors[LocalTime.now().getHour()].getUnits();
         // Insulin sensitivity
-        float isens = db.insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()].units();
+        float isens = db.insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()].getUnits();
         // Units expected
         float u = (c / csens);
         if (g > gref) u += ((g - gref) / isens);
@@ -112,23 +112,23 @@ public class LocalDatabaseTest {
         System.out.println("Basal: " + units[0]);
         HourlyFactor hf0 = new HourlyFactor(units[0], hours[0]);
         db.updateHourlyFactor(hf0, ProfileMode.BASAL);
-        assertEquals(hours[0], db.basalProfile.hourlyFactors[hours[0]].hour(), 0);
-        assertEquals(units[0], db.basalProfile.hourlyFactors[hours[0]].units(), 0.05);
+        assertEquals(hours[0], db.basalProfile.hourlyFactors[hours[0]].getHour(), 0);
+        assertEquals(units[0], db.basalProfile.hourlyFactors[hours[0]].getUnits(), 0.05);
 
         // Carb ratio profile test
         units[1] = (float) ((int) Math.abs(Math.random() * (15 - 1) + 1));
         HourlyFactor hf1 = new HourlyFactor(units[1], hours[1]);
         System.out.println("Carb: " + units[1]);
         db.updateHourlyFactor(hf1, ProfileMode.IC);
-        assertEquals(hours[1], db.carbRatioProfile.hourlyFactors[hours[1]].hour(), 0);
-        assertEquals(units[1], db.carbRatioProfile.hourlyFactors[hours[1]].units(), 0);
+        assertEquals(hours[1], db.carbRatioProfile.hourlyFactors[hours[1]].getHour(), 0);
+        assertEquals(units[1], db.carbRatioProfile.hourlyFactors[hours[1]].getUnits(), 0);
 
         // Insulin sensitivity profile test
         units[2] = (float) ((int) Math.abs(Math.random() * (50 - 20) + 20));
         HourlyFactor hf2 = new HourlyFactor(units[2], hours[2]);
         System.out.println("Insulin: " + units[2]);
         db.updateHourlyFactor(hf2, ProfileMode.IG);
-        assertEquals(hf2.hour(), db.insulinSensitivityProfile.hourlyFactors[hours[2]].hour(), 0);
-        assertEquals(units[2], db.insulinSensitivityProfile.hourlyFactors[hours[2]].units(), 5);
+        assertEquals(hf2.getHour(), db.insulinSensitivityProfile.hourlyFactors[hours[2]].getHour(), 0);
+        assertEquals(units[2], db.insulinSensitivityProfile.hourlyFactors[hours[2]].getUnits(), 5);
     }
 }

@@ -10,18 +10,19 @@ public class HourlyProfile {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
 
-        String path = "";
+        String path = "csv/";
         switch (mode) {
             case BASAL:
-                path = "csv/basalProfile.csv";
+                path += "basalProfile";
                 break;
             case IC:
-                path = "csv/carbRatio.csv";
+                path += "carbRatio";
                 break;
             case IG:
-                path = "csv/insulinSensitivity.csv";
+                path += "insulinSensitivity";
                 break;
         }
+        path += ".csv";
         float[] hf = ReadCSV(path);
         for (int i = 0; i < 24; i++)
             hourlyFactors[i] = new HourlyFactor(hf[i], i);
@@ -30,28 +31,28 @@ public class HourlyProfile {
     public void updateHourlyFactor(HourlyFactor hf) {
         boolean success = false;
         String modeString = "";
-        if (hf.hour() < 0 || hf.hour() > 23)
-            hf.hour = hf.hour() % 24;
+        if (hf.getHour() < 0 || hf.getHour() > 23)
+            hf.setHour(hf.getHour());
         switch (mode) {
             case BASAL:
                 modeString = "basal profile";
-                if (hf.units() > 0.1 && hf.units() < 5)
+                if (hf.getUnits() > 0.1 && hf.getUnits() < 5)
                     success = true;
                 break;
             case IC:
                 modeString = "carb ratio";
-                if (hf.units() >= 1 && hf.units() <= 15)
+                if (hf.getUnits() >= 1 && hf.getUnits() <= 15)
                     success = true;
                 break;
             case IG:
                 modeString = "insulin sensitivity";
-                if (hf.units() >= 20 && hf.units() <= 50)
+                if (hf.getUnits() >= 20 && hf.getUnits() <= 50)
                     success = true;
                 break;
         }
         if (success) {
-            System.out.println("Updating " + modeString + " h=" + hf.hour() + " from " + String.format("%.2f", hourlyFactors[hf.hour()].units()) + " to " + String.format("%.2f", hf.units()) + "...");
-            hourlyFactors[hf.hour()] = hf;
+            System.out.println("Updating " + modeString + " h=" + hf.getHour() + " from " + String.format("%.2f", hourlyFactors[hf.getHour()].getUnits()) + " to " + String.format("%.2f", hf.getUnits()) + "...");
+            hourlyFactors[hf.getHour()] = hf;
         } else {
             System.out.println("Invalid " + modeString + " value");
         }

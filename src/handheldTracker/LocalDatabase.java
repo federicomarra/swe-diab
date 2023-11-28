@@ -92,7 +92,7 @@ public class LocalDatabase extends Database implements Observer {
 
             Measurement lm = measurements.get(measurements.size() - 1);
             // Difference between last measurement and bolus time
-            Duration diff = Duration.between(lm.time(), time);
+            Duration diff = Duration.between(lm.getTime(), time);
 
             // Make a new measurement if the last one is older than 10 minutes from now
             if (diff.toMinutes() > 10)
@@ -107,14 +107,14 @@ public class LocalDatabase extends Database implements Observer {
 
             // Compute the units of correction, units of carbohydrates and total units
             float glycUnits = 0;
-            if (lm.glycemia() > 160)
-                glycUnits = ((float) (lm.glycemia() - GLYC_REFERENCE)) / sensitivity.units();
+            if (lm.getGlycemia() > 160)
+                glycUnits = ((float) (lm.getGlycemia() - GLYC_REFERENCE)) / sensitivity.getUnits();
             float activeUnits = bd.calculateResidualUnits(bolusDeliveries);
             // Units of correction = Units of glycemia - Units of active insulin
             float correctionUnits = glycUnits - activeUnits;
             float carbUnits = 0;
             if (carb > 0 && carb <= 150)
-                carbUnits = carb / carbRatio.units();
+                carbUnits = carb / carbRatio.getUnits();
 
             // Round the results to 2 decimal places
             bd.units = RoundToCent(correctionUnits + carbUnits, "0.01");
@@ -124,7 +124,7 @@ public class LocalDatabase extends Database implements Observer {
             carbUnits = RoundToCent(carbUnits, "0.01");
 
             if (bd.units > 0) {
-                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.glycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction" : ""));
+                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.getGlycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction" : ""));
                 System.out.printf("%-25s%14s%-18s%n", "Active insulin:", (activeUnits > 0 ? "-" : "") + activeUnits + " units", "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
                 System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
                 System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));
@@ -161,7 +161,7 @@ public class LocalDatabase extends Database implements Observer {
                 }
                 addBolus(bd);
             } else if (bd.units == 0) {
-                System.out.println("You don't need to inject insulin, you have a glycemia of: " + lm.glycemia() + " mg/dL");
+                System.out.println("You don't need to inject insulin, you have a glycemia of: " + lm.getGlycemia() + " mg/dL");
             } else if (bd.units < 0) {
                 System.out.println("You don't need to inject insulin, you have " + activeUnits + " units of active insulin");
             }

@@ -4,8 +4,6 @@ import utils.*;
 
 public class UserInterface {
     private final LocalDatabase db;
-    // TODO: put this instead?
-    // private final LocalDatabase localDb;
 
     public UserInterface() {
         // One localDb for one user

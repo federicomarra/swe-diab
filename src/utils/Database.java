@@ -5,7 +5,6 @@ import handheldTracker.BolusMode;
 
 import java.util.List;
 
-
 public class Database {
     public HourlyProfile carbRatioProfile;
     public HourlyProfile insulinSensitivityProfile;
@@ -20,11 +19,11 @@ public class Database {
             measurements.add(m);
     }
 
-    // TODO: check if under methods are needed
+    // TODO: check if following methods are needed
 
-    public void updateHourlyFactor(HourlyFactor hf) {}
+    public void updateHourlyFactor(HourlyFactor hf, ProfileMode mode) {}
     
-    public void newBolus(float units, int delay, BolusMode mode, int carb) {}
+    public void newBolus(float units, int delaySeconds, BolusMode mode, int carb) {}
 
     private void computeAndInject() {}
 

@@ -1,3 +1,5 @@
+package GUI;
+
 import handheldTracker.UserInterface;
 
 import javax.swing.*;

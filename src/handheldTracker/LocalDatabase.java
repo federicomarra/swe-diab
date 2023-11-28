@@ -29,9 +29,9 @@ public class LocalDatabase extends Database implements Observer {
     public LocalDatabase() {
         this.backupDb = new BackupDatabase();
 
-        this.insulinSensitivityProfile = new HourlyProfile(ProfileMode.IG);
+        this.insulinSensitivityProfile = new HourlyProfile(ProfileMode.IS);
         this.basalProfile = new HourlyProfile(ProfileMode.BASAL);
-        this.carbRatioProfile = new HourlyProfile(ProfileMode.IC);
+        this.carbRatioProfile = new HourlyProfile(ProfileMode.CR);
         this.bolusDeliveries = new ArrayList<>();
         this.measurements = new ArrayList<>();
         System.out.println("LocalDatabase created");
@@ -186,10 +186,10 @@ public class LocalDatabase extends Database implements Observer {
             case BASAL:
                 basalProfile.updateHourlyFactor(hf);
                 break;
-            case IC:
+            case CR:
                 carbRatioProfile.updateHourlyFactor(hf);
                 break;
-            case IG:
+            case IS:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
                 manager = PumpManager.getInstance(insulinSensitivityProfile);
 

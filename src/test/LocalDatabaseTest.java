@@ -119,7 +119,7 @@ public class LocalDatabaseTest {
         units[1] = (float) ((int) Math.abs(Math.random() * (15 - 1) + 1));
         HourlyFactor hf1 = new HourlyFactor(units[1], hours[1]);
         System.out.println("Carb: " + units[1]);
-        db.updateHourlyFactor(hf1, ProfileMode.IC);
+        db.updateHourlyFactor(hf1, ProfileMode.CR);
         assertEquals(hours[1], db.carbRatioProfile.hourlyFactors[hours[1]].getHour(), 0);
         assertEquals(units[1], db.carbRatioProfile.hourlyFactors[hours[1]].getUnits(), 0);
 
@@ -127,7 +127,7 @@ public class LocalDatabaseTest {
         units[2] = (float) ((int) Math.abs(Math.random() * (50 - 20) + 20));
         HourlyFactor hf2 = new HourlyFactor(units[2], hours[2]);
         System.out.println("Insulin: " + units[2]);
-        db.updateHourlyFactor(hf2, ProfileMode.IG);
+        db.updateHourlyFactor(hf2, ProfileMode.IS);
         assertEquals(hf2.getHour(), db.insulinSensitivityProfile.hourlyFactors[hours[2]].getHour(), 0);
         assertEquals(units[2], db.insulinSensitivityProfile.hourlyFactors[hours[2]].getUnits(), 5);
     }

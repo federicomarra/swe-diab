@@ -31,11 +31,11 @@ public class UserInterface {
     }
 
     public void updateCarbRatioProfile(float units, int hour) {
-        db.updateHourlyFactor(new HourlyFactor(units, hour), ProfileMode.IC);
+        db.updateHourlyFactor(new HourlyFactor(units, hour), ProfileMode.CR);
     }
 
     public void updateInsulinSensitivityProfile(float units, int hour) {
-        db.updateHourlyFactor(new HourlyFactor(units, hour), ProfileMode.IG);
+        db.updateHourlyFactor(new HourlyFactor(units, hour), ProfileMode.IS);
     }
 
 }

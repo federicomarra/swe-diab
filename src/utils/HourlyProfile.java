@@ -15,10 +15,10 @@ public class HourlyProfile {
             case BASAL:
                 path += "basalProfile";
                 break;
-            case IC:
+            case CR:
                 path += "carbRatio";
                 break;
-            case IG:
+            case IS:
                 path += "insulinSensitivity";
                 break;
         }
@@ -39,12 +39,12 @@ public class HourlyProfile {
                 if (hf.getUnits() > 0.1 && hf.getUnits() < 5)
                     success = true;
                 break;
-            case IC:
+            case CR:
                 modeString = "carb ratio";
                 if (hf.getUnits() >= 1 && hf.getUnits() <= 15)
                     success = true;
                 break;
-            case IG:
+            case IS:
                 modeString = "insulin sensitivity";
                 if (hf.getUnits() >= 20 && hf.getUnits() <= 50)
                     success = true;

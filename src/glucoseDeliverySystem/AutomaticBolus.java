@@ -1,16 +1,32 @@
 package glucoseDeliverySystem;
 
+import handheldTracker.BolusDelivery;
+import handheldTracker.BolusMode;
 import utils.Measurement;
 import utils.Observer;
 
+import java.time.LocalTime;
 import java.util.List;
 
-public class AutomaticBolus implements Observer {
+public class AutomaticBolus implements Observer, Runnable {
     public List<Measurement> measurements;
-    private PumpManager manager;
+    private final PumpManager manager;
 
-    public AutomaticBolus(PumpManager manager){
-        this.manager = manager;
+    public AutomaticBolus(PumpManager manager) {
+        this.manager = PumpManager.getInstance(manager.insulinSensitivityProfile);
+        this.measurements = manager.getMeasurements();
+        //this.run();   // TODO: See if this is needed
+    }
+
+    private void evaluate(List<Measurement> m) {
+        int lastGlyc = m.get(m.size() - 1).getGlycemia();
+        float sensitivity = manager.insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()].getUnits();
+        if (lastGlyc > 180) {
+            float units = (float) (lastGlyc - 120) / sensitivity;
+            BolusDelivery bd = new BolusDelivery(units, LocalTime.now(), BolusMode.STANDARD);
+            units -= bd.calculateResidualUnits(manager.bds);
+            manager.verifyAndInject(units);
+        }
     }
 
     public void update(List<Measurement> m) {
@@ -18,43 +34,9 @@ public class AutomaticBolus implements Observer {
         evaluate(m);
     }
 
-    private void evaluate(List<Measurement> m){
-        // FIXME: implement get insulinSensitivity based on time from insulinSensitivityProfile
-        var lm = m.get(m.size()-1);
-        /*
-        HourlyProfile sensitivities = manager.insulinSensitivityProfile;
-        HourlyFactor sensitivity = sensitivities[(int)(LocalTime.now().getHour())];
-        if (lm.glycemia() > 180){
-            float units = (lm.glycemia() - 120) / sensitivity;
-            sendBolus(units);
-        }
-        */
+    public void run() { // executed every 15 minutes
+        if (LocalTime.now().getMinute() % 15 == 0 && LocalTime.now().getSecond() == 0 && LocalTime.now().getNano() == 0)
+            update(manager.getMeasurements());
     }
 
-    private void sendBolus(float units){
-        manager.verifyAndInject(units);
-    }
-
-    // Example recurrent task every 3 hours
-    /*
-        import java.util.concurrent.Executors;
-        import java.util.concurrent.ScheduledExecutorService;
-        import java.util.concurrent.TimeUnit;
-
-        public class Main {
-
-            public static void main(String[] args) {
-                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-                // Runnable che contiene la tua logica da eseguire ogni 3 ore
-                Runnable task = () -> {
-                    // Inserisci qui la logica che vuoi eseguire
-                    System.out.println("Funzione eseguita ogni 3 ore");
-                };
-
-                // Pianifica l'esecuzione del task ogni 3 ore
-                scheduler.scheduleAtFixedRate(task, 0, 3, TimeUnit.HOURS);
-            }
-        }
-    */
 }

@@ -51,7 +51,7 @@ public class HourlyProfile {
                 break;
         }
         if (success) {
-            System.out.println("Updating " + modeString + " h=" + hf.getHour() + " from " + String.format("%.2f", hourlyFactors[hf.getHour()].getUnits()) + " to " + String.format("%.2f", hf.getUnits()) + "...");
+            System.out.println("Updating " + modeString + " h=" + hf.getHour() + " from " + String.format("%.2f", hourlyFactors[hf.getHour()].getUnits()).replace(",", ".") + " to " + String.format("%.2f", hf.getUnits()).replace(",", ".") + "...");
             hourlyFactors[hf.getHour()] = hf;
         } else {
             System.out.println("Invalid " + modeString + " value");

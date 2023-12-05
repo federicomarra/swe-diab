@@ -32,6 +32,9 @@ jobs:
       - name: Change file name
         run: mv ./target/swe-diab-1.0.0-jar-with-dependencies.jar ./target/swe-diab-1.0.0.jar
 
+      - name: Delete Release
+        run: gh release delete v1.0.0 --yes
+
       - name: Create Release
         run: gh release create v1.0.0 ./target/swe-diab-1.0.0.jar -t "v1.0.0" -n "Version 1.0.0"
 

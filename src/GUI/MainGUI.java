@@ -132,7 +132,8 @@ public class MainGUI {
 
         chooseComboBox.setMaximumSize(chooseComboBox.getPreferredSize());
         choosePanel.add(chooseComboBox);
-        choosePanel.add(Box.createVerticalGlue());
+        var spacer = Box.createVerticalGlue();
+        choosePanel.add(spacer);
 
         // Configura bolusPanel
         bolusLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -178,19 +179,23 @@ public class MainGUI {
                     choosePanel.remove(hourComboBox);
                     choosePanel.remove(unitsTextField);
 
+                    choosePanel.remove(spacer);
                     choosePanel.add(bolusLabel);
                     choosePanel.add(bolusComboBox);
                     choosePanel.add(Box.createVerticalGlue());
 
                     // BASAL
-                } else if (selectedOption.equals("UpdateHourlyProfile")) {
-                    System.out.println("UpdateHourlyProfile");
+                } else if (selectedOption.equals("Update Hourly Profile")) {
+                    System.out.println("Update Hourly Profile");
 
                     choosePanel.remove(bolusComboBox);
                     choosePanel.remove(carbTextField);
                     choosePanel.remove(delayMinutesTextField);
-
+                    choosePanel.remove(spacer);
+                    choosePanel.remove(bolusLabel);
                 }
+                choosePanel.revalidate();
+                choosePanel.repaint();
             }
 
         });

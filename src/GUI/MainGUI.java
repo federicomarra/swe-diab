@@ -5,12 +5,14 @@ import handheldTracker.UserInterface;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainGUI {
     private JFrame frame;
     private UserInterface ui;
+    private JPanel mainPanel;
     private JPanel choosePanel;
     private JLabel chooseLabel;
     private JComboBox<String> chooseComboBox;
@@ -40,17 +42,31 @@ public class MainGUI {
         frame = new JFrame("Diabetes Tracker GUI");
 
         // JPanel
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
         choosePanel = new JPanel();
         choosePanel.setLayout(new BoxLayout(choosePanel, BoxLayout.Y_AXIS));
+
         bolusPanel = new JPanel();
         bolusPanel.setLayout(new BoxLayout(bolusPanel, BoxLayout.Y_AXIS));
+
         buttonPanel = new JPanel();
 
         profilePanel = new JPanel();
+        profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.Y_AXIS));
+
         carbPanel = new JPanel();
+        carbPanel.setLayout(new BoxLayout(carbPanel, BoxLayout.Y_AXIS));
+
         delayMinutesPanel = new JPanel();
+        delayMinutesPanel.setLayout(new BoxLayout(delayMinutesPanel, BoxLayout.Y_AXIS));
+
         hourPanel = new JPanel();
+        hourPanel.setLayout(new BoxLayout(hourPanel, BoxLayout.Y_AXIS));
+
         unitsPanel = new JPanel();
+        unitsPanel.setLayout(new BoxLayout(unitsPanel, BoxLayout.Y_AXIS));
 
         /*
          * // Setto i sotto JPanel come righe orizzontali
@@ -133,39 +149,48 @@ public class MainGUI {
          * unitsPanel.add(unitsTextField);
          */
 
+        // Configura mainPanel
         profileLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         profileLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
-        choosePanel.add(profileLabel);
 
-        choosePanel.add(profileComboBox);
-        choosePanel.add(Box.createVerticalGlue());
+        profilePanel.add(profileLabel);
+        profilePanel.add(profileComboBox);
+
+        mainPanel.add(profilePanel);
+        mainPanel.add(Box.createVerticalGlue());
 
         // Configura choosePanel
         chooseLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         chooseLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        choosePanel.add(chooseLabel);
 
+        choosePanel.add(chooseLabel);
         choosePanel.add(chooseComboBox);
+
+        mainPanel.add(choosePanel);
         var spacer = Box.createVerticalGlue();
-        choosePanel.add(spacer);
+        mainPanel.add(spacer);
 
         // Configura bolusPanel
         bolusLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         bolusLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        choosePanel.add(bolusLabel);
 
-        choosePanel.add(bolusComboBox);
-        choosePanel.add(Box.createVerticalGlue());
+        bolusPanel.add(bolusLabel);
+        bolusPanel.add(bolusComboBox);
+
+        mainPanel.add(bolusPanel);
+        mainPanel.add(Box.createVerticalGlue());
 
         // Configura carbPanel
         carbLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         carbLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        bolusPanel.add(carbLabel);
-        bolusPanel.add(carbTextField);
+
+        carbPanel.add(carbLabel);
+        carbPanel.add(carbTextField);
+
+        mainPanel.add(carbPanel);
 
         // Aggiunge choosePanel e bolusPanel al frame
-        frame.add(choosePanel);
-        frame.add(bolusPanel);
+        frame.add(mainPanel);
 
         // Aggiunge executeButton al frame
         buttonPanel.add(executeButton);
@@ -180,13 +205,22 @@ public class MainGUI {
         delayMinutesLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         delayMinutesLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
+        delayMinutesPanel.add(delayMinutesLabel);
+        delayMinutesPanel.add(delayMinutesTextField);
+
         var unitsLabel = new JLabel("Units");
         unitsLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         unitsLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
+        unitsPanel.add(unitsLabel);
+        unitsPanel.add(unitsTextField);
+
         var hourLabel = new JLabel("Hour");
         hourLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         hourLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+
+        hourPanel.add(hourLabel);
+        hourPanel.add(hourComboBox);
 
         // Handle chooseComboBox change event
         chooseComboBox.addActionListener(new ActionListener() {
@@ -197,30 +231,26 @@ public class MainGUI {
                 if (selectedOption.equals("Bolus")) {
                     System.out.println("Bolus");
 
-                    choosePanel.remove(hourLabel);
-                    choosePanel.remove(hourComboBox);
-                    choosePanel.remove(unitsLabel);
-                    choosePanel.remove(unitsTextField);
+                    mainPanel.remove(hourPanel);
+                    mainPanel.remove(unitsPanel);
 
-                    choosePanel.remove(spacer);
-                    choosePanel.add(bolusLabel);
-                    choosePanel.add(bolusComboBox);
-                    // BASAL
-                } else if (selectedOption.equals("Update Hourly Profile")) {
+                    mainPanel.add(bolusPanel);
+                    mainPanel.add(spacer);
+                    mainPanel.add(carbPanel);
+                }
+
+                // BASAL
+                if (selectedOption.equals("Update Hourly Profile")) {
                     System.out.println("Update Hourly Profile");
 
-                    choosePanel.remove(bolusLabel);
-                    choosePanel.remove(bolusComboBox);
-
-                    choosePanel.remove(carbLabel);
-                    choosePanel.remove(carbTextField);
-
-                    choosePanel.remove(delayMinutesLabel);
-                    choosePanel.remove(delayMinutesTextField);
-                    choosePanel.remove(spacer);
+                    mainPanel.remove(bolusPanel);
+                    mainPanel.remove(carbPanel);
+                    mainPanel.remove(delayMinutesPanel);
+                    mainPanel.remove(spacer);
                 }
-                choosePanel.revalidate();
-                choosePanel.repaint();
+
+                mainPanel.revalidate();
+                mainPanel.repaint();
             }
         });
 
@@ -233,37 +263,37 @@ public class MainGUI {
                     case "New Standard Bolus":
                     case "How Many Units":
                         System.out.println("New Standard Bolus");
-                        choosePanel.remove(delayMinutesLabel);
-                        choosePanel.remove(delayMinutesTextField);
-                        choosePanel.remove(unitsLabel);
-                        choosePanel.remove(unitsTextField);
 
-                        choosePanel.add(carbLabel);
-                        choosePanel.add(carbTextField);
+                        mainPanel.remove(delayMinutesPanel);
+                        mainPanel.remove(hourPanel);
+                        mainPanel.remove(unitsPanel);
+
+                        mainPanel.add(carbPanel);
                         break;
                     case "New Extended Bolus":
                         System.out.println("New Extended Bolus");
-                        choosePanel.remove(unitsLabel);
-                        choosePanel.remove(unitsTextField);
 
-                        choosePanel.add(carbLabel);
-                        choosePanel.add(carbTextField);
-                        choosePanel.add(delayMinutesLabel);
-                        choosePanel.add(delayMinutesTextField);
+                        mainPanel.remove(hourPanel);
+                        mainPanel.remove(unitsPanel);
+
+                        mainPanel.add(carbPanel);
+                        mainPanel.add(delayMinutesPanel);
                         break;
                     case "New Pen Bolus":
-                        choosePanel.remove(delayMinutesLabel);
-                        choosePanel.remove(delayMinutesTextField);
+                        System.out.println("New Pen Bolus");
 
-                        choosePanel.add(unitsLabel);
-                        choosePanel.add(unitsTextField);
+                        mainPanel.remove(delayMinutesPanel);
+                        mainPanel.remove(hourPanel);
+                        mainPanel.remove(carbPanel);
+
+                        mainPanel.add(unitsPanel);
                         break;
                     default:
                         // Gestisci altri casi se necessario
                         break;
                 }
-                choosePanel.revalidate();
-                choosePanel.repaint();
+                mainPanel.revalidate();
+                mainPanel.repaint();
             }
         });
 
@@ -275,46 +305,40 @@ public class MainGUI {
                 switch (profileOption) {
                     case "Update Basal Profile":
                         System.out.println("Update Basal Profile");
-                        choosePanel.remove(delayMinutesLabel);
-                        choosePanel.remove(delayMinutesTextField);
-                        choosePanel.remove(unitsLabel);
-                        choosePanel.remove(unitsTextField);
+                        mainPanel.remove(hourPanel);
+                        mainPanel.remove(unitsPanel);
+                        bolusComboBox.setSelectedIndex(0);
+                        chooseComboBox.setSelectedIndex(0);
 
-                        choosePanel.add(hourLabel);
-                        choosePanel.add(hourComboBox);
-                        choosePanel.add(unitsLabel);
-                        choosePanel.add(unitsTextField);
+                        // mainPanel.add(hourPanel);
+                        // mainPanel.add(unitsPanel);
                         break;
                     case "Update Carb Ratio Profile":
                         System.out.println("Update Carb Ratio Profile");
-                        choosePanel.remove(delayMinutesLabel);
-                        choosePanel.remove(delayMinutesTextField);
-                        choosePanel.remove(unitsLabel);
-                        choosePanel.remove(unitsTextField);
+                        mainPanel.remove(delayMinutesPanel);
+                        mainPanel.remove(unitsPanel);
+                        bolusComboBox.setSelectedIndex(0);
+                        chooseComboBox.setSelectedIndex(0);
 
-                        choosePanel.add(hourLabel);
-                        choosePanel.add(hourComboBox);
-                        choosePanel.add(unitsLabel);
-                        choosePanel.add(unitsTextField);
+                        mainPanel.add(hourPanel);
+                        mainPanel.add(unitsPanel);
                         break;
                     case "Update Insulin Sensitivity Profile":
                         System.out.println("Update Insulin Sensitivity Profile");
-                        choosePanel.remove(delayMinutesLabel);
-                        choosePanel.remove(delayMinutesTextField);
-                        choosePanel.remove(unitsLabel);
-                        choosePanel.remove(unitsTextField);
+                        mainPanel.remove(delayMinutesPanel);
+                        mainPanel.remove(unitsPanel);
+                        bolusComboBox.setSelectedIndex(0);
+                        chooseComboBox.setSelectedIndex(0);
 
-                        choosePanel.add(hourLabel);
-                        choosePanel.add(hourComboBox);
-                        choosePanel.add(unitsLabel);
-                        choosePanel.add(unitsTextField);
+                        mainPanel.add(hourPanel);
+                        mainPanel.add(unitsPanel);
                         break;
                     default:
                         // Gestisci altri casi se necessario
                         break;
                 }
-                choosePanel.revalidate();
-                choosePanel.repaint();
+                mainPanel.revalidate();
+                mainPanel.repaint();
             }
         });
 
@@ -378,6 +402,8 @@ public class MainGUI {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
+                    UIManager.put("Panel.background", new Color(34, 34, 34));
+                    UIManager.put("Label.foreground", Color.WHITE);
                     new MainGUI();
                 } catch (Exception e) {
                     e.printStackTrace();

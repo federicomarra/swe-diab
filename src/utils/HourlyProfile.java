@@ -1,6 +1,6 @@
 package utils;
 
-import static utils.ReadCSV.ReadCSV;
+import static utils.ReadCSV.read;
 
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;
@@ -23,7 +23,7 @@ public class HourlyProfile {
                 break;
         }
         path += ".csv";
-        float[] hf = ReadCSV(path);
+        float[] hf = read(path);
         for (int i = 0; i < 24; i++)
             hourlyFactors[i] = new HourlyFactor(hf[i], i);
     }
@@ -51,7 +51,9 @@ public class HourlyProfile {
                 break;
         }
         if (success) {
-            System.out.println("Updating " + modeString + " h=" + hf.getHour() + " from " + String.format("%.2f", hourlyFactors[hf.getHour()].getUnits()).replace(",", ".") + " to " + String.format("%.2f", hf.getUnits()).replace(",", ".") + "...");
+            System.out.println("Updating " + modeString + " h=" + hf.getHour() + " from "
+                    + String.format("%.2f", hourlyFactors[hf.getHour()].getUnits()).replace(",", ".") + " to "
+                    + String.format("%.2f", hf.getUnits()).replace(",", ".") + "...");
             hourlyFactors[hf.getHour()] = hf;
         } else {
             System.out.println("Invalid " + modeString + " value");

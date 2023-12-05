@@ -5,7 +5,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>  
   <groupId>com.swe-diab</groupId>  
   <artifactId>swe-diab</artifactId>  
-  <version>1</version>
+  <version>1.0.0</version>
 
   <build>
     <plugins>
@@ -49,6 +49,30 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
                 <configuration>
                     <mainClass>GUI.MainGUI</mainClass>
                 </configuration>
+            </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+            <archive>
+                <manifest>
+                    <mainClass>GUI.MainGUI</mainClass>
+                </manifest>
+            </archive>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+        </configuration>
+        <executions>
+            <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>single</goal>
+                </goals>
             </execution>
         </executions>
       </plugin>

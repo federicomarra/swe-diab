@@ -95,6 +95,7 @@ public class MainGUI {
         chooseComboBox.setMaximumSize(chooseComboBox.getPreferredSize());
         bolusComboBox.setMaximumSize(bolusComboBox.getPreferredSize());
         delayMinutesTextField.setMaximumSize(delayMinutesTextField.getPreferredSize());
+        profileComboBox.setMaximumSize(profileComboBox.getPreferredSize());
 
         initialize();
     }
@@ -102,7 +103,7 @@ public class MainGUI {
     private void initialize() {
         // Configura il frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(350, 400);
+        frame.setSize(350, 500);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
         // TODO: finire e far funzionare
@@ -132,9 +133,16 @@ public class MainGUI {
          * unitsPanel.add(unitsTextField);
          */
 
+        profileLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        profileLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
+        choosePanel.add(profileLabel);
+
+        choosePanel.add(profileComboBox);
+        choosePanel.add(Box.createVerticalGlue());
+
         // Configura choosePanel
         chooseLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        chooseLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
+        chooseLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         choosePanel.add(chooseLabel);
 
         choosePanel.add(chooseComboBox);
@@ -176,6 +184,10 @@ public class MainGUI {
         unitsLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         unitsLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
+        var hourLabel = new JLabel("Hour");
+        hourLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        hourLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+
         // Handle chooseComboBox change event
         chooseComboBox.addActionListener(new ActionListener() {
             @Override
@@ -185,14 +197,14 @@ public class MainGUI {
                 if (selectedOption.equals("Bolus")) {
                     System.out.println("Bolus");
 
-                    choosePanel.remove(profileComboBox);
+                    choosePanel.remove(hourLabel);
                     choosePanel.remove(hourComboBox);
+                    choosePanel.remove(unitsLabel);
                     choosePanel.remove(unitsTextField);
 
                     choosePanel.remove(spacer);
                     choosePanel.add(bolusLabel);
                     choosePanel.add(bolusComboBox);
-                    choosePanel.add(Box.createVerticalGlue());
                     // BASAL
                 } else if (selectedOption.equals("Update Hourly Profile")) {
                     System.out.println("Update Hourly Profile");
@@ -263,7 +275,9 @@ public class MainGUI {
                 switch (profileOption) {
                     case "Update Basal Profile":
                         System.out.println("Update Basal Profile");
+                        choosePanel.remove(delayMinutesLabel);
                         choosePanel.remove(delayMinutesTextField);
+                        choosePanel.remove(unitsLabel);
                         choosePanel.remove(unitsTextField);
 
                         choosePanel.add(hourLabel);
@@ -273,28 +287,34 @@ public class MainGUI {
                         break;
                     case "Update Carb Ratio Profile":
                         System.out.println("Update Carb Ratio Profile");
+                        choosePanel.remove(delayMinutesLabel);
                         choosePanel.remove(delayMinutesTextField);
+                        choosePanel.remove(unitsLabel);
                         choosePanel.remove(unitsTextField);
 
-                        choosePanel.add(new JLabel("Hour"));
+                        choosePanel.add(hourLabel);
                         choosePanel.add(hourComboBox);
-                        choosePanel.add(new JLabel("Units"));
+                        choosePanel.add(unitsLabel);
                         choosePanel.add(unitsTextField);
                         break;
                     case "Update Insulin Sensitivity Profile":
                         System.out.println("Update Insulin Sensitivity Profile");
+                        choosePanel.remove(delayMinutesLabel);
                         choosePanel.remove(delayMinutesTextField);
+                        choosePanel.remove(unitsLabel);
                         choosePanel.remove(unitsTextField);
 
-                        choosePanel.add(new JLabel("Hour"));
+                        choosePanel.add(hourLabel);
                         choosePanel.add(hourComboBox);
-                        choosePanel.add(new JLabel("Units"));
+                        choosePanel.add(unitsLabel);
                         choosePanel.add(unitsTextField);
                         break;
                     default:
                         // Gestisci altri casi se necessario
                         break;
                 }
+                choosePanel.revalidate();
+                choosePanel.repaint();
             }
         });
 

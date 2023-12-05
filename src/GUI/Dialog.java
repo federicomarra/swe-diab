@@ -7,7 +7,7 @@ public class Dialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JComboBox comboBoxMode;
+    private JComboBox<Integer> comboBoxMode;
     private JTextField textField1;
 
     public Dialog() {

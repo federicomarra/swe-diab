@@ -41,6 +41,15 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
                     <mainClass>MainCLI</mainClass>
                 </configuration>
             </execution>
+            <execution>
+                <id>gui</id>
+                <goals>
+                    <goal>java</goal>
+                </goals>
+                <configuration>
+                    <mainClass>GUI.MainGUI</mainClass>
+                </configuration>
+            </execution>
         </executions>
       </plugin>
     </plugins>

@@ -6,13 +6,19 @@
 
 Unifi Software Engineering project for diabetes management
 
-## How to run
+## How to build
 
 1. Install dependencies with `mvn install -f pom.xml` from the root of the project.
-2. Run `mvn test` to execute all the available tests.
+2. Run `mvn clean test` to execute all the available tests.
 3. Run `mvn exec:java@main` to execute the random values example.
 4. Run `mvn exec:java@cli` to execute the interactive cli program.
 5. Run `mvn exec:java@gui` to execute the interactive gui program.
+6. Run `mvn clean package` to build the jar file.
+
+## Run the packaged GUI
+
+1. Download the packaged jar file from the [releases](<https://github.com/federicomarra/swe-diab/releases>) page.
+2. Run `java -jar swe-diab-1.0.0.jar` to run the gui program.
 
 ## Authors
 

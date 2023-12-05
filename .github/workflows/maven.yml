@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v3
 
@@ -22,15 +24,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-
-  publish-release:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
       - name: Set up Git
         run: git config --global user.email "github-actions@github.com" && git config --global user.name "GitHub Actions"

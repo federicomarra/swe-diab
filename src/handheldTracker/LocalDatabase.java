@@ -117,11 +117,11 @@ public class LocalDatabase extends Database implements Observer {
                 carbUnits = carb / carbRatio.getUnits();
 
             // Round the results to 2 decimal places
-            bd.units = RoundToCent(correctionUnits + carbUnits, "0.01");
-            glycUnits = RoundToCent(glycUnits, "0.01");
-            activeUnits = RoundToCent(activeUnits, "0.01");
-            correctionUnits = RoundToCent(correctionUnits, "0.01");
-            carbUnits = RoundToCent(carbUnits, "0.01");
+            bd.units = roundTo(correctionUnits + carbUnits, 0.01);
+            glycUnits = roundTo(glycUnits, 0.01);
+            activeUnits = roundTo(activeUnits, 0.01);
+            correctionUnits = roundTo(correctionUnits, 0.01);
+            carbUnits = roundTo(carbUnits, 0.01);
 
             if (bd.units > 0) {
                 System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.getGlycemia() + " mg/dL",
@@ -150,6 +150,7 @@ public class LocalDatabase extends Database implements Observer {
                             System.out.print(minutes + "m ");
                         if (seconds > 0)
                             System.out.print(seconds + "s ");
+
                         // TODO: FIX if delaySeconds is 61, it doesn't print 1 minute and 1 second
 
                         System.out.println("to inject " + bd.units + " units" + " at "
@@ -160,7 +161,7 @@ public class LocalDatabase extends Database implements Observer {
 
                     case MANUAL:
                         // Round the units to 0.5
-                        bd.units = RoundToCent(bd.units, "0.5");
+                        bd.units = roundTo(bd.units, 0.5);
                         System.out.println("Manually inject: " + bd.units + " units");
                         break;
 
@@ -223,8 +224,7 @@ public class LocalDatabase extends Database implements Observer {
         return m;
     }
 
-    // FIXME: Replaceable with String.format("%.2f", units)
-    private float RoundToCent(float f, String sensibility) {
+    private float roundTo(float f, double sensibility) {
         BigDecimal n = new BigDecimal(f);
         n = n.setScale(2, RoundingMode.HALF_UP);
         n = n.divide(new BigDecimal(sensibility), 0, RoundingMode.HALF_UP).multiply(new BigDecimal(sensibility));

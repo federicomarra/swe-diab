@@ -9,7 +9,9 @@ Unifi Software Engineering project for diabetes management
 ## How to run
 
 1. Install dependencies with `mvn install -f pom.xml` from the root of the project.
-2. Run `mvn clean test` to execute all the available tests.
+2. Run `mvn test` to execute all the available tests.
+3. Run `mvn exec:java@main` to execute the random values example.
+4. Run `mvn exec:java@cli` to execute the interactive cli program.
 
 ## Authors
 

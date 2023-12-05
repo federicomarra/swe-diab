@@ -18,6 +18,31 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
           <target>11</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+            <execution>
+                <id>main</id>
+                <goals>
+                    <goal>java</goal>
+                </goals>
+                <configuration>
+                    <mainClass>Main</mainClass>
+                </configuration>
+            </execution>
+            <execution>
+                <id>cli</id>
+                <goals>
+                    <goal>java</goal>
+                </goals>
+                <configuration>
+                    <mainClass>MainCLI</mainClass>
+                </configuration>
+            </execution>
+        </executions>
+      </plugin>
     </plugins>
 
     <sourceDirectory>src/</sourceDirectory>

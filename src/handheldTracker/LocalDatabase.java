@@ -51,7 +51,7 @@ public class LocalDatabase extends Database implements Observer {
         }
     }
 
-    public void newBolus(float units, int delaySeconds, BolusMode mode, int carb) {    // delay in seconds
+    public void newBolus(float units, int delaySeconds, BolusMode mode, int carb) { // delay in seconds
         switch (mode) {
             case STANDARD:
                 System.out.println("Mode: Standard Bolus");
@@ -124,9 +124,14 @@ public class LocalDatabase extends Database implements Observer {
             carbUnits = RoundToCent(carbUnits, "0.01");
 
             if (bd.units > 0) {
-                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.getGlycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction" : ""));
-                System.out.printf("%-25s%14s%-18s%n", "Active insulin:", (activeUnits > 0 ? "-" : "") + activeUnits + " units", "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
-                System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
+                System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.getGlycemia() + " mg/dL",
+                        (glycUnits > 0 ? " " + glycUnits + " units" : ""),
+                        (correctionUnits != 0 ? "    correction" : ""));
+                System.out.printf("%-25s%14s%-18s%n", "Active insulin:",
+                        (activeUnits > 0 ? "-" : "") + activeUnits + " units",
+                        "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
+                System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", carb + " g    ",
+                        (carbUnits > 0 ? " " + carbUnits + " units" : ""));
                 System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));
 
                 switch (mode) {
@@ -147,7 +152,8 @@ public class LocalDatabase extends Database implements Observer {
                             System.out.print(seconds + "s ");
                         // TODO: FIX if delaySeconds is 61, it doesn't print 1 minute and 1 second
 
-                        System.out.println("to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                        System.out.println("to inject " + bd.units + " units" + " at "
+                                + time.format(DateTimeFormatter.ofPattern("HH:mm")));
                         Thread.sleep(delay.toMillis());
                         manager.verifyAndInject(bd.units);
                         break;
@@ -157,13 +163,18 @@ public class LocalDatabase extends Database implements Observer {
                         bd.units = RoundToCent(bd.units, "0.5");
                         System.out.println("Manually inject: " + bd.units + " units");
                         break;
+
                     // FIXME: Add pen case
+                    case PEN:
+                        break;
                 }
                 addBolus(bd);
             } else if (bd.units == 0) {
-                System.out.println("You don't need to inject insulin, you have a glycemia of: " + lm.getGlycemia() + " mg/dL");
+                System.out.println(
+                        "You don't need to inject insulin, you have a glycemia of: " + lm.getGlycemia() + " mg/dL");
             } else if (bd.units < 0) {
-                System.out.println("You don't need to inject insulin, you have " + activeUnits + " units of active insulin");
+                System.out.println(
+                        "You don't need to inject insulin, you have " + activeUnits + " units of active insulin");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,11 +182,10 @@ public class LocalDatabase extends Database implements Observer {
         }
     }
 
-
     private void backup() throws InternetException {
         try {
             // FIXME: update() to be implemented into Database.java
-            //backupDb.update(this.measurements);
+            // backupDb.update(this.measurements);
         } catch (Exception e) {
             e.printStackTrace();
         }

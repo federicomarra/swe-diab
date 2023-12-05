@@ -18,12 +18,14 @@ public class MainCLI {
                 mode = (int) safeInput("mode", 0, 4, 1f);
             } else if (mode == 2) {
                 System.out.print("Select profile type: ");
-                System.out.println("0. to Exit, 1. Basal Profile, 2. Carb Ratio Profile, 3. Insulin Sensitivity Profile");
+                System.out
+                        .println("0. to Exit, 1. Basal Profile, 2. Carb Ratio Profile, 3. Insulin Sensitivity Profile");
                 mode = (int) safeInput("mode", 0, 3, 1f);
                 mode += (mode == 0 ? 0 : 4);
             }
             if (mode >= 1 && mode <= 3) {
                 int carb = (int) safeInput("carbohydrates", 0, 150, 1f);
+
                 switch (mode) {
                     case 1:
                         ui.newStandardBolus(carb);
@@ -42,16 +44,20 @@ public class MainCLI {
             } else if (mode >= 5 && mode <= 7) {
                 int hour = (int) safeInput("hour", 0, 24, 1f);
                 float units;
+
                 switch (mode) {
-                    case 5: // Update Basal Profile
+                    // Update Basal Profile
+                    case 5:
                         units = safeInput("units", 0, 5, 0.05f);
                         ui.updateBasalProfile(units, hour);
                         break;
-                    case 6: // Update Carb Ratio Profile
+                    // Update Carb Ratio Profile
+                    case 6:
                         units = safeInput("units", 1, 15, 1f);
                         ui.updateCarbRatioProfile(units, hour);
                         break;
-                    case 7: // Update Insulin Sensitivity Profile
+                    // Update Insulin Sensitivity Profile
+                    case 7:
                         units = safeInput("units", 20, 50, 1f);
                         ui.updateInsulinSensitivityProfile(units, hour);
                         break;
@@ -71,17 +77,20 @@ public class MainCLI {
             if (scanner.hasNextFloat()) {
                 value = scanner.nextFloat();
                 if (value < min || value > max || value % sensitivity != 0) {
-                    System.out.print("Insert a number between " + min + " and " + max + (sensitivity == 1 ? "" : " with a sensitivity of " + sensitivity) + ". Try again: ");
+                    System.out.print("Insert a number between " + min + " and " + max
+                            + (sensitivity == 1 ? "" : " with a sensitivity of " + sensitivity) + ". Try again: ");
                 } else {
                     break;
                 }
             } else {
                 System.out.println("Invalid input. Please enter a valid float number.");
-                scanner.next(); // Consume invalid input
+                // Consume invalid input
+                scanner.next();
                 System.out.print("Insert " + nameVar + ": ");
             }
         }
+
+        scanner.close();
         return value;
     }
 }
-

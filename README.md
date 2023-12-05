@@ -18,7 +18,7 @@ Unifi Software Engineering project for diabetes management
 ## Run the packaged GUI
 
 1. Download the `swe-diab.jar` file from the [releases](<https://github.com/federicomarra/swe-diab/releases>) page.
-1. Run `java -jar swe-diab.jar` to run the gui program.
+1. Run `java -jar swe-diab.jar` to start the gui program.
 
 ## Authors
 

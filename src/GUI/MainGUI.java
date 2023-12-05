@@ -119,7 +119,6 @@ public class MainGUI {
     private void initialize() {
         // Configura il frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(350, 500);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
         // TODO: finire e far funzionare
@@ -189,17 +188,9 @@ public class MainGUI {
 
         mainPanel.add(carbPanel);
 
-        // Aggiunge choosePanel e bolusPanel al frame
-        frame.add(mainPanel);
-
         // Aggiunge executeButton al frame
         buttonPanel.add(executeButton);
         buttonPanel.setBorder(new EmptyBorder(20, 0, 30, 0));
-
-        frame.add(Box.createVerticalGlue());
-        frame.add(buttonPanel);
-
-        frame.setVisible(true);
 
         var delayMinutesLabel = new JLabel("Delay Minutes");
         delayMinutesLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -221,6 +212,13 @@ public class MainGUI {
 
         hourPanel.add(hourLabel);
         hourPanel.add(hourComboBox);
+
+        frame.add(mainPanel);
+        frame.add(Box.createVerticalGlue());
+        frame.add(buttonPanel);
+
+        frame.setVisible(true);
+        frame.setSize(350, 500);
 
         // Handle chooseComboBox change event
         chooseComboBox.addActionListener(new ActionListener() {

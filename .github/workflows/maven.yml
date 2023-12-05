@@ -23,8 +23,18 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Upload Executable
-        uses: actions/upload-artifact@v2
-        with:
-          name: swe-diab.jar
-          path: ./target/swe-diab-1.0.0-jar-with-dependencies.jar
+  publish-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: git config --global user.email "github-actions@github.com" && git config --global user.name "GitHub Actions"
+
+      - name: Create Release
+        run: gh release create v1.0.0 ./target/swe-diab-1.0.0-jar-with-dependencies.jar -t "v1.0.0" -n "Version 1.0.0"
+
+      - name: Upload Executable as Release Asset
+        run: gh release upload v1.0.0 ./target/swe-diab-1.0.0-jar-with-dependencies.jar --clobber

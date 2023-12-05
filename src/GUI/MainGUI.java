@@ -3,6 +3,8 @@ package GUI;
 import handheldTracker.UserInterface;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,6 +17,7 @@ public class MainGUI {
     private JPanel bolusPanel;
     private JLabel bolusLabel;
     private JComboBox<String> bolusComboBox;
+    private JPanel buttonPanel;
     private JPanel profilePanel;
     private JLabel profileLabel;
     private JComboBox<String> profileComboBox;
@@ -34,11 +37,15 @@ public class MainGUI {
 
     public MainGUI() {
         ui = new UserInterface();
-        frame = new JFrame("Your GUI Title");
+        frame = new JFrame("Diabetes Tracker GUI");
 
         // JPanel
         choosePanel = new JPanel();
+        choosePanel.setLayout(new BoxLayout(choosePanel, BoxLayout.Y_AXIS));
         bolusPanel = new JPanel();
+        bolusPanel.setLayout(new BoxLayout(bolusPanel, BoxLayout.Y_AXIS));
+        buttonPanel = new JPanel();
+
         profilePanel = new JPanel();
         carbPanel = new JPanel();
         delayMinutesPanel = new JPanel();
@@ -46,34 +53,39 @@ public class MainGUI {
         unitsPanel = new JPanel();
 
         /*
-        // Setto i sotto JPanel come righe orizzontali
-        choosePanel.setLayout(new BoxLayout(choosePanel, BoxLayout.X_AXIS));
-        bolusPanel.setLayout(new BoxLayout(bolusPanel, BoxLayout.X_AXIS));
-        profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.X_AXIS));
-        carbPanel.setLayout(new BoxLayout(carbPanel, BoxLayout.X_AXIS, ));
-        delayMinutesPanel.setLayout(new BoxLayout(delayMinutesPanel, BoxLayout.X_AXIS));
-        hourPanel.setLayout(new BoxLayout(hourPanel, BoxLayout.X_AXIS));
-        unitsPanel.setLayout(new BoxLayout(unitsPanel, BoxLayout.X_AXIS));
+         * // Setto i sotto JPanel come righe orizzontali
+         * choosePanel.setLayout(new BoxLayout(choosePanel, BoxLayout.X_AXIS));
+         * bolusPanel.setLayout(new BoxLayout(bolusPanel, BoxLayout.X_AXIS));
+         * profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.X_AXIS));
+         * carbPanel.setLayout(new BoxLayout(carbPanel, BoxLayout.X_AXIS, ));
+         * delayMinutesPanel.setLayout(new BoxLayout(delayMinutesPanel,
+         * BoxLayout.X_AXIS));
+         * hourPanel.setLayout(new BoxLayout(hourPanel, BoxLayout.X_AXIS));
+         * unitsPanel.setLayout(new BoxLayout(unitsPanel, BoxLayout.X_AXIS));
          */
 
         // JComboBox
-        chooseComboBox = new JComboBox<>(new String[]{"Bolus", "Update Hourly Profile"});
-        bolusComboBox = new JComboBox<>(new String[]{"New Standard Bolus", "New Extended Bolus", "How Many Units", "New Pen Bolus"});
-        profileComboBox = new JComboBox<>(new String[]{"Update Basal Profile", "Update Carb Ratio Profile", "Update Insulin Sensitivity Profile"});
+        chooseComboBox = new JComboBox<String>(new String[] { "Bolus", "Update Hourly Profile" });
+        bolusComboBox = new JComboBox<String>(
+                new String[] { "New Standard Bolus", "New Extended Bolus", "How Many Units", "New Pen Bolus" });
+        profileComboBox = new JComboBox<String>(new String[] { "Update Basal Profile", "Update Carb Ratio Profile",
+                "Update Insulin Sensitivity Profile" });
         executeButton = new JButton("Execute");
 
         // JLabel
-        chooseLabel = new JLabel("Choose Option:");
-        bolusLabel = new JLabel("Bolus Options:");
-        profileLabel = new JLabel("Profile Options:");
-        carbLabel = new JLabel("Carb Value:");
-        hourLabel = new JLabel("Hour:");
-        unitsLabel = new JLabel("Units:");
+        chooseLabel = new JLabel("Choose Option");
+        bolusLabel = new JLabel("Bolus Options");
+        profileLabel = new JLabel("Profile Options");
+        carbLabel = new JLabel("Carb Value");
+        hourLabel = new JLabel("Hour");
+        unitsLabel = new JLabel("Units");
 
         // JTextField
-        carbTextField = new JTextField(10);
+        carbTextField = new JTextField(20);
         delayMinutesTextField = new JTextField(10);
-        hourComboBox = new JComboBox<>(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24});
+        hourComboBox = new JComboBox<Integer>(
+                new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                        19, 20, 21, 22, 23, 24 });
         unitsTextField = new JTextField(10);
 
         initialize();
@@ -82,52 +94,76 @@ public class MainGUI {
     private void initialize() {
         // Configura il frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(350, 400);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
         // TODO: finire e far funzionare
 
         /*
-        // Aggiunge una progress bar
-        JProgressBar progressBar = new JProgressBar();
-        progressBar.setValue(0);
-        progressBar.setStringPainted(true);
-        frame.add(progressBar);
-        frame.add(Box.createVerticalStrut(10)); // Aggiungi uno spazio vuoto tra i componenti
+         * // Aggiunge una progress bar
+         * JProgressBar progressBar = new JProgressBar();
+         * progressBar.setValue(0);
+         * progressBar.setStringPainted(true);
+         * frame.add(progressBar);
+         * frame.add(Box.createVerticalStrut(10)); // Aggiungi uno spazio vuoto tra i
+         * componenti
          */
 
         /*
-        // Aggiungo le varie componenti ai JPanel
-        profilePanel.add(profileLabel);
-        profilePanel.add(profileComboBox);
-
-        delayMinutesPanel.add(delayMinutesLabel);
-        delayMinutesPanel.add(delayMinutesTextField);
-
-        hourPanel.add(hourLabel);
-        hourPanel.add(hourComboBox);
-
-        unitsPanel.add(unitsLabel);
-        unitsPanel.add(unitsTextField);
-        */
+         * // Aggiungo le varie componenti ai JPanel
+         * profilePanel.add(profileLabel);
+         * profilePanel.add(profileComboBox);
+         * 
+         * delayMinutesPanel.add(delayMinutesLabel);
+         * delayMinutesPanel.add(delayMinutesTextField);
+         * 
+         * hourPanel.add(hourLabel);
+         * hourPanel.add(hourComboBox);
+         * 
+         * unitsPanel.add(unitsLabel);
+         * unitsPanel.add(unitsTextField);
+         */
 
         // Configura i choosePanel
+        // choosePanel.add(Box.createVerticalGlue());
+        chooseLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        chooseLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
         choosePanel.add(chooseLabel);
+
+        chooseComboBox.setMaximumSize(chooseComboBox.getPreferredSize());
         choosePanel.add(chooseComboBox);
+        choosePanel.add(Box.createVerticalGlue());
+
         // Configura bolusPanel
-        bolusPanel.add(bolusLabel);
-        bolusPanel.add(bolusComboBox);
+        bolusLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        bolusLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        choosePanel.add(bolusLabel);
+
+        bolusComboBox.setMaximumSize(bolusComboBox.getPreferredSize());
+        choosePanel.add(bolusComboBox);
+        choosePanel.add(Box.createVerticalGlue());
+
         // Configura carbPanel
+        carbLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        carbLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         bolusPanel.add(carbLabel);
+
+        carbTextField.setMaximumSize(carbTextField.getPreferredSize());
         bolusPanel.add(carbTextField);
+
         // Aggiunge choosePanel al frame
         frame.add(choosePanel);
+        frame.add(bolusPanel);
+
         // Aggiunge carbPanel a bolusPanel
         // bolusPanel.add(carbPanel);
         // Aggiunge bolusPanel al frame
-        frame.add(bolusPanel);
         // Aggiunge executeButton al frame
-        frame.add(executeButton);
+        buttonPanel.add(executeButton);
+        buttonPanel.setBorder(new EmptyBorder(20, 0, 30, 0));
+
+        frame.add(Box.createVerticalGlue());
+        frame.add(buttonPanel);
 
         // Handle chooseOptionComboBox
         chooseComboBox.addActionListener(new ActionListener() {
@@ -144,6 +180,7 @@ public class MainGUI {
 
                     choosePanel.add(bolusLabel);
                     choosePanel.add(bolusComboBox);
+                    choosePanel.add(Box.createVerticalGlue());
 
                     // BASAL
                 } else if (selectedOption.equals("UpdateHourlyProfile")) {
@@ -236,10 +273,10 @@ public class MainGUI {
         frame.update(frame.getGraphics());
 
         /*
-        // Aggiungi il pannello al frame
-        frame.getContentPane().add(choosePanel);
-        */
-        
+         * // Aggiungi il pannello al frame
+         * frame.getContentPane().add(choosePanel);
+         */
+
         // Rendi il frame visibile
         frame.setVisible(true);
 

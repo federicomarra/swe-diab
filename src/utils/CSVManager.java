@@ -112,7 +112,11 @@ public interface CSVManager {
     }
 
     static void write(String path, HourlyFactor hf) {
-
+        try {
+            Files.write(Paths.get(path), (hf.getHour() + "," + hf.getUnits() + "\n").getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static HistoryEntry[] readHistoryEntry() {

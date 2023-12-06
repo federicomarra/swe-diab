@@ -105,11 +105,14 @@ public class MainGUI {
 
         // JTextField
         carbTextField = new JTextField(10);
+        carbTextField.setText("0");
         delayMinutesTextField = new JTextField(10);
+        delayMinutesTextField.setText("1");
         hourComboBox = new JComboBox<Integer>(
                 new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
                         19, 20, 21, 22, 23, 24 });
         unitsTextField = new JTextField(10);
+        unitsTextField.setText("0");
 
         carbTextField.setMaximumSize(carbTextField.getPreferredSize());
         delayMinutesTextField.setMaximumSize(delayMinutesTextField.getPreferredSize());
@@ -411,18 +414,68 @@ public class MainGUI {
         // Chiama i metodi appropriati di UserInterface in base all'opzione selezionata
         switch (bolusOption) {
             case "New Standard Bolus":
-                ui.newStandardBolus(Integer.parseInt(carbTextField.getText()));
+                if (Float.parseFloat(carbTextField.getText()) >= 0
+                        && Float.parseFloat(carbTextField.getText()) <= 150) {
+                    ui.newStandardBolus(Integer.parseInt(carbTextField.getText()));
+                    carbTextField.setText("0");
+                    break;
+                }
+
+                JOptionPane.showMessageDialog(frame, "Wrong bolus value, should be between 1 and 150.", "Bolus",
+                        JOptionPane.ERROR_MESSAGE);
+                carbTextField.setText("0");
+
                 break;
             case "New Extended Bolus":
-                ui.newExtendedBolus(Integer.parseInt(carbTextField.getText()),
-                        Integer.parseInt(delayMinutesTextField.getText()));
+                if (Float.parseFloat(carbTextField.getText()) >= 0
+                        && Float.parseFloat(carbTextField.getText()) <= 150
+                        && Integer
+                                .parseInt(delayMinutesTextField.getText()) >= 1
+                        && Integer
+                                .parseInt(delayMinutesTextField.getText()) <= 60) {
+                    ui.newExtendedBolus(Integer.parseInt(carbTextField.getText()),
+                            Integer.parseInt(delayMinutesTextField.getText()));
+                    carbTextField.setText("0");
+                    delayMinutesTextField.setText("1");
+                    break;
+                }
+
+                if (Integer.parseInt(delayMinutesTextField.getText()) < 1
+                        || Integer.parseInt(delayMinutesTextField.getText()) > 60) {
+                    JOptionPane.showMessageDialog(frame, "Wrong delay value, should be between 1 and 60 minutes.",
+                            "Delay",
+                            JOptionPane.ERROR_MESSAGE);
+                    delayMinutesTextField.setText("1");
+                    break;
+                }
+
+                JOptionPane.showMessageDialog(frame, "Wrong bolus value, should be between 1 and 150.", "Bolus",
+                        JOptionPane.ERROR_MESSAGE);
+                carbTextField.setText("0");
+                delayMinutesTextField.setText("1");
                 break;
             case "How Many Units":
-                ui.howManyUnits(Integer.parseInt(carbTextField.getText()));
-                break;
+                if (Float.parseFloat(carbTextField.getText()) >= 0
+                        && Float.parseFloat(carbTextField.getText()) <= 150) {
+                    ui.howManyUnits(Integer.parseInt(carbTextField.getText()));
+                    carbTextField.setText("0");
+                    break;
+                }
+
+                JOptionPane.showMessageDialog(frame, "Wrong bolus value, should be between 1 and 150.", "Bolus",
+                        JOptionPane.ERROR_MESSAGE);
+                carbTextField.setText("0");
             case "New Pen Bolus":
-                ui.newPenBolus(Float.parseFloat(unitsTextField.getText()));
-                break;
+                if (Float.parseFloat(unitsTextField.getText()) >= 0
+                        && Float.parseFloat(unitsTextField.getText()) <= 15) {
+                    ui.newPenBolus(Float.parseFloat(unitsTextField.getText()));
+                    unitsTextField.setText("0");
+                    break;
+                }
+
+                JOptionPane.showMessageDialog(frame, "Wrong units value, should be between 0 and 15.", "Units",
+                        JOptionPane.ERROR_MESSAGE);
+                unitsTextField.setText("0");
         }
     }
 
@@ -503,6 +556,8 @@ public class MainGUI {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
+                    UIManager.put("OptionPane.background", new Color(34, 34, 34));
+                    UIManager.put("OptionPane.messageForeground", Color.WHITE);
                     UIManager.put("Panel.background", new Color(34, 34, 34));
                     UIManager.put("Label.foreground", Color.WHITE);
                     new MainGUI();

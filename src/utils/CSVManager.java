@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -156,6 +157,20 @@ public interface CSVManager {
             Files.write(Paths.get(path),
                     (he.getTime() + "," + he.getGlycemia() + "," + he.getUnits() + "\n").getBytes(),
                     StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void backupProfiles() {
+        try {
+            Files.copy(Paths.get("csv/basalProfile.csv"), Paths.get("csv/backupBasalProfile.csv"),
+                    StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Paths.get("csv/carbRatio.csv"), Paths.get("csv/backupCarbRatio.csv"),
+                    StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Paths.get("csv/insulinSensitivity.csv"), Paths.get("csv/backupInsulinSensitivity.csv"),
+                    StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Profiles backed up successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }

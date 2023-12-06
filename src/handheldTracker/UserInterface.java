@@ -18,6 +18,10 @@ public class UserInterface {
         return CSVManager.readHistoryEntry();
     }
 
+    public void backupProfiles() {
+        CSVManager.backupProfiles();
+    }
+
     public void newStandardBolus(int carb) {
         db.newBolus(0, 0, BolusMode.STANDARD, carb);
     }

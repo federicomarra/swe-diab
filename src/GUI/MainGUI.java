@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -37,6 +38,10 @@ public class MainGUI {
     private JLabel unitsLabel;
     private JTextField unitsTextField;
     private JButton executeButton;
+    private JPanel basalProfileCsv;
+    private JPanel carbRatioProfileCsv;
+    private JPanel insulinSensitivityProfileCsv;
+    private Component horizontalSpacer;
 
     public MainGUI() {
         ui = new UserInterface();
@@ -152,26 +157,24 @@ public class MainGUI {
          * unitsPanel.add(unitsTextField);
          */
 
-        // Configura mainPanel
-        profileLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        profileLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
-
-        profilePanel.add(profileLabel);
-        profilePanel.add(profileComboBox);
-
-        mainPanel.add(profilePanel);
-        mainPanel.add(Box.createVerticalGlue());
-
         // Configura choosePanel
         chooseLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        chooseLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        chooseLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
 
         choosePanel.add(chooseLabel);
         choosePanel.add(chooseComboBox);
 
+        mainPanel.add(Box.createVerticalGlue());
         mainPanel.add(choosePanel);
         var spacer = Box.createVerticalGlue();
         mainPanel.add(spacer);
+
+        // Configura mainPanel
+        profileLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        profileLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
+
+        profilePanel.add(profileLabel);
+        profilePanel.add(profileComboBox);
 
         // Configura bolusPanel
         bolusLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -226,25 +229,28 @@ public class MainGUI {
 
         // Create a Jpanel that contains the rows of db.basalProfile
         var basalProfile = ui.getDb().basalProfile;
-        var basalProfileCsv = createCsvList(basalProfile, "Basal Profile");
+        basalProfileCsv = createCsvList(basalProfile, "Basal Profile");
 
         // Create a Jpanel that contains the rows of db.carbRatioProfile
         var carbRatioProfile = ui.getDb().carbRatioProfile;
-        var carbRatioProfileCsv = createCsvList(carbRatioProfile, "Carb Ratio Profile");
+        carbRatioProfileCsv = createCsvList(carbRatioProfile, "Carb Ratio Profile");
 
         // Create a Jpanel that contains the rows of db.insulinSensitivityProfile
         var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
-        var insulinSensitivityProfileCsv = createCsvList(insulinSensitivity, "Insulin Sensitivity Profile");
+        insulinSensitivityProfileCsv = createCsvList(insulinSensitivity, "Insulin Sensitivity Profile");
 
         // Aggiunge i JPanel laterali al frame principale
         frame.add(mainAndButtonPanel);
         frame.add(Box.createHorizontalGlue());
-        frame.add(basalProfileCsv);
-        var horizontalSpacer = Box.createHorizontalGlue();
-        frame.add(horizontalSpacer);
+        // frame.add(basalProfileCsv);
+
+        horizontalSpacer = Box.createHorizontalGlue();
 
         frame.setVisible(true);
         frame.setSize(550, 600);
+
+        var hourSpacer = Box.createVerticalGlue();
+        var unitSpacer = Box.createVerticalGlue();
 
         // Handle chooseComboBox change event
         chooseComboBox.addActionListener(new ActionListener() {
@@ -255,9 +261,18 @@ public class MainGUI {
                 if (selectedOption.equals("Bolus")) {
                     System.out.println("Bolus");
 
+                    mainPanel.remove(hourSpacer);
                     mainPanel.remove(hourPanel);
+                    mainPanel.remove(unitSpacer);
                     mainPanel.remove(unitsPanel);
+                    mainPanel.remove(profilePanel);
 
+                    frame.remove(basalProfileCsv);
+                    frame.remove(carbRatioProfileCsv);
+                    frame.remove(insulinSensitivityProfileCsv);
+                    frame.remove(horizontalSpacer);
+
+                    mainPanel.add(spacer);
                     mainPanel.add(bolusPanel);
                     mainPanel.add(spacer);
                     mainPanel.add(carbPanel);
@@ -271,12 +286,22 @@ public class MainGUI {
                     mainPanel.remove(carbPanel);
                     mainPanel.remove(delayMinutesPanel);
                     mainPanel.remove(spacer);
-                }
 
-                mainPanel.revalidate();
-                mainPanel.repaint();
+                    frame.add(basalProfileCsv);
+                    frame.add(horizontalSpacer);
+
+                    mainPanel.add(profilePanel);
+                    mainPanel.add(hourSpacer);
+                    mainPanel.add(hourPanel);
+                    mainPanel.add(unitSpacer);
+                    mainPanel.add(unitsPanel);
+                }
+                frame.revalidate();
+                frame.repaint();
             }
         });
+
+        var basalProfileSpacer = Box.createVerticalGlue();
 
         // Handle bolusComboBox change event
         bolusComboBox.addActionListener(new ActionListener() {
@@ -291,6 +316,7 @@ public class MainGUI {
                         mainPanel.remove(delayMinutesPanel);
                         mainPanel.remove(hourPanel);
                         mainPanel.remove(unitsPanel);
+                        mainPanel.remove(basalProfileSpacer);
 
                         mainPanel.add(carbPanel);
                         break;
@@ -301,6 +327,7 @@ public class MainGUI {
                         mainPanel.remove(unitsPanel);
 
                         mainPanel.add(carbPanel);
+                        mainPanel.add(basalProfileSpacer);
                         mainPanel.add(delayMinutesPanel);
                         break;
                     case "New Pen Bolus":
@@ -309,6 +336,7 @@ public class MainGUI {
                         mainPanel.remove(delayMinutesPanel);
                         mainPanel.remove(hourPanel);
                         mainPanel.remove(carbPanel);
+                        mainPanel.remove(basalProfileSpacer);
 
                         mainPanel.add(unitsPanel);
                         break;
@@ -316,8 +344,8 @@ public class MainGUI {
                         // Gestisci altri casi se necessario
                         break;
                 }
-                mainPanel.revalidate();
-                mainPanel.repaint();
+                frame.revalidate();
+                frame.repaint();
             }
         });
 
@@ -329,10 +357,6 @@ public class MainGUI {
                 switch (profileOption) {
                     case "Update Basal Profile":
                         System.out.println("Update Basal Profile");
-                        mainPanel.remove(hourPanel);
-                        mainPanel.remove(unitsPanel);
-                        bolusComboBox.setSelectedIndex(0);
-                        chooseComboBox.setSelectedIndex(0);
 
                         frame.remove(carbRatioProfileCsv);
                         frame.remove(insulinSensitivityProfileCsv);
@@ -342,10 +366,6 @@ public class MainGUI {
                         break;
                     case "Update Carb Ratio Profile":
                         System.out.println("Update Carb Ratio Profile");
-                        mainPanel.remove(delayMinutesPanel);
-                        mainPanel.remove(unitsPanel);
-                        bolusComboBox.setSelectedIndex(0);
-                        chooseComboBox.setSelectedIndex(0);
 
                         frame.remove(basalProfileCsv);
                         frame.remove(insulinSensitivityProfileCsv);
@@ -355,10 +375,6 @@ public class MainGUI {
                         break;
                     case "Update Insulin Sensitivity Profile":
                         System.out.println("Update Insulin Sensitivity Profile");
-                        mainPanel.remove(delayMinutesPanel);
-                        mainPanel.remove(unitsPanel);
-                        bolusComboBox.setSelectedIndex(0);
-                        chooseComboBox.setSelectedIndex(0);
 
                         frame.remove(basalProfileCsv);
                         frame.remove(carbRatioProfileCsv);
@@ -419,15 +435,41 @@ public class MainGUI {
         // selezionata
         switch (profileOption) {
             case "Update Basal Profile":
+                frame.remove(horizontalSpacer);
+                frame.remove(basalProfileCsv);
+
                 ui.updateBasalProfile(units, hour);
+                var basalProfile = ui.getDb().basalProfile;
+                basalProfileCsv = createCsvList(basalProfile, "Basal Profile");
+
+                frame.add(basalProfileCsv);
+                frame.add(horizontalSpacer);
                 break;
             case "Update Carb Ratio Profile":
+                frame.remove(horizontalSpacer);
+                frame.remove(carbRatioProfileCsv);
+
                 ui.updateCarbRatioProfile(units, hour);
+                var carbRatioProfile = ui.getDb().carbRatioProfile;
+                carbRatioProfileCsv = createCsvList(carbRatioProfile, "Carb Ratio Profile");
+
+                frame.add(carbRatioProfileCsv);
+                frame.add(horizontalSpacer);
                 break;
             case "Update Insulin Sensitivity Profile":
+                frame.remove(horizontalSpacer);
+                frame.remove(insulinSensitivityProfileCsv);
+
                 ui.updateInsulinSensitivityProfile(units, hour);
+                var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
+                insulinSensitivityProfileCsv = createCsvList(insulinSensitivity, "Insulin Sensitivity Profile");
+
+                frame.add(insulinSensitivityProfileCsv);
+                frame.add(horizontalSpacer);
                 break;
         }
+        frame.revalidate();
+        frame.repaint();
     }
 
     private JPanel createCsvList(HourlyProfile profile, String title) {

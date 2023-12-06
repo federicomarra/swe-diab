@@ -80,7 +80,7 @@ public class MainCLI {
                     System.out.print("Insert a number between " + min + " and " + max
                             + (sensitivity == 1 ? "" : " with a sensitivity of " + sensitivity) + ". Try again: ");
                 } else {
-                    break;
+                    return value;
                 }
             } else {
                 System.out.println("Invalid input. Please enter a valid float number.");
@@ -90,7 +90,5 @@ public class MainCLI {
             }
         }
 
-        scanner.close();
-        return value;
     }
 }

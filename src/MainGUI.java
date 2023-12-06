@@ -93,11 +93,11 @@ public class MainGUI {
          */
 
         // JComboBox
-        chooseComboBox = new JComboBox<String>(new String[] { "Bolus", "Update Hourly Profile" });
+        chooseComboBox = new JComboBox<String>(new String[]{"Bolus", "Update Hourly Profile"});
         bolusComboBox = new JComboBox<String>(
-                new String[] { "New Standard Bolus", "New Extended Bolus", "How Many Units", "New Pen Bolus" });
-        profileComboBox = new JComboBox<String>(new String[] { "Update Basal Profile", "Update Carb Ratio Profile",
-                "Update Insulin Sensitivity Profile" });
+                new String[]{"New Standard Bolus", "New Extended Bolus", "How Many Units", "New Pen Bolus"});
+        profileComboBox = new JComboBox<String>(new String[]{"Update Basal Profile", "Update Carb Ratio Profile",
+                "Update Insulin Sensitivity Profile"});
         executeButton = new JButton("Execute");
         backupButton = new JButton("Backup");
 
@@ -115,8 +115,8 @@ public class MainGUI {
         delayMinutesTextField = new JTextField(10);
         delayMinutesTextField.setText("1");
         hourComboBox = new JComboBox<Integer>(
-                new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-                        19, 20, 21, 22, 23, 24 });
+                new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                        19, 20, 21, 22, 23, 24});
         unitsTextField = new JTextField(10);
         unitsTextField.setText("0");
 
@@ -151,13 +151,13 @@ public class MainGUI {
          * // Aggiungo le varie componenti ai JPanel
          * profilePanel.add(profileLabel);
          * profilePanel.add(profileComboBox);
-         * 
+         *
          * delayMinutesPanel.add(delayMinutesLabel);
          * delayMinutesPanel.add(delayMinutesTextField);
-         * 
+         *
          * hourPanel.add(hourLabel);
          * hourPanel.add(hourComboBox);
-         * 
+         *
          * unitsPanel.add(unitsLabel);
          * unitsPanel.add(unitsTextField);
          */
@@ -447,7 +447,7 @@ public class MainGUI {
                     break;
                 }
 
-                JOptionPane.showMessageDialog(frame, "Wrong bolus value, should be between 1 and 150.", "Bolus",
+                JOptionPane.showMessageDialog(frame, "Wrong bolus value, it should be between 1 and 150.", "Bolus",
                         JOptionPane.ERROR_MESSAGE);
                 carbTextField.setText("0");
 
@@ -456,9 +456,9 @@ public class MainGUI {
                 if (Float.parseFloat(carbTextField.getText()) >= 0
                         && Float.parseFloat(carbTextField.getText()) <= 150
                         && Integer
-                                .parseInt(delayMinutesTextField.getText()) >= 1
+                        .parseInt(delayMinutesTextField.getText()) >= 1
                         && Integer
-                                .parseInt(delayMinutesTextField.getText()) <= 60) {
+                        .parseInt(delayMinutesTextField.getText()) <= 60) {
                     ui.newExtendedBolus(Integer.parseInt(carbTextField.getText()),
                             Integer.parseInt(delayMinutesTextField.getText()));
                     carbTextField.setText("0");
@@ -468,14 +468,14 @@ public class MainGUI {
 
                 if (Integer.parseInt(delayMinutesTextField.getText()) < 1
                         || Integer.parseInt(delayMinutesTextField.getText()) > 60) {
-                    JOptionPane.showMessageDialog(frame, "Wrong delay value, should be between 1 and 60 minutes.",
+                    JOptionPane.showMessageDialog(frame, "Wrong delay value, it should be between 1 and 60 minutes.",
                             "Delay",
                             JOptionPane.ERROR_MESSAGE);
                     delayMinutesTextField.setText("1");
                     break;
                 }
 
-                JOptionPane.showMessageDialog(frame, "Wrong bolus value, should be between 1 and 150.", "Bolus",
+                JOptionPane.showMessageDialog(frame, "Wrong bolus value, it should be between 1 and 150.", "Bolus",
                         JOptionPane.ERROR_MESSAGE);
                 carbTextField.setText("0");
                 delayMinutesTextField.setText("1");
@@ -488,7 +488,7 @@ public class MainGUI {
                     break;
                 }
 
-                JOptionPane.showMessageDialog(frame, "Wrong bolus value, should be between 1 and 150.", "Bolus",
+                JOptionPane.showMessageDialog(frame, "Wrong bolus value, it should be between 1 and 150.", "Bolus",
                         JOptionPane.ERROR_MESSAGE);
                 carbTextField.setText("0");
             case "New Pen Bolus":
@@ -499,7 +499,7 @@ public class MainGUI {
                     break;
                 }
 
-                JOptionPane.showMessageDialog(frame, "Wrong units value, should be between 0 and 15.", "Units",
+                JOptionPane.showMessageDialog(frame, "Wrong units value, it should be between 0 and 15.", "Units",
                         JOptionPane.ERROR_MESSAGE);
                 unitsTextField.setText("0");
         }
@@ -510,41 +510,63 @@ public class MainGUI {
         int hour = (int) hourComboBox.getSelectedItem();
         float units = Float.parseFloat(unitsTextField.getText());
 
+
         // Chiamate i metodi appropriati di UserInterface in base all'opzione
         // selezionata
         switch (profileOption) {
             case "Update Basal Profile":
-                frame.remove(horizontalSpacer);
-                frame.remove(basalProfileCsv);
+                if (units >= 0.1 && units <= 5) {
+                    frame.remove(horizontalSpacer);
+                    frame.remove(basalProfileCsv);
 
-                ui.updateBasalProfile(units, hour);
-                var basalProfile = ui.getDb().basalProfile;
-                basalProfileCsv = createHourList(basalProfile, "Basal Profile");
+                    ui.updateBasalProfile(units, hour);
+                    var basalProfile = ui.getDb().basalProfile;
+                    basalProfileCsv = createHourList(basalProfile, "Basal Profile");
 
-                frame.add(basalProfileCsv);
-                frame.add(horizontalSpacer);
+                    frame.add(basalProfileCsv);
+                    frame.add(horizontalSpacer);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Wrong units value, it should be between 0 and 5 with a sensitivity of 0.05.", "Basal Profile", JOptionPane.ERROR_MESSAGE);
+                    unitsTextField.setText("0");
+                }
                 break;
+
             case "Update Carb Ratio Profile":
-                frame.remove(horizontalSpacer);
-                frame.remove(carbRatioProfileCsv);
+                if (units >= 1 && units <= 15) {
+                    frame.remove(horizontalSpacer);
+                    frame.remove(carbRatioProfileCsv);
 
-                ui.updateCarbRatioProfile(units, hour);
-                var carbRatioProfile = ui.getDb().carbRatioProfile;
-                carbRatioProfileCsv = createHourList(carbRatioProfile, "Carb Ratio Profile");
+                    ui.updateCarbRatioProfile(units, hour);
+                    var carbRatioProfile = ui.getDb().carbRatioProfile;
+                    carbRatioProfileCsv = createHourList(carbRatioProfile, "Carb Ratio Profile");
 
-                frame.add(carbRatioProfileCsv);
-                frame.add(horizontalSpacer);
+                    frame.add(carbRatioProfileCsv);
+                    frame.add(horizontalSpacer);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Wrong units value, it should be between 1 and 15.", "Carb Ratio Profile",
+                            JOptionPane.ERROR_MESSAGE);
+                    unitsTextField.setText("0");
+                }
                 break;
+
             case "Update Insulin Sensitivity Profile":
-                frame.remove(horizontalSpacer);
-                frame.remove(insulinSensitivityProfileCsv);
+                if (units >= 20 && units <= 50) {
+                    frame.remove(horizontalSpacer);
+                    frame.remove(insulinSensitivityProfileCsv);
 
-                ui.updateInsulinSensitivityProfile(units, hour);
-                var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
-                insulinSensitivityProfileCsv = createHourList(insulinSensitivity, "Insulin Sensitivity Profile");
+                    ui.updateInsulinSensitivityProfile(units, hour);
+                    var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
+                    insulinSensitivityProfileCsv = createHourList(insulinSensitivity, "Insulin Sensitivity Profile");
 
-                frame.add(insulinSensitivityProfileCsv);
-                frame.add(horizontalSpacer);
+                    frame.add(insulinSensitivityProfileCsv);
+                    frame.add(horizontalSpacer);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Wrong units value, it should be between 20 and 50.", "Insulin Sensitivity Profile",
+                            JOptionPane.ERROR_MESSAGE);
+                    unitsTextField.setText("0");
+                }
+
+
                 break;
         }
         frame.revalidate();
@@ -565,8 +587,10 @@ public class MainGUI {
         for (int i = 0; i < profile.hourlyFactors.length; i++) {
             var profileRow = new JPanel();
             profileRow.setLayout(new BoxLayout(profileRow, BoxLayout.X_AXIS));
-            var profileHour = new JLabel("Hour " + profile.hourlyFactors[i].getHour());
-            var profileUnits = new JLabel("Units " + profile.hourlyFactors[i].getUnits());
+            var hour = profile.hourlyFactors[i].getHour();
+            var units = profile.hourlyFactors[i].getUnits();
+            var profileHour = new JLabel("Hour: " + (hour < 10 ? " " : "") + hour);
+            var profileUnits = new JLabel("Units: " + (units % 1 == 0 ? String.format("%.0f", units) : String.format("%.2f", units)));
 
             profileHour.setBorder(new EmptyBorder(0, 0, 0, 10));
             profileRow.add(profileHour);

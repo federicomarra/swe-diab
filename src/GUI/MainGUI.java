@@ -1,6 +1,7 @@
 package GUI;
 
 import handheldTracker.UserInterface;
+import utils.HourlyProfile;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -39,6 +40,7 @@ public class MainGUI {
 
     public MainGUI() {
         ui = new UserInterface();
+
         frame = new JFrame("Diabetes Tracker GUI");
 
         // JPanel
@@ -119,7 +121,9 @@ public class MainGUI {
     private void initialize() {
         // Configura il frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
+
+        frame.add(Box.createHorizontalGlue());
 
         // TODO: finire e far funzionare
 
@@ -213,12 +217,34 @@ public class MainGUI {
         hourPanel.add(hourLabel);
         hourPanel.add(hourComboBox);
 
-        frame.add(mainPanel);
-        frame.add(Box.createVerticalGlue());
-        frame.add(buttonPanel);
+        // Crea un JPanel che contiene mainPanel e buttonPanel
+        var mainAndButtonPanel = new JPanel();
+        mainAndButtonPanel.setLayout(new BoxLayout(mainAndButtonPanel, BoxLayout.Y_AXIS));
+        mainAndButtonPanel.add(mainPanel);
+        mainAndButtonPanel.add(Box.createVerticalGlue());
+        mainAndButtonPanel.add(buttonPanel);
+
+        // Create a Jpanel that contains the rows of db.basalProfile
+        var basalProfile = ui.getDb().basalProfile;
+        var basalProfileCsv = createCsvList(basalProfile, "Basal Profile");
+
+        // Create a Jpanel that contains the rows of db.carbRatioProfile
+        var carbRatioProfile = ui.getDb().carbRatioProfile;
+        var carbRatioProfileCsv = createCsvList(carbRatioProfile, "Carb Ratio Profile");
+
+        // Create a Jpanel that contains the rows of db.insulinSensitivityProfile
+        var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
+        var insulinSensitivityProfileCsv = createCsvList(insulinSensitivity, "Insulin Sensitivity Profile");
+
+        // Aggiunge i JPanel laterali al frame principale
+        frame.add(mainAndButtonPanel);
+        frame.add(Box.createHorizontalGlue());
+        frame.add(basalProfileCsv);
+        var horizontalSpacer = Box.createHorizontalGlue();
+        frame.add(horizontalSpacer);
 
         frame.setVisible(true);
-        frame.setSize(350, 500);
+        frame.setSize(550, 600);
 
         // Handle chooseComboBox change event
         chooseComboBox.addActionListener(new ActionListener() {
@@ -308,8 +334,11 @@ public class MainGUI {
                         bolusComboBox.setSelectedIndex(0);
                         chooseComboBox.setSelectedIndex(0);
 
-                        // mainPanel.add(hourPanel);
-                        // mainPanel.add(unitsPanel);
+                        frame.remove(carbRatioProfileCsv);
+                        frame.remove(insulinSensitivityProfileCsv);
+
+                        frame.add(basalProfileCsv);
+                        frame.add(horizontalSpacer);
                         break;
                     case "Update Carb Ratio Profile":
                         System.out.println("Update Carb Ratio Profile");
@@ -318,8 +347,11 @@ public class MainGUI {
                         bolusComboBox.setSelectedIndex(0);
                         chooseComboBox.setSelectedIndex(0);
 
-                        mainPanel.add(hourPanel);
-                        mainPanel.add(unitsPanel);
+                        frame.remove(basalProfileCsv);
+                        frame.remove(insulinSensitivityProfileCsv);
+
+                        frame.add(carbRatioProfileCsv);
+                        frame.add(horizontalSpacer);
                         break;
                     case "Update Insulin Sensitivity Profile":
                         System.out.println("Update Insulin Sensitivity Profile");
@@ -328,15 +360,18 @@ public class MainGUI {
                         bolusComboBox.setSelectedIndex(0);
                         chooseComboBox.setSelectedIndex(0);
 
-                        mainPanel.add(hourPanel);
-                        mainPanel.add(unitsPanel);
+                        frame.remove(basalProfileCsv);
+                        frame.remove(carbRatioProfileCsv);
+
+                        frame.add(insulinSensitivityProfileCsv);
+                        frame.add(horizontalSpacer);
                         break;
                     default:
                         // Gestisci altri casi se necessario
                         break;
                 }
-                mainPanel.revalidate();
-                mainPanel.repaint();
+                frame.revalidate();
+                frame.repaint();
             }
         });
 
@@ -352,7 +387,6 @@ public class MainGUI {
                 }
             }
         });
-
     }
 
     private void executeBolusOption() {
@@ -394,6 +428,33 @@ public class MainGUI {
                 ui.updateInsulinSensitivityProfile(units, hour);
                 break;
         }
+    }
+
+    private JPanel createCsvList(HourlyProfile profile, String title) {
+        var profileCsv = new JPanel();
+        profileCsv.setLayout(new BoxLayout(profileCsv, BoxLayout.Y_AXIS));
+        profileCsv.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+
+        var profileLabel = new JLabel(title);
+        profileLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        profileLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
+
+        profileCsv.add(profileLabel);
+
+        for (int i = 0; i < profile.hourlyFactors.length; i++) {
+            var profileRow = new JPanel();
+            profileRow.setLayout(new BoxLayout(profileRow, BoxLayout.X_AXIS));
+            var profileHour = new JLabel("Hour " + profile.hourlyFactors[i].getHour());
+            var profileUnnits = new JLabel("Units " + profile.hourlyFactors[i].getUnits());
+
+            profileHour.setBorder(new EmptyBorder(0, 0, 0, 10));
+            profileRow.add(profileHour);
+            profileRow.add(profileUnnits);
+            profileCsv.add(profileRow);
+        }
+        profileCsv.setBorder(new EmptyBorder(0, 0, 30, 30));
+
+        return profileCsv;
     }
 
     public static void main(String[] args) {

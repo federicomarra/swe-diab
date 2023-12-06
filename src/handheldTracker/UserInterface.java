@@ -10,12 +10,16 @@ public class UserInterface {
         db = new LocalDatabase();
     }
 
+    public LocalDatabase getDb() {
+        return db;
+    }
+
     public void newStandardBolus(int carb) {
         db.newBolus(0, 0, BolusMode.STANDARD, carb);
     }
 
     public void newExtendedBolus(int carb, int delayMinutes) { // delay in minutes
-        db.newBolus(0, delayMinutes * 60, BolusMode.EXTENDED, carb);  // delay in seconds
+        db.newBolus(0, delayMinutes * 60, BolusMode.EXTENDED, carb); // delay in seconds
     }
 
     public void howManyUnits(int carb) {

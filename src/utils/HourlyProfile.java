@@ -1,6 +1,6 @@
 package utils;
 
-import static utils.ReadCSV.read;
+import static utils.CSVManager.read;
 
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;

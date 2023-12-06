@@ -36,7 +36,7 @@ public class HourlyProfile {
         switch (mode) {
             case BASAL:
                 modeString = "basal profile";
-                if (hf.getUnits() > 0.1 && hf.getUnits() < 5)
+                if (hf.getUnits() >= 0.1 && hf.getUnits() <= 5)
                     success = true;
                 break;
             case CR:

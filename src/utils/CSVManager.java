@@ -125,7 +125,7 @@ public interface CSVManager {
             while (line != null && !line.equals("")) {
                 String[] lineSplit = line.split(",");
 
-                historyEntry.add(new HistoryEntry(ZonedDateTime.parse(lineSplit[0]), Float.parseFloat(lineSplit[1]),
+                historyEntry.add(new HistoryEntry(ZonedDateTime.parse(lineSplit[0]), Integer.parseInt(lineSplit[1]),
                         Float.parseFloat(lineSplit[2])));
 
                 line = br.readLine();

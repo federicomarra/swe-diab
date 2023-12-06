@@ -1,5 +1,3 @@
-package GUI;
-
 import handheldTracker.UserInterface;
 import utils.HourlyProfile;
 

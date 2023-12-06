@@ -47,7 +47,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
                     <goal>java</goal>
                 </goals>
                 <configuration>
-                    <mainClass>GUI.MainGUI</mainClass>
+                    <mainClass>MainGUI</mainClass>
                 </configuration>
             </execution>
         </executions>
@@ -59,7 +59,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
         <configuration>
             <archive>
                 <manifest>
-                    <mainClass>GUI.MainGUI</mainClass>
+                    <mainClass>MainGUI</mainClass>
                 </manifest>
             </archive>
             <descriptorRefs>

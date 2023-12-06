@@ -6,7 +6,6 @@ public class Main {
 
         System.out.println("\nWelcome to \nStarting bolus simulation:\n");
 
-
         // Bolus simulation
 
         // Randomize carb between -150 and 150 put in absolute value
@@ -47,4 +46,3 @@ public class Main {
         System.out.println("\n\nSimulation ended.");
     }
 }
-

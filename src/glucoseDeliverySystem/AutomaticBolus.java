@@ -2,10 +2,13 @@ package glucoseDeliverySystem;
 
 import handheldTracker.BolusDelivery;
 import handheldTracker.BolusMode;
+import utils.CSVManager;
+import utils.HistoryEntry;
 import utils.Measurement;
 import utils.Observer;
 
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class AutomaticBolus implements Observer, Runnable {
@@ -15,7 +18,7 @@ public class AutomaticBolus implements Observer, Runnable {
     public AutomaticBolus(PumpManager manager) {
         this.manager = PumpManager.getInstance(manager.insulinSensitivityProfile);
         this.measurements = manager.getMeasurements();
-        //this.run();   // TODO: See if this is needed
+        // this.run(); // TODO: See if this is needed
     }
 
     private void evaluate(List<Measurement> m) {
@@ -25,7 +28,11 @@ public class AutomaticBolus implements Observer, Runnable {
             float units = (float) (lastGlyc - 120) / sensitivity;
             BolusDelivery bd = new BolusDelivery(units, LocalTime.now(), BolusMode.STANDARD);
             units -= bd.calculateResidualUnits(manager.bds);
-            manager.verifyAndInject(units);
+            var result = manager.verifyAndInject(units);
+
+            if (result) {
+                CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lastGlyc, units));
+            }
         }
     }
 

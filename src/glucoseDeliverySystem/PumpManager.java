@@ -14,7 +14,7 @@ public class PumpManager {
     private final List<Observer> observers = new ArrayList<>();
     public HourlyProfile insulinSensitivityProfile;
     public List<BolusDelivery> bds = new ArrayList<>();
-    //private AutomaticBolus ab;
+    // private AutomaticBolus ab;
 
     private static PumpManager SingletonInstance;
 
@@ -23,8 +23,8 @@ public class PumpManager {
         this.pump = new InsulinPump();
         this.insulinSensitivityProfile = isp;
         // FIXME: see how to make start automatic bolus
-        //this.ab = new AutomaticBolus(this);
-        //ab.run();
+        // this.ab = new AutomaticBolus(this);
+        // ab.run();
     }
 
     public static PumpManager getInstance(HourlyProfile isp) {
@@ -36,15 +36,17 @@ public class PumpManager {
         return SingletonInstance;
     }
 
-    public void verifyAndInject(float units) {
+    public boolean verifyAndInject(float units) {
         if (units > 0 && units <= 20) {
             bds.add(new BolusDelivery(units, LocalTime.now(), BolusMode.STANDARD));
             pump.inject(units);
+            return true;
         } else if (units > 20) {
             System.out.println("Too many units");
         } else {
             System.out.println("Invalid units");
         }
+        return false;
     }
 
     public Measurement newMeasurement() {
@@ -59,23 +61,24 @@ public class PumpManager {
         observers.add(o);
     }
 
-    /* TODO: See if this is needed
-    public void unsubscribe(Observer o) {
-        observers.remove(o);
-    }
-
-
-    public void unsubscribeAll() {
-        observers.clear();
-    }
-
-    public void backup() {
-        for (Observer observer : observers) {
-            observer.update(getMeasurements());
-        }
-    }
-
-    */
+    /*
+     * TODO: See if this is needed
+     * public void unsubscribe(Observer o) {
+     * observers.remove(o);
+     * }
+     * 
+     * 
+     * public void unsubscribeAll() {
+     * observers.clear();
+     * }
+     * 
+     * public void backup() {
+     * for (Observer observer : observers) {
+     * observer.update(getMeasurements());
+     * }
+     * }
+     * 
+     */
     public void notifyObservers() {
         for (Observer observer : observers) {
             observer.update(getMeasurements());

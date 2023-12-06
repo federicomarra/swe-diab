@@ -9,6 +9,7 @@ import exceptions.InternetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -136,7 +137,10 @@ public class LocalDatabase extends Database implements Observer {
 
                 switch (mode) {
                     case STANDARD:
-                        manager.verifyAndInject(bd.units);
+                        var result = manager.verifyAndInject(bd.units);
+                        if (result) {
+                            CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), glycUnits, bd.units));
+                        }
                         break;
                     case EXTENDED:
                         Duration delay = Duration.between(LocalTime.now(), time).plusSeconds(1);
@@ -156,9 +160,12 @@ public class LocalDatabase extends Database implements Observer {
                         System.out.println("to inject " + bd.units + " units" + " at "
                                 + time.format(DateTimeFormatter.ofPattern("HH:mm")));
                         Thread.sleep(delay.toMillis());
-                        manager.verifyAndInject(bd.units);
-                        break;
+                        result = manager.verifyAndInject(bd.units);
 
+                        if (result) {
+                            CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), glycUnits, bd.units));
+                        }
+                        break;
                     case MANUAL:
                         // Round the units to 0.5
                         bd.units = roundTo(bd.units, 0.5);

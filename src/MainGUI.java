@@ -1,5 +1,6 @@
 import handheldTracker.UserInterface;
 import utils.HourlyProfile;
+import utils.HistoryEntry;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -40,6 +41,9 @@ public class MainGUI {
     private JPanel carbRatioProfileCsv;
     private JPanel insulinSensitivityProfileCsv;
     private Component horizontalSpacer;
+    private JPanel historyPanel;
+    private JPanel historyList;
+    private JButton backupButton;
 
     public MainGUI() {
         ui = new UserInterface();
@@ -73,6 +77,9 @@ public class MainGUI {
         unitsPanel = new JPanel();
         unitsPanel.setLayout(new BoxLayout(unitsPanel, BoxLayout.Y_AXIS));
 
+        historyPanel = new JPanel();
+        historyPanel.setLayout(new BoxLayout(historyPanel, BoxLayout.Y_AXIS));
+
         /*
          * // Setto i sotto JPanel come righe orizzontali
          * choosePanel.setLayout(new BoxLayout(choosePanel, BoxLayout.X_AXIS));
@@ -92,6 +99,7 @@ public class MainGUI {
         profileComboBox = new JComboBox<String>(new String[] { "Update Basal Profile", "Update Carb Ratio Profile",
                 "Update Insulin Sensitivity Profile" });
         executeButton = new JButton("Execute");
+        backupButton = new JButton("Backup");
 
         // JLabel
         chooseLabel = new JLabel("Choose Option");
@@ -128,10 +136,6 @@ public class MainGUI {
         // Configura il frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
-
-        frame.add(Box.createHorizontalGlue());
-
-        // TODO: finire e far funzionare
 
         /*
          * // Aggiunge una progress bar
@@ -199,6 +203,8 @@ public class MainGUI {
         // Aggiunge executeButton al frame
         buttonPanel.add(executeButton);
         buttonPanel.setBorder(new EmptyBorder(20, 0, 30, 0));
+        buttonPanel.add(Box.createHorizontalGlue());
+        buttonPanel.add(backupButton);
 
         var delayMinutesLabel = new JLabel("Delay Minutes");
         delayMinutesLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -230,17 +236,24 @@ public class MainGUI {
 
         // Create a Jpanel that contains the rows of db.basalProfile
         var basalProfile = ui.getDb().basalProfile;
-        basalProfileCsv = createCsvList(basalProfile, "Basal Profile");
+        basalProfileCsv = createHourList(basalProfile, "Basal Profile");
 
         // Create a Jpanel that contains the rows of db.carbRatioProfile
         var carbRatioProfile = ui.getDb().carbRatioProfile;
-        carbRatioProfileCsv = createCsvList(carbRatioProfile, "Carb Ratio Profile");
+        carbRatioProfileCsv = createHourList(carbRatioProfile, "Carb Ratio Profile");
 
         // Create a Jpanel that contains the rows of db.insulinSensitivityProfile
         var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
-        insulinSensitivityProfileCsv = createCsvList(insulinSensitivity, "Insulin Sensitivity Profile");
+        insulinSensitivityProfileCsv = createHourList(insulinSensitivity, "Insulin Sensitivity Profile");
 
         // Aggiunge i JPanel laterali al frame principale
+        historyList = createHistoryList(ui.getHistory(), "History");
+        historyPanel.add(historyList);
+
+        frame.add(Box.createHorizontalGlue());
+        frame.add(historyPanel);
+        frame.add(Box.createHorizontalGlue());
+
         frame.add(mainAndButtonPanel);
         frame.add(Box.createHorizontalGlue());
         // frame.add(basalProfileCsv);
@@ -248,7 +261,7 @@ public class MainGUI {
         horizontalSpacer = Box.createHorizontalGlue();
 
         frame.setVisible(true);
-        frame.setSize(550, 600);
+        frame.setSize(850, 650);
 
         var hourSpacer = Box.createVerticalGlue();
         var unitSpacer = Box.createVerticalGlue();
@@ -399,9 +412,24 @@ public class MainGUI {
                 String selectedOption = chooseComboBox.getSelectedItem().toString();
                 if (selectedOption.equals("Bolus")) {
                     executeBolusOption();
+
+                    historyPanel.remove(historyList);
+                    historyList = createHistoryList(ui.getHistory(), "History");
+                    historyPanel.add(historyList);
+
+                    frame.revalidate();
+                    frame.repaint();
                 } else if (selectedOption.equals("Update Hourly Profile")) {
                     executeUpdateHourlyProfileOption();
                 }
+            }
+        });
+
+        // Handle backupButton click event
+        backupButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO: implement backup
             }
         });
     }
@@ -491,7 +519,7 @@ public class MainGUI {
 
                 ui.updateBasalProfile(units, hour);
                 var basalProfile = ui.getDb().basalProfile;
-                basalProfileCsv = createCsvList(basalProfile, "Basal Profile");
+                basalProfileCsv = createHourList(basalProfile, "Basal Profile");
 
                 frame.add(basalProfileCsv);
                 frame.add(horizontalSpacer);
@@ -502,7 +530,7 @@ public class MainGUI {
 
                 ui.updateCarbRatioProfile(units, hour);
                 var carbRatioProfile = ui.getDb().carbRatioProfile;
-                carbRatioProfileCsv = createCsvList(carbRatioProfile, "Carb Ratio Profile");
+                carbRatioProfileCsv = createHourList(carbRatioProfile, "Carb Ratio Profile");
 
                 frame.add(carbRatioProfileCsv);
                 frame.add(horizontalSpacer);
@@ -513,7 +541,7 @@ public class MainGUI {
 
                 ui.updateInsulinSensitivityProfile(units, hour);
                 var insulinSensitivity = ui.getDb().insulinSensitivityProfile;
-                insulinSensitivityProfileCsv = createCsvList(insulinSensitivity, "Insulin Sensitivity Profile");
+                insulinSensitivityProfileCsv = createHourList(insulinSensitivity, "Insulin Sensitivity Profile");
 
                 frame.add(insulinSensitivityProfileCsv);
                 frame.add(horizontalSpacer);
@@ -523,7 +551,7 @@ public class MainGUI {
         frame.repaint();
     }
 
-    private JPanel createCsvList(HourlyProfile profile, String title) {
+    private JPanel createHourList(HourlyProfile profile, String title) {
         var profileCsv = new JPanel();
         profileCsv.setLayout(new BoxLayout(profileCsv, BoxLayout.Y_AXIS));
         profileCsv.setAlignmentX(JPanel.CENTER_ALIGNMENT);
@@ -538,16 +566,50 @@ public class MainGUI {
             var profileRow = new JPanel();
             profileRow.setLayout(new BoxLayout(profileRow, BoxLayout.X_AXIS));
             var profileHour = new JLabel("Hour " + profile.hourlyFactors[i].getHour());
-            var profileUnnits = new JLabel("Units " + profile.hourlyFactors[i].getUnits());
+            var profileUnits = new JLabel("Units " + profile.hourlyFactors[i].getUnits());
 
             profileHour.setBorder(new EmptyBorder(0, 0, 0, 10));
             profileRow.add(profileHour);
-            profileRow.add(profileUnnits);
+            profileRow.add(profileUnits);
             profileCsv.add(profileRow);
         }
         profileCsv.setBorder(new EmptyBorder(0, 0, 30, 30));
 
         return profileCsv;
+    }
+
+    private JPanel createHistoryList(HistoryEntry[] list, String title) {
+        var listCsv = new JPanel();
+        listCsv.setLayout(new BoxLayout(listCsv, BoxLayout.Y_AXIS));
+        listCsv.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+
+        var listLabel = new JLabel(title);
+        listLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        listLabel.setBorder(new EmptyBorder(30, 0, 10, 0));
+
+        listCsv.add(listLabel);
+
+        for (int i = 0; i < list.length; i++) {
+            var listRow = new JPanel();
+            listRow.setLayout(new BoxLayout(listRow, BoxLayout.X_AXIS));
+            var time = list[i].getTime();
+            var listTime = new JLabel(time.getDayOfMonth() + "/" + time.getMonthValue() + "/" + time.getYear() +
+                    " " + String.format("%02d", time.getHour())
+                    + ":" + String.format("%02d", time.getMinute()));
+            var listGlycemia = new JLabel(list[i].getGlycemia() + " mg/dL");
+            var listUnits = new JLabel(list[i].getUnits() + " U");
+
+            listTime.setBorder(new EmptyBorder(0, 0, 0, 10));
+            listRow.add(listTime);
+            listGlycemia.setBorder(new EmptyBorder(0, 0, 0, 10));
+            listRow.add(listGlycemia);
+            listRow.add(listUnits);
+            listCsv.add(listRow);
+        }
+
+        listCsv.setBorder(new EmptyBorder(0, 0, 30, 30));
+
+        return listCsv;
     }
 
     public static void main(String[] args) {

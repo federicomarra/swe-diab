@@ -14,6 +14,10 @@ public class UserInterface {
         return db;
     }
 
+    public HistoryEntry[] getHistory() {
+        return CSVManager.readHistoryEntry();
+    }
+
     public void newStandardBolus(int carb) {
         db.newBolus(0, 0, BolusMode.STANDARD, carb);
     }

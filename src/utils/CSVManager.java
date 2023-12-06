@@ -9,6 +9,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 public interface CSVManager {
     /**
@@ -51,7 +53,6 @@ public interface CSVManager {
             }
             br.close();
         } catch (IOException err) {
-            System.out.println("File not found");
             String[] pathSplit = path.split("/");
             String wrongPath = pathSplit[pathSplit.length - 1].replace(".csv", "");
 
@@ -111,5 +112,52 @@ public interface CSVManager {
 
     static void write(String path, HourlyFactor hf) {
 
+    }
+
+    static HistoryEntry[] readHistoryEntry() {
+        var path = "csv/history.csv";
+        var historyEntry = new ArrayList<HistoryEntry>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(path));
+
+            String line = br.readLine();
+            while (line != null && !line.equals("")) {
+                String[] lineSplit = line.split(",");
+
+                historyEntry.add(new HistoryEntry(ZonedDateTime.parse(lineSplit[0]), Float.parseFloat(lineSplit[1]),
+                        Float.parseFloat(lineSplit[2])));
+
+                line = br.readLine();
+            }
+            br.close();
+        } catch (IOException err) {
+            System.out.println("Creating history file...");
+
+            try {
+                try {
+                    Files.createDirectory(Paths.get("csv"));
+                } catch (FileAlreadyExistsException e) {
+                    System.out.println("Directory already exists");
+                }
+
+                Files.write(Paths.get("csv/history.csv"),
+                        "".getBytes(), StandardOpenOption.CREATE_NEW);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return readHistoryEntry();
+        }
+        return historyEntry.toArray(new HistoryEntry[historyEntry.size()]);
+    }
+
+    static void addHistoryEntry(HistoryEntry he) {
+        var path = "csv/history.csv";
+        try {
+            Files.write(Paths.get(path),
+                    (he.getTime() + "," + he.getGlycemia() + "," + he.getUnits() + "\n").getBytes(),
+                    StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

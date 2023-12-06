@@ -135,12 +135,10 @@ public class LocalDatabase extends Database implements Observer {
                         (carbUnits > 0 ? " " + carbUnits + " units" : ""));
                 System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));
 
+                boolean result = false;
                 switch (mode) {
                     case STANDARD:
-                        var result = manager.verifyAndInject(bd.units);
-                        if (result) {
-                            CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), glycUnits, bd.units));
-                        }
+                        result = manager.verifyAndInject(bd.units);
                         break;
                     case EXTENDED:
                         Duration delay = Duration.between(LocalTime.now(), time).plusSeconds(1);
@@ -154,27 +152,25 @@ public class LocalDatabase extends Database implements Observer {
                             System.out.print(minutes + "m ");
                         if (seconds > 0)
                             System.out.print(seconds + "s ");
-
-                        // TODO: FIX if delaySeconds is 61, it doesn't print 1 minute and 1 second
-
                         System.out.println("to inject " + bd.units + " units" + " at "
                                 + time.format(DateTimeFormatter.ofPattern("HH:mm")));
                         Thread.sleep(delay.toMillis());
+
                         result = manager.verifyAndInject(bd.units);
 
-                        if (result) {
-                            CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), glycUnits, bd.units));
-                        }
                         break;
                     case MANUAL:
                         // Round the units to 0.5
                         bd.units = roundTo(bd.units, 0.5);
                         System.out.println("Manually inject: " + bd.units + " units");
-                        break;
-
-                    // FIXME: Add pen case
                     case PEN:
+                        result = true;
                         break;
+                }
+                if (result) {
+                    CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
+                } else {
+                    System.out.println("Injection failed");
                 }
                 addBolus(bd);
             } else if (bd.units == 0) {

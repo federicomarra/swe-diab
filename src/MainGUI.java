@@ -613,15 +613,12 @@ public class MainGUI {
 
         listCsv.add(listLabel);
 
-        for (int i = 0; i < list.length; i++) {
+        for (HistoryEntry he : list) {
             var listRow = new JPanel();
             listRow.setLayout(new BoxLayout(listRow, BoxLayout.X_AXIS));
-            var time = list[i].getTime();
-            var listTime = new JLabel(time.getDayOfMonth() + "/" + time.getMonthValue() + "/" + time.getYear() +
-                    " " + String.format("%02d", time.getHour())
-                    + ":" + String.format("%02d", time.getMinute()));
-            var listGlycemia = new JLabel(list[i].getGlycemia() + " mg/dL");
-            var listUnits = new JLabel(list[i].getUnits() + " U");
+            var listTime = new JLabel(he.getTimeString());
+            var listGlycemia = new JLabel(String.format("%d", he.getGlycemia()) + " mg/dL");
+            var listUnits = new JLabel(he.getUnits() + " U");
 
             listTime.setBorder(new EmptyBorder(0, 0, 0, 10));
             listRow.add(listTime);

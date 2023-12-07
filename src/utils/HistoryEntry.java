@@ -1,5 +1,6 @@
 package utils;
 
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
 public class HistoryEntry {
@@ -20,6 +21,10 @@ public class HistoryEntry {
         return time.getDayOfMonth() + "/" + time.getMonthValue() + "/" + time.getYear() +
                 " " + String.format("%02d", time.getHour())
                 + ":" + String.format("%02d", time.getMinute());
+    }
+
+    public LocalTime toLocalTime() {
+        return LocalTime.of(this.time.getHour(), this.time.getMinute());
     }
 
     public int getGlycemia() {

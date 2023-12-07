@@ -168,7 +168,7 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                 }
                 if (result) {
-                    CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
+                    DBManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
                 } else {
                     System.out.println("Injection failed");
                 }

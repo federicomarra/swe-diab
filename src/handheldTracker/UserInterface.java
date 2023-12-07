@@ -15,11 +15,11 @@ public class UserInterface {
     }
 
     public HistoryEntry[] getHistory() {
-        return CSVManager.readHistoryEntry();
+        return DBManager.readHistoryEntry();
     }
 
     public void backupProfiles() {
-        CSVManager.backupProfiles();
+        DBManager.backupProfiles();
     }
 
     public void newStandardBolus(int carb) {

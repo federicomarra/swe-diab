@@ -2,7 +2,7 @@ package glucoseDeliverySystem;
 
 import handheldTracker.BolusDelivery;
 import handheldTracker.BolusMode;
-import utils.CSVManager;
+import utils.DBManager;
 import utils.HistoryEntry;
 import utils.Measurement;
 import utils.Observer;
@@ -31,7 +31,7 @@ public class AutomaticBolus implements Observer, Runnable {
             var result = manager.verifyAndInject(units);
 
             if (result) {
-                CSVManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lastGlyc, units));
+                DBManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lastGlyc, units));
             }
         }
     }

@@ -1,6 +1,6 @@
 package utils;
 
-import static utils.CSVManager.read;
+import static utils.DBManager.read;
 
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;
@@ -10,20 +10,19 @@ public class HourlyProfile {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
 
-        String path = "csv/";
+        String file = "";
         switch (mode) {
             case BASAL:
-                path += "basalProfile";
+                file += "BasalProfile";
                 break;
             case CR:
-                path += "carbRatio";
+                file += "CarbRatio";
                 break;
             case IS:
-                path += "insulinSensitivity";
+                file += "InsulinSensitivity";
                 break;
         }
-        path += ".csv";
-        float[] hf = read(path);
+        float[] hf = read(file);
         for (int i = 0; i < 24; i++)
             hourlyFactors[i] = new HourlyFactor(hf[i], i);
     }

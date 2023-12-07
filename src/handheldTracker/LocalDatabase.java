@@ -1,11 +1,5 @@
 package handheldTracker;
 
-import cloudInterface.BackupDatabase;
-import glucoseDeliverySystem.PumpManager;
-import utils.*;
-import exceptions.BluetoothException;
-import exceptions.InternetException;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalTime;
@@ -15,7 +9,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static utils.DBManager.addHistoryEntry;
+import cloudInterface.BackupDatabase;
+import glucoseDeliverySystem.PumpManager;
+import utils.*;
+import exceptions.*;
+
 
 public class LocalDatabase extends Database implements Observer {
     private PumpManager manager;
@@ -31,7 +29,6 @@ public class LocalDatabase extends Database implements Observer {
 
     public LocalDatabase() {
         this.backupDb = new BackupDatabase();
-
         this.insulinSensitivityProfile = new HourlyProfile(ProfileMode.IS);
         this.basalProfile = new HourlyProfile(ProfileMode.BASAL);
         this.carbRatioProfile = new HourlyProfile(ProfileMode.CR);
@@ -170,7 +167,7 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                 }
                 if (result) {
-                    addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
+                    DBManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
                 } else {
                     System.out.println("Injection failed");
                 }

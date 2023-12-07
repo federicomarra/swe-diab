@@ -173,7 +173,7 @@ public interface DBManager {
         }
     }
 
-    static void backupProfiles() {
+    static void backup() {
         try {
             // It also backup the history file
             try {

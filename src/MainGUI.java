@@ -429,7 +429,7 @@ public class MainGUI {
         backupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ui.backupProfiles();
+                ui.backup();
             }
         });
     }

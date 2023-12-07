@@ -18,8 +18,8 @@ public class UserInterface {
         return DBManager.readHistoryEntry();
     }
 
-    public void backupProfiles() {
-        DBManager.backupProfiles();
+    public void backup() {
+        DBManager.backup();
     }
 
     public void newStandardBolus(int carb) {

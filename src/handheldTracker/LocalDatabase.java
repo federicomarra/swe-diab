@@ -15,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static utils.DBManager.addHistoryEntry;
+
 public class LocalDatabase extends Database implements Observer {
     private PumpManager manager;
     private BackupDatabase backupDb;
@@ -168,7 +170,7 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                 }
                 if (result) {
-                    DBManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
+                    addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
                 } else {
                     System.out.println("Injection failed");
                 }
@@ -190,6 +192,7 @@ public class LocalDatabase extends Database implements Observer {
         try {
             // FIXME: update() to be implemented into Database.java
             // backupDb.update(this.measurements);
+            DBManager.backup();
         } catch (Exception e) {
             e.printStackTrace();
         }

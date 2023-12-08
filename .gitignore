@@ -64,3 +64,6 @@ exec
 /db/BasalProfile.csv
 /db/CarbRatio.csv
 /db/InsulinSensitivity.csv
+db/InsulinSensitivity.csv
+db/BasalProfile.csv
+db/CarbRatio.csv

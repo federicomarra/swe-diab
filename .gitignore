@@ -63,6 +63,4 @@ build
 exec
 
 # Database files
-db/InsulinSensitivity.csv
-db/BasalProfile.csv
-db/CarbRatio.csv
+db/

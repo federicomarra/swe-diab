@@ -14,27 +14,19 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 public interface DBManager {
-    private static String getProfileFilename(ProfileMode mode) {
-        switch (mode) {
-            case BASAL:
-                return "BasalProfile";
-            case CR:
-                return "CarbRatio";
-            case IS:
-                return "InsulinSensitivity";
-        }
-        return "";
-    }
 
-    /**
-     * @param file Path of the CSV file
-     * @return Array of floats containing the hourly factors
-     */
+    String DIR = "db";
+    String DIR_PATH = DIR + "/";
+    String[] FILES = { "BasalProfile", "CarbRatio", "InsulinSensitivity", "History" };
+    String EXTENSION = ".csv";
+    private static String getProfileFilename(ProfileMode mode) {
+        return FILES[mode.ordinal()];
+    }
     static float[] read(ProfileMode mode) {
         String file = getProfileFilename(mode);
         float[] units = new float[24];
-        String path = dirPath + file + extension;
-        System.out.println("Reading " + file + " from " + dirPath + file);
+        String path = DIR_PATH + file + EXTENSION;
+        System.out.println("Reading " + file + " from " + DIR_PATH + file);
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
 
@@ -109,12 +101,12 @@ public interface DBManager {
             }
             try {
                 try {
-                    Files.createDirectory(Paths.get(dir));
-                    System.out.println("Directory " + dir + " created");
+                    Files.createDirectory(Paths.get(DIR));
+                    System.out.println("Directory " + DIR + " created");
                 } catch (FileAlreadyExistsException e) {
-                    System.out.println("Directory " + dir + " already exists");
+                    System.out.println("Directory " + DIR + " already exists");
                 }
-                Files.write(Paths.get(dirPath + file + extension), values.getBytes(),
+                Files.write(Paths.get(DIR_PATH + file + EXTENSION), values.getBytes(),
                         StandardOpenOption.CREATE_NEW);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -128,18 +120,27 @@ public interface DBManager {
 
     static void write(ProfileMode mode, HourlyFactor hf) {
         String file = getProfileFilename(mode);
-        String path = dirPath + file + extension;
-        System.out.println("Reading " + file + " from " + dirPath + file);
+        String path = DIR_PATH + file + EXTENSION;
+        System.out.println("Writing " + file + " line " + hf.getHour() + " from " + DIR_PATH + file);
+        float[] units = read(mode);
+        units[hf.getHour()] = hf.getUnits();
+        String values = "";
+        for (int i = 0; i < 24 ; i++) {
+            if (mode == ProfileMode.BASAL)
+                values += i + "," + String.format("%.2f", units[i]).replace(",", ".") + "\n";
+            else
+                values += i + "," + String.format("%.0f", units[i]) + "\n";
+        }
         try {
-            Files.write(Paths.get(path), (hf.getHour() + "," + hf.getUnits() + "\n").getBytes(),
-                    StandardOpenOption.APPEND);
+            Files.write(Paths.get(path), values.getBytes(),
+                    StandardOpenOption.WRITE);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     static HistoryEntry[] readHistoryEntry() {
-        String path = dirPath + "History" + extension;
+        String path = DIR_PATH + "History" + EXTENSION;
         var historyEntry = new ArrayList<HistoryEntry>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
@@ -159,10 +160,10 @@ public interface DBManager {
 
             try {
                 try {
-                    Files.createDirectory(Paths.get(dir));
-                    System.out.println("Directory " + dir + " created");
+                    Files.createDirectory(Paths.get(DIR));
+                    System.out.println("Directory " + DIR + " created");
                 } catch (FileAlreadyExistsException e) {
-                    System.out.println("Directory " + dir + " already exists");
+                    System.out.println("Directory " + DIR + " already exists");
                 }
 
                 Files.write(Paths.get(path),
@@ -176,7 +177,7 @@ public interface DBManager {
     }
 
     static void addHistoryEntry(HistoryEntry he) {
-        String path = dirPath + "History" + extension;
+        String path = DIR_PATH + "History" + EXTENSION;
         try {
             readHistoryEntry();
             Files.write(Paths.get(path),
@@ -191,13 +192,13 @@ public interface DBManager {
         try {
             // It also backup the history file
             try {
-                Files.createDirectory(Paths.get(dirPath + "backup"));
-                System.out.println("Directory " + dirPath + "backup" + " created");
+                Files.createDirectory(Paths.get(DIR_PATH + "backup"));
+                System.out.println("Directory " + DIR_PATH + "backup" + " created");
             } catch (FileAlreadyExistsException e) {
-                System.out.println("Directory " + dirPath + "backup" + " already exists");
+                System.out.println("Directory " + DIR_PATH + "backup" + " already exists");
             }
-            for (String file : files)
-                Files.copy(Paths.get(dirPath + file + extension), Paths.get(dirPath + "backup/" + file + extension),
+            for (String file : FILES)
+                Files.copy(Paths.get(DIR_PATH + file + EXTENSION), Paths.get(DIR_PATH + "backup/" + file + EXTENSION),
                         StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Profiles backed up successfully.");
         } catch (IOException e) {
@@ -205,8 +206,4 @@ public interface DBManager {
         }
     }
 
-    String dir = "db";
-    String dirPath = dir + "/";
-    String[] files = { "BasalProfile", "CarbRatio", "InsulinSensitivity", "History" };
-    String extension = ".csv";
 }

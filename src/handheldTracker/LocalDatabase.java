@@ -37,7 +37,7 @@ public class LocalDatabase extends Database implements Observer {
         this.manager = PumpManager.getInstance(insulinSensitivityProfile);
         System.out.println("PumpManager created");
 
-        manager.subscribe(this);
+        this.manager.subscribe(this);
     }
 
     public void update(List<Measurement> ms) {

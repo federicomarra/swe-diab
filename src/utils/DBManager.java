@@ -35,6 +35,10 @@ public interface DBManager {
             BigDecimal unit;
 
             while (line != null) {
+                if (line.isEmpty()){
+                    line = br.readLine();
+                    continue;
+                }
                 // Split by separator
                 String[] lineSplit = line.split(",");
 

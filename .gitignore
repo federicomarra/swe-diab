@@ -61,3 +61,6 @@ build
 /src/target/
 /target
 exec
+/db/BasalProfile.csv
+/db/CarbRatio.csv
+/db/InsulinSensitivity.csv

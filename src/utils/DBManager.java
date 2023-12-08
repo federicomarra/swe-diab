@@ -14,11 +14,24 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 public interface DBManager {
+    private static String getProfileFilename(ProfileMode mode) {
+        switch (mode) {
+            case BASAL:
+                return "BasalProfile";
+            case CR:
+                return "CarbRatio";
+            case IS:
+                return "InsulinSensitivity";
+        }
+        return "";
+    }
+
     /**
      * @param file Path of the CSV file
      * @return Array of floats containing the hourly factors
      */
-    static float[] read(String file) {
+    static float[] read(ProfileMode mode) {
+        String file = getProfileFilename(mode);
         float[] units = new float[24];
         String path = dirPath + file + extension;
         System.out.println("Reading " + file + " from " + dirPath + file);
@@ -55,11 +68,9 @@ public interface DBManager {
             }
             br.close();
         } catch (IOException err) {
-            String[] pathSplit = path.split("/");
-            String wrongFile = pathSplit[pathSplit.length - 1].replace(extension, "");
             String values = "";
-            switch (file) {
-                case "BasalProfile":
+            switch (mode) {
+                case BASAL:
                     for (int i = 0; i < 24; i++) {
                         if (i < 7)
                             values += i + ",1.60\n";
@@ -73,7 +84,7 @@ public interface DBManager {
                             values += i + ",2.25\n";
                     }
                     break;
-                case "CarbRatio":
+                case CR:
                     for (int i = 0; i < 24; i++) {
                         if (i < 12)
                             values += i + ",9\n";
@@ -83,7 +94,7 @@ public interface DBManager {
                             values += i + ",10\n";
                     }
                     break;
-                case "InsulinSensitivity":
+                case IS:
                     for (int i = 0; i < 24; i++) {
                         if (i < 5)
                             values += i + ",30\n";
@@ -103,22 +114,25 @@ public interface DBManager {
                 } catch (FileAlreadyExistsException e) {
                     System.out.println("Directory " + dir + " already exists");
                 }
-                Files.write(Paths.get(dirPath + wrongFile + extension), values.getBytes(), StandardOpenOption.CREATE_NEW);
+                Files.write(Paths.get(dirPath + file + extension), values.getBytes(),
+                        StandardOpenOption.CREATE_NEW);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Creating default " + wrongFile + "...");
+            System.out.println("Creating default " + file + "...");
 
-            return read(path.substring(dirPath.length(), path.length() - extension.length()));
+            return read(mode);
         }
         return units;
     }
 
-    static void write(String file, HourlyFactor hf) {
+    static void write(ProfileMode mode, HourlyFactor hf) {
+        String file = getProfileFilename(mode);
         String path = dirPath + file + extension;
         System.out.println("Reading " + file + " from " + dirPath + file);
         try {
-            Files.write(Paths.get(path), (hf.getHour() + "," + hf.getUnits() + "\n").getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(path), (hf.getHour() + "," + hf.getUnits() + "\n").getBytes(),
+                    StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -193,6 +207,6 @@ public interface DBManager {
 
     String dir = "db";
     String dirPath = dir + "/";
-    String[] files = {"BasalProfile", "CarbRatio", "InsulinSensitivity", "History"};
+    String[] files = { "BasalProfile", "CarbRatio", "InsulinSensitivity", "History" };
     String extension = ".csv";
 }

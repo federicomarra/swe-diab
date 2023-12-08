@@ -14,7 +14,6 @@ import glucoseDeliverySystem.PumpManager;
 import utils.*;
 import exceptions.*;
 
-
 public class LocalDatabase extends Database implements Observer {
     private PumpManager manager;
     private BackupDatabase backupDb;
@@ -38,13 +37,11 @@ public class LocalDatabase extends Database implements Observer {
         this.manager = PumpManager.getInstance(insulinSensitivityProfile);
         System.out.println("PumpManager created");
 
-        // TODO: Check if this is needed
-        // manager.subscribe(this);
+        manager.subscribe(this);
     }
 
     public void update(List<Measurement> ms) {
         try {
-            super.update(ms);
             backup();
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,8 +185,7 @@ public class LocalDatabase extends Database implements Observer {
     private void backup() throws InternetException {
         try {
             // FIXME: update() to be implemented into Database.java
-            // backupDb.update(this.measurements);
-            DBManager.backup();
+            backupDb.update(this.measurements);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,17 +201,9 @@ public class LocalDatabase extends Database implements Observer {
                 break;
             case IS:
                 insulinSensitivityProfile.updateHourlyFactor(hf);
-                manager = PumpManager.getInstance(insulinSensitivityProfile);
-
-                // TODO: Check if this is needed
-                // manager.subscribe(this);
                 break;
         }
-        try {
-            backup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DBManager.write(mode, hf);
     }
 
     private void addBolus(BolusDelivery bd) {

@@ -10,19 +10,7 @@ public class HourlyProfile {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
 
-        String file = "";
-        switch (mode) {
-            case BASAL:
-                file += "BasalProfile";
-                break;
-            case CR:
-                file += "CarbRatio";
-                break;
-            case IS:
-                file += "InsulinSensitivity";
-                break;
-        }
-        float[] hf = read(file);
+        float[] hf = read(mode);
         for (int i = 0; i < 24; i++)
             hourlyFactors[i] = new HourlyFactor(hf[i], i);
     }

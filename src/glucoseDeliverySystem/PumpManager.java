@@ -61,24 +61,18 @@ public class PumpManager {
         observers.add(o);
     }
 
-    /*
-     * TODO: See if this is needed
-     * public void unsubscribe(Observer o) {
-     * observers.remove(o);
-     * }
-     * 
-     * 
-     * public void unsubscribeAll() {
-     * observers.clear();
-     * }
-     * 
-     * public void backup() {
-     * for (Observer observer : observers) {
-     * observer.update(getMeasurements());
-     * }
-     * }
-     * 
-     */
+    public void unsubscribe(Observer o) {
+        observers.remove(o);
+    }
+
+    public void unsubscribeAll() {
+        observers.clear();
+    }
+
+    public void backup() {
+        notifyObservers();
+    }
+
     public void notifyObservers() {
         for (Observer observer : observers) {
             observer.update(getMeasurements());

@@ -11,6 +11,7 @@ import java.util.List;
 public class PumpManager {
     private final GlucoseSensor sensor;
     private final InsulinPump pump;
+    private List<Measurement> measurements = new ArrayList<>();
     private final List<Observer> observers = new ArrayList<>();
     public HourlyProfile insulinSensitivityProfile;
     public List<BolusDelivery> bds = new ArrayList<>();
@@ -50,11 +51,13 @@ public class PumpManager {
     }
 
     public Measurement newMeasurement() {
-        return sensor.makeMeasurement();
+        Measurement m = sensor.makeMeasurement();
+        this.measurements.add(m);
+        return m;
     }
 
     public List<Measurement> getMeasurements() {
-        return sensor.measurements;
+        return this.measurements;
     }
 
     public void subscribe(Observer o) {

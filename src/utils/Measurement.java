@@ -26,4 +26,12 @@ public class Measurement {
     public void setTime(LocalTime time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        return "Measurement{" +
+                "glycemia=" + glycemia +
+                ", time=" + time +
+                '}';
+    }
 }

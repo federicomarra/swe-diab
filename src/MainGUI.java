@@ -510,7 +510,6 @@ public class MainGUI {
         int hour = (int) hourComboBox.getSelectedItem();
         float units = Float.parseFloat(unitsTextField.getText());
 
-
         // Chiamate i metodi appropriati di UserInterface in base all'opzione
         // selezionata
         switch (profileOption) {
@@ -590,7 +589,7 @@ public class MainGUI {
             var hour = profile.hourlyFactors[i].getHour();
             var units = profile.hourlyFactors[i].getUnits();
             var profileHour = new JLabel("Hour: " + (hour < 10 ? " " : "") + hour);
-            var profileUnits = new JLabel("Units: " + (units % 1 == 0 ? String.format("%.0f", units) : String.format("%.2f", units)));
+            var profileUnits = new JLabel("Units: " + (!title.equals("Basal Profile") ? String.format("%.0f", units) : String.format("%.2f", units)));
 
             profileHour.setBorder(new EmptyBorder(0, 0, 0, 10));
             profileRow.add(profileHour);

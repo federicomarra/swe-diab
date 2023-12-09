@@ -22,17 +22,37 @@ public interface DBManager {
 
     private static String getDatabaseUrl() {
         Dotenv dotenv = Dotenv.load();
-        String databaseUrl = dotenv.get("DATABASE_URL");
+        String databaseUrl = dotenv.get("DATABASE_FILE");
 
-        if (databaseUrl == null || !databaseUrl.startsWith("jdbc:sqlite:")) {
-            System.out.println("DATABASE_URL not found in .env file. Using default value.");
-            databaseUrl = "jdbc:sqlite:db/data.db";
+        if (databaseUrl == null || !databaseUrl.contains(".db")) {
+            System.out.println("DATABASE_FILE not found in .env file. Using default value.");
+            databaseUrl = "db/data.db";
         }
 
-        return databaseUrl;
+        var folders = databaseUrl.split("/");
+        var folder = "";
+        for (int i = 0; i < folders.length; i++) {
+            if (folders[i].contains(".db")) {
+                break;
+            }
+
+            folder += folders[i] + "/";
+            if (!Files.exists(Paths.get(folder))) {
+                try {
+                    Files.createDirectories(Paths.get(folder));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return "jdbc:sqlite:" + databaseUrl;
     }
 
-    String databaseDir = getDatabaseUrl().split("sqlite:")[1].split("/")[0] + "/";
+    String databaseFilePath = getDatabaseUrl().split("sqlite:")[1];
+
+    String backupFilePath = databaseFilePath
+            .substring(0, databaseFilePath.lastIndexOf("/") + 1) + "backup.db";
 
     private static void createProfileTable(ProfileMode mode) {
         String tableName = getProfileFilename(mode);
@@ -118,6 +138,13 @@ public interface DBManager {
 
     static HistoryEntry[] readHistoryTable() {
         try {
+            if (Files.exists(Paths.get(backupFilePath))
+                    && !Files.exists(Paths.get(databaseFilePath))) {
+                System.out.println("Database file not found. Cloning backup...");
+                Files.copy(Paths.get(backupFilePath), Paths.get(databaseFilePath),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+
             Class.forName("org.sqlite.JDBC");
 
             Connection c = DriverManager.getConnection(getDatabaseUrl());
@@ -176,7 +203,15 @@ public interface DBManager {
     static float[] readProfileTable(ProfileMode mode) {
         String tableName = getProfileFilename(mode);
         float[] units = new float[24];
+
         try {
+            if (Files.exists(Paths.get(backupFilePath))
+                    && !Files.exists(Paths.get(databaseFilePath))) {
+                System.out.println("Database file not found. Cloning backup...");
+                Files.copy(Paths.get(backupFilePath), Paths.get(databaseFilePath),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+
             Class.forName("org.sqlite.JDBC");
 
             Connection c = DriverManager.getConnection(getDatabaseUrl());
@@ -229,8 +264,8 @@ public interface DBManager {
 
     static void backupDatabase() {
         try {
-            Files.copy(Paths.get(getDatabaseUrl().split("sqlite:")[1]),
-                    Paths.get(databaseDir + "backup.db"),
+            Files.copy(Paths.get(databaseFilePath),
+                    Paths.get(backupFilePath),
                     StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Database backed up successfully.");
         } catch (IOException e) {

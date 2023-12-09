@@ -18,7 +18,7 @@ Unifi Software Engineering project for diabetes management
 If you want to change the default database path (`db/data.db`), you can do so by creating a `.env` file in the root of the project with specified:
 
 ```env
-DATABASE_URL="jdbc:sqlite:path/or/url/to/database.db"
+DATABASE_FILE="path/to/database.db"
 ```
 
 ## Run the packaged GUI

@@ -15,6 +15,12 @@ Unifi Software Engineering project for diabetes management
 1. Run `mvn clean test` to execute all the available tests.
 1. Run `mvn clean package` to build the jar file.
 
+If you want to change the default database path (`db/data.db`), you can do so by creating a `.env` file in the root of the project with specified:
+
+```env
+DATABASE_URL="jdbc:sqlite:path/or/url/to/database.db"
+```
+
 ## Run the packaged GUI
 
 1. Download the `swe-diab.jar` file from the [releases](<https://github.com/federicomarra/swe-diab/releases>) page.

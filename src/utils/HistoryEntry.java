@@ -17,6 +17,7 @@ public class HistoryEntry {
     public ZonedDateTime getTime() {
         return time;
     }
+
     public String getTimeString() {
         return time.getDayOfMonth() + "/" + time.getMonthValue() + "/" + time.getYear() +
                 " " + String.format("%02d", time.getHour())
@@ -32,6 +33,6 @@ public class HistoryEntry {
     }
 
     public float getUnits() {
-        return units;
+        return Float.parseFloat(String.format("%.2f", this.units).replace(",", "."));
     }
 }

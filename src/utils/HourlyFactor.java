@@ -10,7 +10,7 @@ public class HourlyFactor {
     }
 
     public float getUnits() {
-        return this.units;
+        return Float.parseFloat(String.format("%.2f", this.units).replace(",", "."));
     }
 
     public void setUnits(float units) {

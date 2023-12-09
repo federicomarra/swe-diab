@@ -9,6 +9,6 @@ import java.util.List;
 public class BackupDatabase extends Database {
     public void update(List<Measurement> ms) {
         super.update(ms);
-        DBManager.backup();
+        DBManager.backupDatabase();
     }
 }

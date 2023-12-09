@@ -64,3 +64,6 @@ exec
 
 # Database files
 db/
+
+# Enviroment file
+.env

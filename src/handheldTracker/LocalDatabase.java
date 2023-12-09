@@ -164,7 +164,7 @@ public class LocalDatabase extends Database implements Observer {
                         break;
                 }
                 if (result) {
-                    DBManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
+                    DBManager.writeHistoryTable(new HistoryEntry(ZonedDateTime.now(), lm.getGlycemia(), bd.units));
                 } else {
                     System.out.println("Injection failed");
                 }
@@ -203,7 +203,7 @@ public class LocalDatabase extends Database implements Observer {
                 insulinSensitivityProfile.updateHourlyFactor(hf);
                 break;
         }
-        DBManager.write(mode, hf);
+        DBManager.writeProfileTable(mode, hf);
     }
 
     private void addBolus(BolusDelivery bd) {

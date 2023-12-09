@@ -31,7 +31,7 @@ public class AutomaticBolus implements Observer, Runnable {
             var result = manager.verifyAndInject(units);
 
             if (result) {
-                DBManager.addHistoryEntry(new HistoryEntry(ZonedDateTime.now(), lastGlyc, units));
+                DBManager.writeHistoryTable(new HistoryEntry(ZonedDateTime.now(), lastGlyc, units));
             }
         }
     }

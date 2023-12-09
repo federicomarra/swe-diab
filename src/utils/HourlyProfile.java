@@ -1,6 +1,6 @@
 package utils;
 
-import static utils.DBManager.read;
+import static utils.DBManager.readProfileTable;
 
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;
@@ -10,7 +10,7 @@ public class HourlyProfile {
         hourlyFactors = new HourlyFactor[24];
         this.mode = mode;
 
-        float[] hf = read(mode);
+        float[] hf = readProfileTable(mode);
         for (int i = 0; i < 24; i++)
             hourlyFactors[i] = new HourlyFactor(hf[i], i);
     }

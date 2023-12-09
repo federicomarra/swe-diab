@@ -15,11 +15,11 @@ public class UserInterface {
     }
 
     public HistoryEntry[] getHistory() {
-        return DBManager.readHistoryEntry();
+        return DBManager.readHistoryTable();
     }
 
     public void backup() {
-        DBManager.backup();
+        DBManager.backupDatabase();
     }
 
     public void newStandardBolus(int carb) {

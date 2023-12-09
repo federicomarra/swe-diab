@@ -5,8 +5,6 @@ import utils.Measurement;
 import java.time.LocalTime;
 
 public class GlucoseSensor {
-    public GlucoseSensor() {
-    }
 
     public Measurement makeMeasurement() {
         int min = 60;

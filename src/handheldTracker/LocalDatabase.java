@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cloudInterface.BackupDatabase;
+import database.DBManager;
+import database.Database;
 import glucoseDeliverySystem.PumpManager;
 import utils.*;
 import exceptions.*;

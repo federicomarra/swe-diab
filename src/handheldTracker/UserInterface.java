@@ -1,5 +1,6 @@
 package handheldTracker;
 
+import database.DBManager;
 import utils.*;
 
 public class UserInterface {

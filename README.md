@@ -15,11 +15,12 @@ Unifi Software Engineering project for diabetes management
 1. Run `mvn clean test` to execute all the available tests.
 1. Run `mvn clean package` to build the jar file.
 
-If you want to change the default database path (`db/data.db`) or the default method of backup (clone locally `data.db`), you can do so by creating a `.env` file in the root of the project with specified a local path for the data file and a ftp string for the backup if desired. The file should look like this:
+If you want to change the default database path (`db/data.db`) or the default method of backup (clone locally `data.db`), you can do so by creating a `.env` file in the root of the project with specifies a local path for the data file, an ftp string for the backup if desired and the remote location to clone the file in (defaults to `backup.db`). The file should look like this:
 
 ```env
 DATABASE_FILE="path/to/database.db"
 BACKUP_FTP_STRING="remote-server.com:21?user=your-username&password=your-password"
+BACKUP_DB_PATH="path/to/backup.db"
 ```
 
 You can use [SFTP Cloud](https://sftpcloud.io/tools/free-ftp-server) to create a temporary ftp server for testing purposes.

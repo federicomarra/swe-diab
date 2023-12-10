@@ -1,7 +1,11 @@
-package utils;
+package database;
 
 import handheldTracker.BolusDelivery;
 import handheldTracker.BolusMode;
+import utils.HourlyFactor;
+import utils.HourlyProfile;
+import utils.Measurement;
+import utils.ProfileMode;
 
 import java.util.List;
 

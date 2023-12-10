@@ -1,6 +1,6 @@
 package utils;
 
-import static utils.DBManager.readProfileTable;
+import static database.DBManager.readProfileTable;
 
 public class HourlyProfile {
     public HourlyFactor[] hourlyFactors;

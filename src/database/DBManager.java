@@ -1,4 +1,4 @@
-package utils;
+package database;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +17,9 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import utils.HistoryEntry;
+import utils.HourlyFactor;
+import utils.ProfileMode;
 
 public interface DBManager {
 
@@ -28,10 +31,10 @@ public interface DBManager {
 
     private static String getDatabaseUrl() {
         Dotenv dotenv = Dotenv.load();
-        String databaseUrl = dotenv.get("DATABASE_FILE");
+        String databaseUrl = dotenv.get("LOCAL_DB_PATH");
 
         if (databaseUrl == null || !databaseUrl.contains(".db")) {
-            System.out.println("DATABASE_FILE not found in .env file. Using default value.");
+            System.out.println("LOCAL_DB_PATH not found in .env file. Using default value.");
             databaseUrl = "db/data.db";
         }
 
@@ -275,14 +278,17 @@ public interface DBManager {
         }
     }
 
-    static class FTPInfo {
-        String server;
-        int port;
-        String username;
-        String password;
-    }
+    static String getRemoteFilePath() {
+        Dotenv dotenv = Dotenv.load();
+        String remoteFilePath = dotenv.get("BACKUP_DB_PATH");
 
-    static String remoteFilePath = "/backup.db";
+        if (remoteFilePath == null || !remoteFilePath.contains(".db")) {
+            System.out.println("BACKUP_DB_PATH not found in .env file. Using default value.");
+            remoteFilePath = "backup.db";
+        }
+
+        return remoteFilePath;
+    }
 
     static boolean checkBackupDatabase(FTPInfo info) {
         FTPClient ftpClient = new FTPClient();
@@ -292,7 +298,7 @@ public interface DBManager {
             ftpClient.enterLocalPassiveMode();
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            var remoteFileSize = ftpClient.listFiles(remoteFilePath);
+            var remoteFileSize = ftpClient.listFiles(getRemoteFilePath());
             ftpClient.logout();
 
             return remoteFileSize.length > 0;
@@ -315,7 +321,7 @@ public interface DBManager {
             fos = new FileOutputStream(localFile);
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            ftpClient.retrieveFile(remoteFilePath, fos);
+            ftpClient.retrieveFile(getRemoteFilePath(), fos);
             ftpClient.logout();
             fos.close();
         } catch (IOException e) {
@@ -325,7 +331,7 @@ public interface DBManager {
 
     static FTPInfo getBackupFtpInfo() {
         Dotenv dotenv = Dotenv.load();
-        String ftpInfo = dotenv.get("BACKUP_FTP_STRING");
+        String ftpInfo = dotenv.get("BACKUP_DB_FTP");
 
         if (ftpInfo == null || !ftpInfo.contains(":") || !ftpInfo.contains("?") || !ftpInfo.contains("&")) {
             return null;
@@ -367,7 +373,7 @@ public interface DBManager {
             fis = new FileInputStream(localFile);
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            ftpClient.storeFile(remoteFilePath, fis);
+            ftpClient.storeFile(getRemoteFilePath(), fis);
             ftpClient.logout();
             fis.close();
 

@@ -2,7 +2,6 @@ package glucoseDeliverySystem;
 
 import handheldTracker.BolusDelivery;
 import handheldTracker.BolusMode;
-import utils.DBManager;
 import utils.HistoryEntry;
 import utils.Measurement;
 import utils.Observer;
@@ -10,6 +9,8 @@ import utils.Observer;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import database.DBManager;
 
 public class AutomaticBolus implements Observer, Runnable {
     public List<Measurement> measurements;

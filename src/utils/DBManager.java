@@ -1,5 +1,8 @@
 package utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +12,9 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -57,8 +63,6 @@ public interface DBManager {
     private static void createProfileTable(ProfileMode mode) {
         String tableName = getProfileFilename(mode);
         try {
-            Class.forName("org.sqlite.JDBC");
-
             Connection c = DriverManager.getConnection(getDatabaseUrl());
             System.out.println("Opened database successfully");
 
@@ -108,8 +112,6 @@ public interface DBManager {
 
     private static void createHistoryTable() {
         try {
-            Class.forName("org.sqlite.JDBC");
-
             Connection c = DriverManager.getConnection(getDatabaseUrl());
             System.out.println("Opened database successfully");
 
@@ -137,15 +139,23 @@ public interface DBManager {
     }
 
     static HistoryEntry[] readHistoryTable() {
-        try {
-            if (Files.exists(Paths.get(backupFilePath))
-                    && !Files.exists(Paths.get(databaseFilePath))) {
-                System.out.println("Database file not found. Cloning backup...");
-                Files.copy(Paths.get(backupFilePath), Paths.get(databaseFilePath),
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
+        FTPInfo info = getBackupFtpInfo();
 
-            Class.forName("org.sqlite.JDBC");
+        try {
+            if (!Files.exists(Paths.get(databaseFilePath))) {
+                if (info == null) {
+                    if (Files.exists(Paths.get(backupFilePath))) {
+                        System.out.println("Database file not found. Cloning backup...");
+                        Files.copy(Paths.get(backupFilePath), Paths.get(databaseFilePath),
+                                StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } else {
+                    if (checkBackupDatabase(info)) {
+                        System.out.println("Database file not found. Cloning remote backup...");
+                        cloneBackupDatabase(info);
+                    }
+                }
+            }
 
             Connection c = DriverManager.getConnection(getDatabaseUrl());
             c.setAutoCommit(false);
@@ -176,8 +186,6 @@ public interface DBManager {
 
     static void writeHistoryTable(HistoryEntry he) {
         try {
-            Class.forName("org.sqlite.JDBC");
-
             Connection c = DriverManager.getConnection(getDatabaseUrl());
             c.setAutoCommit(false);
 
@@ -203,16 +211,23 @@ public interface DBManager {
     static float[] readProfileTable(ProfileMode mode) {
         String tableName = getProfileFilename(mode);
         float[] units = new float[24];
+        FTPInfo info = getBackupFtpInfo();
 
         try {
-            if (Files.exists(Paths.get(backupFilePath))
-                    && !Files.exists(Paths.get(databaseFilePath))) {
-                System.out.println("Database file not found. Cloning backup...");
-                Files.copy(Paths.get(backupFilePath), Paths.get(databaseFilePath),
-                        StandardCopyOption.REPLACE_EXISTING);
+            if (!Files.exists(Paths.get(databaseFilePath))) {
+                if (info == null) {
+                    if (Files.exists(Paths.get(backupFilePath))) {
+                        System.out.println("Database file not found. Cloning backup...");
+                        Files.copy(Paths.get(backupFilePath), Paths.get(databaseFilePath),
+                                StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } else {
+                    if (checkBackupDatabase(info)) {
+                        System.out.println("Database file not found. Cloning remote backup...");
+                        cloneBackupDatabase(info);
+                    }
+                }
             }
-
-            Class.forName("org.sqlite.JDBC");
 
             Connection c = DriverManager.getConnection(getDatabaseUrl());
             c.setAutoCommit(false);
@@ -236,15 +251,13 @@ public interface DBManager {
             }
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(1);
-            return units;
+            return null;
         }
     }
 
     static void writeProfileTable(ProfileMode mode, HourlyFactor hf) {
         String tableName = getProfileFilename(mode);
         try {
-            Class.forName("org.sqlite.JDBC");
-
             Connection c = DriverManager.getConnection(getDatabaseUrl());
             c.setAutoCommit(false);
 
@@ -262,15 +275,114 @@ public interface DBManager {
         }
     }
 
-    static void backupDatabase() {
+    static class FTPInfo {
+        String server;
+        int port;
+        String username;
+        String password;
+    }
+
+    static String remoteFilePath = "/backup.db";
+
+    static boolean checkBackupDatabase(FTPInfo info) {
+        FTPClient ftpClient = new FTPClient();
         try {
-            Files.copy(Paths.get(databaseFilePath),
-                    Paths.get(backupFilePath),
-                    StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Database backed up successfully.");
+            ftpClient.connect(info.server, info.port);
+            ftpClient.login(info.username, info.password);
+            ftpClient.enterLocalPassiveMode();
+
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            var remoteFileSize = ftpClient.listFiles(remoteFilePath);
+            ftpClient.logout();
+
+            return remoteFileSize.length > 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    static void cloneBackupDatabase(FTPInfo info) {
+        FTPClient ftpClient = new FTPClient();
+        FileOutputStream fos = null;
+
+        try {
+            ftpClient.connect(info.server, info.port);
+            ftpClient.login(info.username, info.password);
+            ftpClient.enterLocalPassiveMode();
+
+            File localFile = new File(databaseFilePath);
+            fos = new FileOutputStream(localFile);
+
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            ftpClient.retrieveFile(remoteFilePath, fos);
+            ftpClient.logout();
+            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    static FTPInfo getBackupFtpInfo() {
+        Dotenv dotenv = Dotenv.load();
+        String ftpInfo = dotenv.get("BACKUP_FTP_STRING");
+
+        if (ftpInfo == null || !ftpInfo.contains(":") || !ftpInfo.contains("?") || !ftpInfo.contains("&")) {
+            return null;
+        }
+
+        FTPInfo info = new FTPInfo();
+        info.server = ftpInfo.split(":")[0];
+        info.port = Integer.parseInt(ftpInfo.split(":")[1].split("\\?")[0]);
+        info.username = ftpInfo.split("\\?")[1].split("&")[0].split("=")[1];
+        info.password = ftpInfo.split("\\?")[1].split("&")[1].split("=")[1];
+
+        return info;
+    }
+
+    static void backupDatabase() {
+        FTPInfo info = getBackupFtpInfo();
+
+        if (info == null) {
+            try {
+                Files.copy(Paths.get(databaseFilePath),
+                        Paths.get(backupFilePath),
+                        StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Database backed up successfully.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        FTPClient ftpClient = new FTPClient();
+        FileInputStream fis = null;
+
+        try {
+            ftpClient.connect(info.server, info.port);
+            ftpClient.login(info.username, info.password);
+            ftpClient.enterLocalPassiveMode();
+
+            File localFile = new File(databaseFilePath);
+            fis = new FileInputStream(localFile);
+
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            ftpClient.storeFile(remoteFilePath, fis);
+            ftpClient.logout();
+            fis.close();
+
+            System.out.println("File backed up successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                ftpClient.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

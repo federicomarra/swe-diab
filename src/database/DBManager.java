@@ -30,12 +30,18 @@ public interface DBManager {
     }
 
     private static String getDatabaseUrl() {
-        Dotenv dotenv = Dotenv.load();
-        String databaseUrl = dotenv.get("LOCAL_DB_PATH");
+        String databaseUrl;
 
-        if (databaseUrl == null || !databaseUrl.contains(".db")) {
-            System.out.println("LOCAL_DB_PATH not found in .env file. Using default value.");
-            databaseUrl = "db/data.db";
+        try {
+            Dotenv dotenv = Dotenv.load();
+            databaseUrl = dotenv.get("LOCAL_DB_PATH");
+
+            if (databaseUrl == null || !databaseUrl.contains(".db")) {
+                System.out.println("LOCAL_DB_PATH not found in .env file. Using default value.");
+                databaseUrl = "db/data.db";
+            }
+        } catch (Exception e) {
+            return "db/data.db";
         }
 
         var folders = databaseUrl.split("/");
@@ -279,12 +285,18 @@ public interface DBManager {
     }
 
     static String getRemoteFilePath() {
-        Dotenv dotenv = Dotenv.load();
-        String remoteFilePath = dotenv.get("BACKUP_DB_PATH");
+        String remoteFilePath;
 
-        if (remoteFilePath == null || !remoteFilePath.contains(".db")) {
-            System.out.println("BACKUP_DB_PATH not found in .env file. Using default value.");
-            remoteFilePath = "backup.db";
+        try {
+            Dotenv dotenv = Dotenv.load();
+            remoteFilePath = dotenv.get("BACKUP_DB_PATH");
+
+            if (remoteFilePath == null || !remoteFilePath.contains(".db")) {
+                System.out.println("BACKUP_DB_PATH not found in .env file. Using default value.");
+                remoteFilePath = "backup.db";
+            }
+        } catch (Exception e) {
+            return "backup.db";
         }
 
         return remoteFilePath;
@@ -330,10 +342,16 @@ public interface DBManager {
     }
 
     static FTPInfo getBackupFtpInfo() {
-        Dotenv dotenv = Dotenv.load();
-        String ftpInfo = dotenv.get("BACKUP_DB_FTP");
+        String ftpInfo;
 
-        if (ftpInfo == null || !ftpInfo.contains(":") || !ftpInfo.contains("?") || !ftpInfo.contains("&")) {
+        try {
+            Dotenv dotenv = Dotenv.load();
+            ftpInfo = dotenv.get("BACKUP_DB_FTP");
+
+            if (ftpInfo == null || !ftpInfo.contains(":") || !ftpInfo.contains("?") || !ftpInfo.contains("&")) {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
 

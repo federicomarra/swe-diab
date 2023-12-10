@@ -293,7 +293,7 @@ public interface DBManager {
 
             if (remoteFilePath == null || !remoteFilePath.contains(".db")) {
                 System.out.println("BACKUP_DB_PATH not found in .env file. Using default value.");
-                remoteFilePath = "backup.db";
+                return "backup.db";
             }
         } catch (Exception e) {
             return "backup.db";

@@ -19,8 +19,8 @@ If you want to change the default database path (`db/data.db`) or the default me
 
 ```env
 DATABASE_FILE="path/to/database.db"
-BACKUP_FTP_STRING="remote-server.com:21?user=your-username&password=your-password"
 BACKUP_DB_PATH="path/to/backup.db"
+BACKUP_FTP_STRING="remote-server.com:21?user=your-username&password=your-password"
 ```
 
 You can use [SFTP Cloud](https://sftpcloud.io/tools/free-ftp-server) to create a temporary ftp server for testing purposes.

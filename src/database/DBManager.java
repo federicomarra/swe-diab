@@ -41,7 +41,7 @@ public interface DBManager {
                 databaseUrl = "db/data.db";
             }
         } catch (Exception e) {
-            return "db/data.db";
+            databaseUrl = "db/data.db";
         }
 
         var folders = databaseUrl.split("/");

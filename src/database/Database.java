@@ -1,7 +1,8 @@
-package utils;
+package database;
 
 import handheldTracker.BolusDelivery;
-import handheldTracker.BolusMode;
+import utils.HourlyProfile;
+import utils.Measurement;
 
 import java.util.List;
 
@@ -12,30 +13,10 @@ public class Database {
     public List<BolusDelivery> bolusDeliveries;
     public List<Measurement> measurements;
 
-    public Database() {
-    }
-
     protected void update(List<Measurement> ms) {
+
         for (Measurement m : ms) {
             measurements.add(m);
         }
     }
-
-    // TODO: check if following methods are needed
-
-    public void updateHourlyFactor(HourlyFactor hf, ProfileMode mode) {
-    }
-
-    public void newBolus(float units, int delaySeconds, BolusMode mode, int carb) {
-    }
-
-    private void computeAndInject() {
-    }
-
-    private void backup() {
-    }
-
-    private void addBolus(BolusDelivery bd) {
-    }
-
 }

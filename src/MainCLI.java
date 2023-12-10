@@ -7,6 +7,8 @@ import java.math.RoundingMode;
 import java.util.Scanner;
 
 public class MainCLI {
+    private static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         UserInterface ui = new UserInterface();
 
@@ -78,12 +80,11 @@ public class MainCLI {
             }
             System.out.println();
         } while (selection > 0);
-        System.out.println("Exiting...");
+        scanner.close();
     }
 
     public static float safeInput(String nameVar, int min, int max, float sensibility) {
         float value;
-        Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.print("Insert " + nameVar + ": ");
@@ -95,7 +96,8 @@ public class MainCLI {
             }
 
             BigDecimal n = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP);
-            float delta = n.remainder(new BigDecimal(sensibility).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP).floatValue();
+            float delta = n.remainder(new BigDecimal(sensibility).setScale(2, RoundingMode.HALF_UP))
+                    .setScale(2, RoundingMode.HALF_UP).floatValue();
 
             if (value < min || value > max || delta != 0) {
                 System.out.println("Insert a number between " + min + " and " + max

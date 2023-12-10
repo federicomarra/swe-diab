@@ -44,8 +44,18 @@ public class MainGUI {
     private JPanel historyPanel;
     private JPanel historyList;
     private JButton backupButton;
+    private Component spacer;
 
     public MainGUI() {
+        initializeUI();
+        configureUI();
+        initializeEventHandlers();
+
+        frame.setVisible(true);
+        frame.setSize(850, 650);
+    }
+
+    private void initializeUI() {
         ui = new UserInterface();
 
         frame = new JFrame("Diabetes Tracker GUI");
@@ -79,18 +89,6 @@ public class MainGUI {
 
         historyPanel = new JPanel();
         historyPanel.setLayout(new BoxLayout(historyPanel, BoxLayout.Y_AXIS));
-
-        /*
-         * // Setto i sotto JPanel come righe orizzontali
-         * choosePanel.setLayout(new BoxLayout(choosePanel, BoxLayout.X_AXIS));
-         * bolusPanel.setLayout(new BoxLayout(bolusPanel, BoxLayout.X_AXIS));
-         * profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.X_AXIS));
-         * carbPanel.setLayout(new BoxLayout(carbPanel, BoxLayout.X_AXIS, ));
-         * delayMinutesPanel.setLayout(new BoxLayout(delayMinutesPanel,
-         * BoxLayout.X_AXIS));
-         * hourPanel.setLayout(new BoxLayout(hourPanel, BoxLayout.X_AXIS));
-         * unitsPanel.setLayout(new BoxLayout(unitsPanel, BoxLayout.X_AXIS));
-         */
 
         // JComboBox
         chooseComboBox = new JComboBox<String>(new String[] { "Bolus", "Update Hourly Profile" });
@@ -129,38 +127,13 @@ public class MainGUI {
         delayMinutesTextField.setMaximumSize(delayMinutesTextField.getPreferredSize());
         profileComboBox.setMaximumSize(profileComboBox.getPreferredSize());
 
-        initialize();
+        frame.getRootPane().setDefaultButton(executeButton);
     }
 
-    private void initialize() {
+    private void configureUI() {
         // Configura il frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
-
-        /*
-         * // Aggiunge una progress bar
-         * JProgressBar progressBar = new JProgressBar();
-         * progressBar.setValue(0);
-         * progressBar.setStringPainted(true);
-         * frame.add(progressBar);
-         * frame.add(Box.createVerticalStrut(10)); // Aggiungi uno spazio vuoto tra i
-         * componenti
-         */
-
-        /*
-         * // Aggiungo le varie componenti ai JPanel
-         * profilePanel.add(profileLabel);
-         * profilePanel.add(profileComboBox);
-         *
-         * delayMinutesPanel.add(delayMinutesLabel);
-         * delayMinutesPanel.add(delayMinutesTextField);
-         *
-         * hourPanel.add(hourLabel);
-         * hourPanel.add(hourComboBox);
-         *
-         * unitsPanel.add(unitsLabel);
-         * unitsPanel.add(unitsTextField);
-         */
 
         // Configura choosePanel
         chooseLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -171,7 +144,7 @@ public class MainGUI {
 
         mainPanel.add(Box.createVerticalGlue());
         mainPanel.add(choosePanel);
-        var spacer = Box.createVerticalGlue();
+        spacer = Box.createVerticalGlue();
         mainPanel.add(spacer);
 
         // Configura mainPanel
@@ -256,13 +229,11 @@ public class MainGUI {
 
         frame.add(mainAndButtonPanel);
         frame.add(Box.createHorizontalGlue());
-        // frame.add(basalProfileCsv);
 
         horizontalSpacer = Box.createHorizontalGlue();
+    }
 
-        frame.setVisible(true);
-        frame.setSize(850, 650);
-
+    private void initializeEventHandlers() {
         var hourSpacer = Box.createVerticalGlue();
         var unitSpacer = Box.createVerticalGlue();
 

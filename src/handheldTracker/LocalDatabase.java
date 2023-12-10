@@ -19,11 +19,6 @@ import exceptions.*;
 public class LocalDatabase extends Database implements Observer {
     private PumpManager manager;
     private BackupDatabase backupDb;
-    public HourlyProfile carbRatioProfile;
-    public HourlyProfile insulinSensitivityProfile;
-    public HourlyProfile basalProfile;
-    public List<BolusDelivery> bolusDeliveries;
-    public List<Measurement> measurements;
 
     // Set the reference glycemia to 120 mg/dL
     private final int GLYC_REFERENCE = 120;
@@ -35,15 +30,15 @@ public class LocalDatabase extends Database implements Observer {
         this.carbRatioProfile = new HourlyProfile(ProfileMode.CR);
         this.bolusDeliveries = new ArrayList<>();
         this.measurements = new ArrayList<>();
-        System.out.println("LocalDatabase created");
         this.manager = PumpManager.getInstance(insulinSensitivityProfile);
-        System.out.println("PumpManager created");
 
         this.manager.subscribe(this);
     }
 
+    @Override
     public void update(List<Measurement> ms) {
         try {
+            super.update(ms);
             backup();
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,16 +82,17 @@ public class LocalDatabase extends Database implements Observer {
         try {
             // Get the last measurement if it exists
             if (measurements.isEmpty())
-                addMeasurement(manager.newMeasurement());
+                manager.newMeasurement();
 
             Measurement lm = measurements.get(measurements.size() - 1);
             // Difference between last measurement and bolus time
             Duration diff = Duration.between(lm.getTime(), time);
 
             // Make a new measurement if the last one is older than 10 minutes from now
-            if (diff.toMinutes() > 10)
-                lm = addMeasurement(manager.newMeasurement());
-
+            if (diff.toMinutes() > 10) {
+                manager.newMeasurement();
+                lm = this.measurements.get(measurements.size() - 1);
+            }
             // Get the actual hourly factors from profiles
             HourlyFactor sensitivity = insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()];
             HourlyFactor carbRatio = carbRatioProfile.hourlyFactors[LocalTime.now().getHour()];
@@ -186,7 +182,6 @@ public class LocalDatabase extends Database implements Observer {
 
     private void backup() throws InternetException {
         try {
-            // FIXME: update() to be implemented into Database.java
             backupDb.update(this.measurements);
         } catch (Exception e) {
             e.printStackTrace();
@@ -210,11 +205,6 @@ public class LocalDatabase extends Database implements Observer {
 
     private void addBolus(BolusDelivery bd) {
         bolusDeliveries.add(bd);
-    }
-
-    private Measurement addMeasurement(Measurement m) {
-        measurements.add(m);
-        return m;
     }
 
     private float roundTo(float f, double sensibility) {

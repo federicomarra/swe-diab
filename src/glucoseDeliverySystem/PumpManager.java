@@ -53,6 +53,8 @@ public class PumpManager {
     public Measurement newMeasurement() {
         Measurement m = sensor.makeMeasurement();
         this.measurements.add(m);
+
+        notifyObservers();
         return m;
     }
 
@@ -72,13 +74,9 @@ public class PumpManager {
         observers.clear();
     }
 
-    public void backup() {
-        notifyObservers();
-    }
-
-    public void notifyObservers() {
+    private void notifyObservers() {
         for (Observer observer : observers) {
-            observer.update(getMeasurements());
+            observer.update(this.measurements);
         }
     }
 

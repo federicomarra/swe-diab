@@ -1,10 +1,11 @@
 # swe-diab
 
-![Java](https://img.shields.io/badge/Java-11.0-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![GitHub last commit](https://img.shields.io/github/last-commit/federicomarra/swe-diab?style=for-the-badge)
-![GitHub repo size](https://img.shields.io/github/repo-size/federicomarra/swe-diab?style=for-the-badge)
+[![Java](https://img.shields.io/badge/Java-11.0-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/it/java/technologies/javase/jdk11-archive-downloads.html)
+[![GitHub last commit](https://img.shields.io/github/last-commit/federicomarra/swe-diab?style=for-the-badge)](https://github.com/federicomarra/swe-diab/commits/master/)
+[![GitHub repo size](https://img.shields.io/github/repo-size/federicomarra/swe-diab?style=for-the-badge)](https://github.com/federicomarra/swe-diab)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/federicomarra/swe-diab?style=for-the-badge&logo=github&color=ED8B00)](https://github.com/federicomarra/swe-diab/releases)
 
-Unifi Software Engineering project for diabetes management
+Unifi Software Engineering project for diabetes management.
 
 ## How to run & build
 
@@ -15,19 +16,19 @@ Unifi Software Engineering project for diabetes management
 1. Run `mvn clean test` to execute all the available tests.
 1. Run `mvn clean package` to build the jar file.
 
-If you want to change the default database path (`db/data.db`) or the default method of backup (clone locally `data.db`), you can do so by creating a `.env` file in the root of the project with specifies a local path for the data file, an ftp string for the backup if desired and the remote location to clone the file in (defaults to `backup.db`). The file should look like this:
+If you want to change the default database path (`db/data.db`) or the default method of backup (clone locally `data.db`), you can do so by creating a `.env` file in the root of the project with specified a local path for the data file, an ftp string for the backup if desired and the remote path to clone the file in (defaults to `backup.db`). The file should look like this:
 
 ```env
 DATABASE_FILE="path/to/database.db"
 BACKUP_DB_PATH="path/to/backup.db"
-BACKUP_FTP_STRING="remote-server.com:21?user=your-username&password=your-password"
+BACKUP_FTP_STRING="your-server.com:your-port?user=your-username&password=your-password"
 ```
 
 You can use [SFTP Cloud](https://sftpcloud.io/tools/free-ftp-server) to create a temporary ftp server for testing purposes.
 
 ## Run the packaged GUI
 
-1. Download the `swe-diab.jar` file from the [releases](<https://github.com/federicomarra/swe-diab/releases>) page.
+1. Download the `swe-diab.jar` file from the [releases](https://github.com/federicomarra/swe-diab/releases) page.
 1. Run `java -jar swe-diab.jar` to start the gui program.
 
 ## Authors

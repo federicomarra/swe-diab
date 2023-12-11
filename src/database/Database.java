@@ -14,7 +14,6 @@ public class Database {
     public List<Measurement> measurements;
 
     protected void update(List<Measurement> ms) {
-
         for (Measurement m : ms) {
             measurements.add(m);
         }

@@ -17,8 +17,8 @@ import utils.*;
 import exceptions.*;
 
 public class LocalDatabase extends Database implements Observer {
-    private PumpManager manager;
-    private BackupDatabase backupDb;
+    private final PumpManager manager;
+    private final BackupDatabase backupDb;
 
     // Set the reference glycemia to 120 mg/dL
     private final int GLYC_REFERENCE = 120;

@@ -18,7 +18,7 @@ import java.time.LocalTime;
 public class LocalDatabaseTest {
 
     @Test
-    public void ConstructorTest() {
+    public void constructorTest() {
         LocalDatabase db = new LocalDatabase();
 
         assertEquals(0, db.bolusDeliveries.size());

@@ -14,13 +14,16 @@ import java.util.List;
 public class BolusDeliveryTest {
 
     @Test
-    public void ConstructorTest() {
+    public void constructorTest() {
         float[] units = new float[4];
-        for (int i = 0; i < 2; i++) // Randomize units between 1 and 15 with 0.01 precision
+        // Randomize units between 1 and 15 with 0.01 precision (Standard and Extended modes)
+        for (int i = 0; i < 2; i++)
             units[i] = (float) (((int) Math.abs(Math.random() * 2900) + 100) * 0.01);
-        for (int j = 2; j < 4; j++) // Randomize units between 1 and 15 with 0.5 precision
+        // Randomize units between 1 and 15 with 0.5 precision (Manual and Pen modes)
+        for (int j = 2; j < 4; j++)
             units[j] = (float) (((int) Math.abs(Math.random() * 29) + 1) * 0.5);
-        int delay = (int) (Math.abs(Math.random() * 14) + 1); // Randomize delay between 1 and 15 with 1 second precision
+        // Randomize delay between 1 and 15 with 1 minute precision (Extended mode)
+        int delay = (int) (Math.abs(Math.random() * 14) + 1);
 
         // Standard bolus test
         BolusDelivery bd0 = new BolusDelivery(units[0], LocalTime.now(), BolusMode.STANDARD);

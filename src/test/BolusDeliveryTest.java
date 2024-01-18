@@ -14,7 +14,7 @@ import java.util.List;
 public class BolusDeliveryTest {
 
     @Test
-    public void constructorTest() {
+    public void ConstructorTest() {
         float[] units = new float[4];
         // Randomize units between 1 and 15 with 0.01 precision (Standard and Extended modes)
         for (int i = 0; i < 2; i++)

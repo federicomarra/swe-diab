@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class GlucoseSensorTest {
     @Test
-    public void constructorTest() {
+    public void ConstructorTest() {
         PumpManager pm = PumpManager.getInstance(new HourlyProfile(ProfileMode.IS));
 
         String m = pm.newMeasurement().toString();

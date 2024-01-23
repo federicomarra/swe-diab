@@ -11,9 +11,9 @@ public class BackupDatabase extends Database {
     public void update(List<Measurement> ms) {
         if (measurements == null) {
             measurements = ms;
-            return;
+        } else {
+            super.update(ms);
+            DBManager.backupDatabase();
         }
-        super.update(ms);
-        DBManager.backupDatabase();
     }
 }

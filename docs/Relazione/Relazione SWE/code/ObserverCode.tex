@@ -1,0 +1,20 @@
+\begin{javaCode}{Implementazione di Observer - handheldTracker.LocalDatabase.java}
+public class LocalDatabase extends Database implements Observer {
+    // ...
+    @Override
+    public void update(List<Measurement> ms) {
+        super.update(ms);
+        backup();
+    }
+}
+
+class Database {
+    public List<Measurement> measurements;
+
+    protected void update(List<Measurement> ms) {
+        for (Measurement m : ms) {
+            measurements.add(m);
+        }
+    }
+}
+\end{javaCode}

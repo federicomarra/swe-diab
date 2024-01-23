@@ -1,0 +1,92 @@
+\begin{javaCode}{LocalDatabase.java - \textit{computeAndInject}}
+try {
+    // Get the last measurement if it exists
+    if (measurements.isEmpty())
+        manager.newMeasurement();
+
+    Measurement lm = measurements.get(measurements.size() - 1);
+    // Difference between last measurement and bolus time
+    Duration diff = Duration.between(lm.getTime(), time);
+
+    // Make a new measurement if the last one is older than 10 minutes from now
+    if (diff.toMinutes() > 10) {
+        manager.newMeasurement();
+        lm = this.measurements.get(measurements.size() - 1);
+    }
+    // Get the actual hourly factors from profiles
+    HourlyFactor sensitivity = insulinSensitivityProfile.hourlyFactors[LocalTime.now().getHour()];
+    HourlyFactor carbRatio = carbRatioProfile.hourlyFactors[LocalTime.now().getHour()];
+
+    // Create the BolusDelivery object
+    BolusDelivery bd = new BolusDelivery(0, time, mode);
+
+    // Compute the units of correction, units of carbohydrates and total units
+    float glycUnits = 0;
+    if (lm.getGlycemia() > 160)
+        glycUnits = ((float) (lm.getGlycemia() - GLYC_REFERENCE)) / sensitivity.getUnits();
+    float activeUnits = bd.calculateResidualUnits(bolusDeliveries);
+    // Units of correction = Units of glycemia - Units of active insulin
+    float correctionUnits = glycUnits - activeUnits;
+    float carbUnits = 0;
+    if (carb > 0 && carb <= 150)
+        carbUnits = carb / carbRatio.getUnits();
+
+    // Round the results to 2 decimal places
+    bd.units = roundTo(correctionUnits + carbUnits, 0.01);
+    glycUnits = roundTo(glycUnits, 0.01);
+    activeUnits = roundTo(activeUnits, 0.01);
+    correctionUnits = roundTo(correctionUnits, 0.01);
+    carbUnits = roundTo(carbUnits, 0.01);
+
+    if (bd.units > 0) {
+        System.out.printf("%-16s%9s%14s%-18s%n", "Glycemia:", lm.getGlycemia() + " mg/dL", (glycUnits > 0 ? " " + glycUnits + " units" : ""), (correctionUnits != 0 ? "    correction" : ""));
+        System.out.printf("%-25s%14s%-18s%n", "Active insulin:", (activeUnits > 0 ? "-" : "") + activeUnits + " units", "    " + (correctionUnits != 0 ? correctionUnits + " units" : ""));
+        System.out.printf("%-16s%9s%14s%n", "Carbohydrates:", carb + " g    ", (carbUnits > 0 ? " " + carbUnits + " units" : ""));
+        System.out.printf("%-25s%14s%n%n", "Total insulin:", (bd.units > 0 ? " " + bd.units + " units" : ""));
+
+        boolean result = false;
+        switch (mode) {
+            case STANDARD:
+                result = manager.verifyAndInject(bd.units);
+                break;
+            case EXTENDED:
+                Duration delay = Duration.between(LocalTime.now(), time).plusSeconds(1); System.out.print("Waiting ");
+                int hours = (int) delay.toHours();
+                int minutes = (int) delay.toMinutes() % 60;
+                int seconds = (int) delay.toSeconds() % 60;
+                if (hours > 0)
+                    System.out.print(hours + "h ");
+                if (minutes > 0)
+                    System.out.print(minutes + "m ");
+                if (seconds > 0)
+                    System.out.print(seconds + "s ");
+                System.out.println("to inject " + bd.units + " units" + " at " + time.format(DateTimeFormatter.ofPattern("HH:mm")));
+                Thread.sleep(delay.toMillis());
+
+                result = manager.verifyAndInject(bd.units);
+
+                break;
+            case MANUAL:
+                // Round the units to 0.5
+                bd.units = roundTo(bd.units, 0.5);
+                System.out.println("Manually inject: " + bd.units + " units");
+            case PEN:
+                result = true;
+                break;
+        }
+        if (result) {
+            DBManager.writeHistoryTable(new HistoryEntry(ZonedDateTime.now()lm.getGlycemia(), bd.units));
+        } else {
+            System.out.println("Injection failed");
+        }
+        addBolus(bd);
+    } else if (bd.units == 0) {
+        System.out.println("You don't need to inject insulin, you have a glycemia of: " + lm.getGlycemia() + " mg/dL");
+    } else if (bd.units < 0) {
+        System.out.println( "You don't need to inject insulin, you have " + activeUnits + " units of active insulin");
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+    throw new BluetoothException();
+}
+\end{javaCode}

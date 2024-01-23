@@ -1,0 +1,9 @@
+\begin{javaCode} {PumpManager.java - verifyAndInject}
+public Measurement newMeasurement() {
+    Measurement m = sensor.makeMeasurement();
+    this.measurements.add(m);
+
+    notifyObservers();
+    return m;
+}
+\end{javaCode}

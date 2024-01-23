@@ -1,0 +1,17 @@
+\begin{javaCode}{Implementazione di Singleton - glucoseDeliverySystem.PumpManager}
+public class PumpManager {
+    // ...
+    private static PumpManager SingletonInstance;
+
+    private PumpManager(HourlyProfile isp) { ... }
+
+    public static PumpManager getInstance(HourlyProfile isp) {
+        if (SingletonInstance == null) {
+            SingletonInstance = new PumpManager(isp);
+        } else {
+            SingletonInstance.insulinSensitivityProfile = isp;
+        }
+        return SingletonInstance;
+    }
+}
+\end{javaCode}

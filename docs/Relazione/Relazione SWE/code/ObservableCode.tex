@@ -1,0 +1,16 @@
+\begin{javaCode}{Implementazione di Observable - glucoseDeliverySystem.PumpManager}
+public class PumpManager {
+    private List<Measurement> measurements = new ArrayList<>();
+    private final List<Observer> observers = new ArrayList<>();
+    // ...
+    public void subscribe(Observer o) { observers.add(o); }
+    
+    public void unsubscribe(Observer o) { observers.remove(o); }
+    
+    private void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(this.measurements);
+        }
+    }
+}
+\end{javaCode}

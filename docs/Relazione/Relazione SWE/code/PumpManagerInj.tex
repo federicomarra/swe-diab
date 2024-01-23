@@ -1,0 +1,14 @@
+\begin{javaCode} {PumpManager.java - verifyAndInject}
+public boolean verifyAndInject(float units) {
+    if (units > 0 && units <= 20) {
+        bds.add(new BolusDelivery(units, LocalTime.now(), BolusMode.STANDARD));
+        pump.inject(units);
+        return true;
+    } else if (units > 20) {
+        System.out.println("Too many units");
+    } else {
+        System.out.println("Invalid units");
+    }
+    return false;
+}
+\end{javaCode}

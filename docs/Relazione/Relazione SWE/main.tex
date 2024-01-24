@@ -69,7 +69,7 @@
 \usepackage{tgschola}
 \linespread{1.5}
 
-\title{Relazione su Applicativo Java\newline per la Gestione del Diabete}
+\title{Relazione su Applicativo Java per la Gestione del Diabete}
 \author{Federico Marra - Alberto del Buono Paolini}
 \date{Ottobre - Dicembre 2023}
 
@@ -218,7 +218,7 @@ Riportiamo di seguito i template relativi a tutti i casi d’uso individuati nel
         Svolgimenti alternativi & Come UC1, se i carboidrati sono 0, verranno calcolatate solo le unità per correggere se la glicemia è oltre una certa soglia \\
         \hline
     \end{tabular}
-    \caption{Use Case Template 2 che consiste nel richiedere al sistema il calcolo delle unità e l'iniezione di insulina in modalità estesa.}
+    \caption{Use Case Template 2 che consiste nel richiedere al sistema il calcolo delle unità e l'iniezione di insulina in modalità estesa, Mockup in figura \ref{fig:gui-bolus-ext}}
     \label{tab:uc2}
 \end{table}
 
@@ -296,7 +296,7 @@ Riportiamo di seguito i template relativi a tutti i casi d’uso individuati nel
         Svolgimenti alternativi & Se viene immesso come orario 0 o 24, il funzionamento è il medesimo\\
         \hline
     \end{tabular}
-    \caption{Use Case Template 5 che consiste nel richiedere al sistema l'aggiornamento del profilo orario della .}
+    \caption{Use Case Template 5 che consiste nel richiedere al sistema l'aggiornamento del profilo orario della Basale, Mockup in figura \ref{fig:gui-basal}.}
     \label{tab:uc5}
 \end{table}
 
@@ -322,7 +322,7 @@ Riportiamo di seguito i template relativi a tutti i casi d’uso individuati nel
         Svolgimenti alternativi & Se viene immesso come orario 0 o 24, il funzionamento è il medesimo\\
         \hline
     \end{tabular}
-    \caption{Use Case Template 6 che consiste nel richiedere al sistema l'aggiornamento del profilo orario della .}
+    \caption{Use Case Template 6 che consiste nel richiedere al sistema l'aggiornamento del profilo orario del rapporto insulina carboidrati.}
     \label{tab:uc6}
 \end{table}
 
@@ -348,7 +348,7 @@ Riportiamo di seguito i template relativi a tutti i casi d’uso individuati nel
         Svolgimenti alternativi & Se viene immesso come orario 0 o 24, il funzionamento è il medesimo\\
         \hline
     \end{tabular}
-    \caption{Use Case Template 7 che consiste nel richiedere al sistema l'aggiornamento del profilo orario della .}
+    \caption{Use Case Template 7 che consiste nel richiedere al sistema l'aggiornamento del profilo orario della sensitività insulinica, Mockup in figura \ref{fig:gui-insens}.}
     \label{tab:uc7}
 \end{table}
 
@@ -374,7 +374,7 @@ Riportiamo di seguito i template relativi a tutti i casi d’uso individuati nel
         Svolgimenti alternativi & Se viene impostato un file \texttt{.env} si può uploadare il file di backup su un server sqlite.\\
         \hline
     \end{tabular}
-    \caption{Use Case Template 8 che consiste nell'eseguire una copia del database con il nome di \texttt{backup.db}.}
+    \caption{Use Case Template 8 che consiste nell'eseguire una copia del database con il nome di \texttt{backup.db}, Mockup in figura \ref{fig:gui-history}.}
     \label{tab:uc8}
 \end{table}
 
@@ -390,7 +390,7 @@ Riportiamo di seguito i mockups realizzati relativi alla GUI per l’interazione
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=14cm]{gui-history.png}
-    \caption{Storico dei boli sulla sinistra}
+    \caption{Storico dei boli sulla sinistra, bottone per il backup in basso a destra, UC\ref{tab:uc8}}
     \label{fig:gui-history}
 \end{figure}
 \vfill\null
@@ -398,21 +398,21 @@ Riportiamo di seguito i mockups realizzati relativi alla GUI per l’interazione
 \begin{figure}
     \centering
     \includegraphics[width=14cm]{gui-bolus-ext.png}
-    \caption{Creazione bolo in modalità estesa}
+    \caption{Creazione bolo in modalità estesa, UC\ref{tab:uc2}}
     \label{fig:gui-bolus-ext}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=14cm]{gui-basal.png}
-    \caption{Aggiornamento profilo orario della basale}
+    \caption{Aggiornamento profilo orario della basale, UC\ref{tab:uc5}}
     \label{fig:gui-basal}
 \end{figure}
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=14cm]{gui-insens.png}
-    \caption{Aggiornamento profilo orario della sensitività dell'insulina}
+    \caption{Aggiornamento profilo orario della sensitività dell'insulina, UC\ref{tab:uc7}}
     \label{fig:gui-insens}
 \end{figure}
 
@@ -440,93 +440,94 @@ Per l’implementazione del nostro applicativo abbiamo sia definito nuove classi
 \subsubsection{Package Handheld Tracker}
 è il package che rappresenta il palmare da cui comandare la pompa di insulina.
 
-\textbf{User Interface}
+\noindent\textbf{User Interface}
 \newline è l'interfaccia che con tutti i suoi metodi pubblici permette di eseguire tutto ciò che può richiedere l'utente: boli, aggiornamenti dei profili orari e backup.    
 \input{code/UserInterface}
 
-\textbf{Local Database}
+\noindent\textbf{Local Database}
 \newline è il centro nevralgico del sistema, estende la classe \texttt{Database} del package \texttt{Database} e si occupa di calcolare i boli raccogliendo le risorse necessarie, salva nel database i dati dei boli e dei profili di gestione e manda al \texttt{GlucoseDeliverySystem} (che rappresenta la pump) il calcolo delle unità di insulina da iniettare. Qui di seguito la funzione più importante di questa classe:
 \input{code/LocalDatabase}
 
 
-\textbf{Bolus Delivery}
+\noindent\textbf{Bolus Delivery}
 \newline è la classe che ha come attributi \texttt{float units; LocalTime time; BolusMode mode} che permettono la rappresentazione di un oggetto bolo. Il suo unico metodo è \texttt{calculateResidualUnits} che prendendo in ingresso come parametro \texttt{List<BolusDelivery> bds} calcola attraverso una regressione linerare quante unità di insulina sono ancora attive. Qui di seguito la funzione più importante di questa classe:
 
 \input{code/BolusDelivery}
 
 
-\textbf{Bolus Mode}
+\noindent\textbf{Bolus Mode}
 \newline rappresenta i 4 diversi tipi di bolo che possono esserci: \texttt{STANDARD, EXTENDED, MANUAL, PEN}.
 
 
 \subsubsection{Package Database}
 
-\textbf{DB Manager}
+\noindent\textbf{DB Manager}
 \newline si occupa della scrittura, lettura e backup del database e quindi del registro delle glicemie/boli, e dei tre \texttt{ProfileMode}: Basale, Rapporto Insulina Carboidrati e Rapporto Sensitività Insulinica.
 
-\textbf{Database}
+\noindent\textbf{Database}
 \newline ha come attributi: \texttt{HourlyProfile carbRatioProfile; HourlyProfile insulinSensitivityProfile; HourlyProfile basalProfile; List<BolusDelivery> bolusDeliveries; List<Measurement> measurements;} e fa da classe base per \texttt{LocalDatabase} e \texttt{BackupDatabase} che implementano il metodo \texttt{update}, che aggiunge alla lista dei Measurements le ultime misurazioni.
 
-\textbf{FTP Info}
+\noindent\textbf{FTP Info}
 \newline ha come attributi: \texttt{String server; int port; String username; String password} che permettono di caricare il database su un server sqlite con le credenziale dettate da questa classe.
 
 
 \subsubsection{Package Utils}
 
-\textbf{History Entry}
+\noindent\textbf{History Entry}
 \newline è il tipo base che ha come attributi glicemia, unità (d'insulina) e orario di somministrazione. Uno dei quattro registri nel database è composto da \texttt{HistoryEntry}. Come metodi sono implementati i getter e i setter.
 
-\textbf{Measurement}
+\noindent\textbf{Measurement}
 \newline è il tipo base che rappresenta una misurazione di glicemia (di cui il creatore è \texttt{glucoseDeliverySystem.GlucoseSensor}) e ha come attributi un intero corrispondente alla densità di glucosio nel sangue, misurata in $mg/dL$ e l'orario. Come metodi sono implementati i getter e i setter.
 
-\textbf{Hourly Factor}
+\noindent\textbf{Hourly Factor}
 \newline è il tipo base che va a comporre tre dei quattro registri nel database: \texttt{BasalProfile}, \texttt{InsulineSensitivityProfile} e \texttt{CarbRatioProfile}. Ha come attributi delle unità e un orario (compreso tra $0$ e $23$, $24$ coincide con $0$) Come metodi sono implementati i getter e i setter.
 
-\textbf{Hourly Profile}
+\noindent\textbf{Hourly Profile}
 \newline è composto da una lista di 24 \texttt{HourlyProfile} e da un attributo \texttt{ProfileMode mode}. Alla sua creazione se non è reperibile dal database la modalità corrispondente (attraverso il metodo \texttt{readProfileTable(mode)} della classe \texttt{DBManager} dal package \texttt{Database}), si andrà a creare un profilo di default. Qui di seguito la funzione più importante di questa classe che verifica che per ogni modalità i valori con cui aggiornare l'\texttt{HourlyFactor} siano in un certo range che permette sicurezza dell'utente:
 
 \input{code/HourlyProfile}
 
-\textbf{Profile Mode}
+\noindent\textbf{Profile Mode}
 \newline rappresenta i 3 diversi tipi di HourlyProfile che possono esserci: \texttt{BASAL, CR, IS} corrispondenti rispettivamente ai profili di Basale, Rapporto insulina carboidrati e Rapporto Sensitività insulinica.
 
-\textbf{Observer}
+\noindent\textbf{Observer}
 \newline interfaccia per il design pattern Observer implementato poi nel \texttt{handheldTracker.LocalDatabase}.
 
 
 \subsubsection{Package Glucose Delivery System}
 
-\textbf{Pump Manager}
+\noindent\textbf{Pump Manager}
 \newline gestore principale del \texttt{GlucoseDeliverySystem}. Implementa i design pattern Observer, chiama il Factory e la creazione della sua istanza è un Singleton (esisterà solo un oggetto \texttt{PumpManager}). Permette di mandare le informazioni all'\texttt{InsulinPump} tramite il metodo:
 \input{code/PumpManagerInj}
 permette di chiamare una nuova misurazione e dunque la chiamata della factory \texttt{GlucoseSensor} tramite il metodo:
 \input{code/PumpManagerMeas}
 
-\textbf{Glucose Sensor}
+\noindent\textbf{Glucose Sensor}
 \newline crea un oggetto \texttt{Measurement} e di fatto implementa il desing pattern Factory.
 
-\textbf{Insulin Pump}
+\noindent\textbf{Insulin Pump}
 \newline inietta il quantitativo di insulina che riceve dal \texttt{PumpManager} e stampa il risultato.
 
-\textbf{Automatic Bolus}
-\newline fornisce una routine che ogni $10$ o $15$ minuti inietta rispettivamente \(\frac{1}{6}\) o \(\frac{1}{4}\) della basale relativa all'orario corrente, a cui è sommata una correzione per far tornare la glicemia in un range corretto, indicativamente di $80-150$ (non è sommata se la glicemia è già nel range), e manda il tutto al \textttt{PumpManager}.
+\noindent\textbf{Automatic Bolus}
+\newline 
+fornisce una routine che ogni $10$ o $15$ minuti inietta rispettivamente $\frac{1}{6}$ o $\frac{1}{4}$ della basale relativa all'orario corrente, a cui è sommata una correzione per far tornare la glicemia in un range corretto, indicativamente di $80-150$ (non è sommata se la glicemia è già nel range), e manda il tutto al \textttt{PumpManager}.
 
 
 \subsubsection{Package Cloud Interface}
 
-\textbf{Backup Database}
+\noindent\textbf{Backup Database}
 \newline tiene traccia del backup del database quando invocato.
 
-\textbf{User Dashboard}
+\noindent\textbf{User Dashboard}
 \newline fornisce statistiche e grafici dei dati presenti nella History.
 
 
 \subsubsection{Package Exceptions}
 
-\textbf{Bluetooth Exception}
+\noindent\textbf{Bluetooth Exception}
 \newline classe che rappresenta l'eccezione se non riesce il collegamento tra l'Handheld Tracker e il Glucose Delivery System.
 
-\textbf{Internet Exception}
+\noindent\textbf{Internet Exception}
 \newline  classe che rappresenta l'eccezione se non riesce il collegamento tra l'Handheld Tracker e la Cloud Interface.
 
 
